@@ -1,0 +1,51 @@
+{
+  "manifest_version": 3,
+  "name": "Norde Maison",
+  "version": "1.0.0",
+  "version_name": "1.0",
+  "description": "Интернет-магазин одежды Norde Maison",
+  "action": {
+    "default_popup": "index.html",
+    "default_title": "Norde Maison",
+    "default_icon": {
+      "16": "logo16.png",
+      "32": "logo32.png",
+      "48": "logo48.png",
+      "128": "logo128.png"
+    }
+  },
+  "icons": {
+    "16": "logo16.png",
+    "32": "logo32.png",
+    "48": "logo48.png",
+    "128": "logo128.png"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "permissions": [
+    "storage",
+    "activeTab",
+    "scripting"
+  ],
+  "host_permissions": [
+    "http://localhost:8000/*"
+  ],
+  "content_security_policy": {
+
+  },
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "*.png",
+        "*.svg",
+        "*.css",
+        "*.js"
+      ],
+      "matches": [
+        "<all_urls>"
+      ]
+    }
+  ],
+  "minimum_chrome_version": "88"
+}
