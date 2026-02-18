@@ -1,0 +1,60 @@
+.hero-section {
+  &__inner {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    min-height: 640px;
+    margin-bottom: 64px;
+  }
+
+  &__title {
+    @include checkbox-hidden;
+  }
+
+  &__card {
+    position: relative;
+    overflow: hidden;
+    display: block;
+    text-decoration: none;
+    color: inherit;
+
+    img {
+      @include objectCoverBg;
+      height: 100%;
+      transition: transform 0.4s ease;
+    }
+
+    &:hover img, &:focus img {
+      transform: scale(1.05);
+    }
+  }
+
+  &__name {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    z-index: 1;
+  }
+
+  &__subtitle {
+    font-size: 16px;
+    letter-spacing: -0.03em;
+    margin-bottom: 20px;
+    display: block;
+    text-transform: uppercase;
+    color: rgba($black100, .64);
+  }
+
+  &__description {
+    margin-bottom: 120px;
+    font-size: 28px;
+    letter-spacing: -0.03em;
+    font-weight: 400;
+  }
+
+  &__btn {
+    margin-bottom: 64px;
+    padding-left: 20px;
+    padding-right: 20px;
+    font-weight: 600;
+  }
+}

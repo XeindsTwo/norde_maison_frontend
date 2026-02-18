@@ -1,56 +1,31 @@
 .btn {
   @include flex-center;
-  margin-top: auto;
-  padding: 15px;
-  font-size: 17px;
-  background: var(--primary-color);
-  color: var(--secondary-color);
   text-align: center;
-  border-radius: 45px;
-  font-weight: 600;
-  letter-spacing: -0.03em;
+  padding: 14px 40px;
+  max-width: max-content;
+  background-color: $black100;
+  color: $white;
+  border: 1px solid transparent;
+  text-transform: uppercase;
+  font-size: 16px;
+  letter-spacing: 0.02em;
+  z-index: 1;
+  transition: color .4s, background-color .4s, border .4s;
 
   &:hover {
-    background: #91FFBD;
+    background-color: transparent;
+    border-color: $black100;
+    color: $black100;
   }
 
-  &:disabled {
-    opacity: .9;
-    pointer-events: none;
-    background-color: #618D73;
-  }
+  &--black {
+    background-color: $white;
+    color: $black100;
 
-  &.bottom {
-    min-height: 52px;
-    margin-bottom: 18px;
-    &.disabled,
-    &:disabled {
-      background-color: var(--primary-color);
+    &:hover {
+      background-color: $black100;
+      border-color: transparent;
+      color: $white;
     }
-  }
-}
-
-.btn-spinner {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-}
-
-.spinner {
-  width: 20px;
-  height: 20px;
-  border: 3px solid #37A764;
-  border-top: 3px solid #1B1B1C;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
   }
 }
