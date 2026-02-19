@@ -4,6 +4,7 @@ import HeroSection from '@/pages/Home/HeroSection/HeroSection.jsx';
 import CategoryShowcase from '@/components/CategoryShowcase/CategoryShowcase.jsx';
 import {getSubcategories} from '@/api/catalog.js';
 import Materials from "@/pages/Home/Materials/Materials.jsx";
+import Footer from "@/components/Footer/Footer.jsx";
 
 const HomePage = () => {
   const [womenItems, setWomenItems] = useState([]);
@@ -63,6 +64,7 @@ const HomePage = () => {
         loading={loading}
       />
       <Materials />
+      <Footer/>
     </>
   );
 };
