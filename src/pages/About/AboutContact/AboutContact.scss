@@ -1,0 +1,52 @@
+.about-contact {
+  background-color: $black200;
+
+  &__inner {
+    min-height: 440px;
+    padding: 40px 0;
+    color: $white;
+    @include flex-between-center-gap(30);
+    align-items: stretch;
+  }
+
+  &__content {
+    @include flex-column(16);
+    max-width: 630px;
+  }
+
+  &__title {
+    font-size: 36px;
+    letter-spacing: -0.18px;
+    font-weight: 500;
+    line-height: 1.2;
+  }
+
+  &__text {
+    max-width: 500px;
+    font-size: 18px;
+    line-height: 1.5;
+    letter-spacing: -0.24px;
+    color: rgba($white, .64);
+  }
+
+  &__btn {
+    margin-top: auto;
+    padding: 12px 26px;
+
+    &:hover {
+      opacity: .7;
+      background-color: $white;
+      color: $black200;
+    }
+
+    &:focus {
+      background-color: transparent;
+      border-color: $white;
+      color: $white;
+
+      svg path {
+        fill: $white;
+      }
+    }
+  }
+}

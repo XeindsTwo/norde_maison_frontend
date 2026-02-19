@@ -1,7 +1,7 @@
 import './MegaMenu.scss';
 
-const MegaMenu = ({ data, subcategoriesByCategory }) => {
-  const { categories, materials } = data;
+const MegaMenu = ({data, subcategoriesByCategory}) => {
+  const {categories, materials} = data;
   const mainCategories = categories.slice(0, 3);
 
   return (
@@ -24,21 +24,20 @@ const MegaMenu = ({ data, subcategoriesByCategory }) => {
         </div>
       ))}
 
-      <div className="mega-menu__column">
-        <div className="mega-menu__title">Материалы</div>
-        <ul className="mega-menu__list">
-          {materials.map((mat) => (
-            <li key={mat.id}>
-              <a
-                href={`/catalog?material=${mat.id}`}
-                className="mega-menu__link"
-              >
-                {mat.name}
-              </a>
-            </li>
-          ))}
-        </ul>
-      </div>
+      {materials.length > 0 && (
+        <div className="mega-menu__column">
+          <div className="mega-menu__title">Материалы</div>
+          <ul className="mega-menu__list">
+            {materials.map((mat) => (
+              <li key={mat.id}>
+                <a href={`/catalog?material=${mat.id}`} className="mega-menu__link">
+                  {mat.name}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
     </div>
   );
 };

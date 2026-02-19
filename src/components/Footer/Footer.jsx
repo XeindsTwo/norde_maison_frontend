@@ -37,12 +37,14 @@ const Footer = () => {
         <div className="container container--padding">
           <div className="footer__top-inner">
             <div className="footer__left">
-              <img
-                src="/images/logo.svg"
-                width={189}
-                height={24}
-                alt="Norde Maison"
-              />
+              <Link to="/" className="header__logo">
+                <img
+                  src="/images/logo.svg"
+                  width={189}
+                  height={24}
+                  alt="Nordé Maison"
+                />
+              </Link>
             </div>
             <nav className="footer__nav">
               <Link className="footer__link" to="">

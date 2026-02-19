@@ -1,5 +1,6 @@
 .footer {
   &__top {
+    border-top: 1px solid rgba($black100, .15);
     border-bottom: 1px solid rgba($black100, .15);
     padding: 40px 0;
     font-size: 18px;
@@ -7,6 +8,22 @@
     &-inner {
       @include flex-between-center-gap(30);
       align-items: center;
+    }
+  }
+
+  &__logo {
+    display: inline-flex;
+    align-items: center;
+    transition: opacity .25s ease, transform .25s ease;
+
+    &:hover {
+      opacity: .8;
+      transform: translateY(-1px);
+    }
+
+    &:active {
+      transform: translateY(0);
+      opacity: .9;
     }
   }
 

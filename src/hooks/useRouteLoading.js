@@ -1,4 +1,3 @@
-// useRouteLoading.js
 import {useEffect, useRef, useState} from 'react';
 import {useLocation, useNavigationType} from 'react-router-dom';
 
@@ -40,7 +39,7 @@ export const useRouteLoading = (delay = 400) => {
 
     const cooldownId = setTimeout(() => {
       setJustNavigated(false);
-    }, 400); // время, пока блокируем авто-ховер
+    }, 600);
 
     return () => {
       if (timeoutId) clearTimeout(timeoutId);
