@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
+import {useEffect, useState} from 'react';
 import './Header.scss';
-import { getCategories, getSubcategories } from '@/api/catalog.js';
+import {getCategories, getSubcategories} from '@/api/catalog.js';
 import MegaMenu from '../MegaMenu/MegaMenu.jsx';
 
 import SearchIcon from '@/assets/images/icons/bx_search.svg';
@@ -8,8 +8,8 @@ import CartIcon from '@/assets/images/icons/bx_cart.svg';
 
 const Header = () => {
   const [openMenu, setOpenMenu] = useState(null);
-  const [womenData, setWomenData] = useState({ categories: [], materials: [] });
-  const [menData, setMenData] = useState({ categories: [], materials: [] });
+  const [womenData, setWomenData] = useState({categories: [], materials: []});
+  const [menData, setMenData] = useState({categories: [], materials: []});
   const [subcategoriesByCategory, setSubcategoriesByCategory] = useState({});
   const [loading, setLoading] = useState(true);
 
@@ -22,9 +22,9 @@ const Header = () => {
           materialsRes,
           subcatsRes,
         ] = await Promise.all([
-          getCategories({ gender: 'F', is_material: false }),
-          getCategories({ gender: 'M', is_material: false }),
-          getCategories({ is_material: true }),
+          getCategories({gender: 'F', is_material: false}),
+          getCategories({gender: 'M', is_material: false}),
+          getCategories({is_material: true}),
           getSubcategories(),
         ]);
 
@@ -106,11 +106,11 @@ const Header = () => {
           <div className="header__right">
             <button className="header__link">Авторизация</button>
             <button className="header__link">
-              <SearchIcon />
+              <SearchIcon/>
               Поиск
             </button>
             <button className="header__link">
-              <CartIcon />
+              <CartIcon/>
               Корзина
             </button>
           </div>
@@ -125,7 +125,7 @@ const Header = () => {
                   ? womenData
                   : openMenu === 'men'
                     ? menData
-                    : { categories: [], materials: [] }
+                    : {categories: [], materials: []}
               }
               subcategoriesByCategory={subcategoriesByCategory}
             />
