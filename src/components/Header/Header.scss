@@ -7,7 +7,7 @@
 
     &-inner {
       @include flex-between-center-gap(30);
-      padding: 16px 40px;
+      padding: 10px 40px;
       font-size: 14px;
       color: rgba($black100, .6);
     }
@@ -27,21 +27,47 @@
     gap: 28px;
   }
 
+  &__logo {
+    display: inline-flex;
+    align-items: center;
+    transition: opacity .25s ease, transform .25s ease;
+
+    &:hover {
+      opacity: .8;
+      transform: translateY(-1px);
+    }
+
+    &:active {
+      transform: translateY(0);
+      opacity: .9;
+    }
+  }
+
   &__nav {
     display: flex;
     gap: 26px;
+    padding: 6px 0;
     transform: translateY(3px);
   }
 
   &__link {
+    @include flex-align-center(6);
     line-height: 1;
     padding-bottom: 2px;
     color: rgba($black100, .8);
     border-bottom: 1px solid transparent;
+    background: none;
+    border-radius: 0;
+    font: inherit;
+    cursor: pointer;
     transition: color .4s, border .4s, text-decoration .4s;
-    @include flex-align-center(6);
 
     &:hover {
+      color: $black100;
+      border-bottom-color: $black100;
+    }
+
+    &.is-active {
       color: $black100;
       border-bottom-color: $black100;
     }

@@ -49,7 +49,7 @@ const HomePage = () => {
 
   return (
     <>
-      <Header />
+      <Header/>
       <HeroSection />
       <CategoryShowcase
         title="Женская линейка"

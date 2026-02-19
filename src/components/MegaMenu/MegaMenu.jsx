@@ -1,7 +1,7 @@
 import './MegaMenu.scss';
 
-const MegaMenu = ({data, subcategoriesByCategory}) => {
-  const {categories, materials} = data;
+const MegaMenu = ({ data, subcategoriesByCategory }) => {
+  const { categories, materials } = data;
   const mainCategories = categories.slice(0, 3);
 
   return (

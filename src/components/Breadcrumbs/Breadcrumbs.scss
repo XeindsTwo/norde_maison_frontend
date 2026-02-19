@@ -1,0 +1,31 @@
+.breadcrumbs {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  font-size: 14px;
+  color: rgba($black100, .6);
+  text-transform: uppercase;
+
+  &__item {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  &__link {
+    transition: color .25s ease;
+
+    &:hover {
+      color: $black100;
+    }
+  }
+
+  &__current {
+    color: $black100;
+  }
+
+  &__separator {
+    color: rgba($black100, .5);
+  }
+}
