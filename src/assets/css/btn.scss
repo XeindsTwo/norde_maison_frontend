@@ -1,7 +1,9 @@
 .btn {
   @include flex-center;
+  gap: 12px;
   text-align: center;
   padding: 14px 40px;
+  line-height: 1;
   max-width: max-content;
   background-color: $black100;
   color: $white;
@@ -10,7 +12,7 @@
   font-size: 16px;
   letter-spacing: 0.02em;
   z-index: 1;
-  transition: color .4s, background-color .4s, border .4s;
+  transition: color .4s, background-color .4s, border .4s, opacity .4s;
 
   &:hover {
     background-color: transparent;

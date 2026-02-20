@@ -49,17 +49,17 @@ const HomePage = () => {
 
   return (
     <>
-      <Header />
+      <Header/>
       <HeroSection />
       <CategoryShowcase
         title="Женская линейка"
-        viewAllLink="/catalog?gender=F"
+        viewAllLink="/women"
         items={womenItems}
         loading={loading}
       />
       <CategoryShowcase
         title="Мужская линейка"
-        viewAllLink="/catalog?gender=M"
+        viewAllLink="/men"
         items={menItems}
         loading={loading}
       />

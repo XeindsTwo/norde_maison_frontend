@@ -1,0 +1,44 @@
+.about-main {
+  display: flex;
+  position: relative;
+  flex-direction: column;
+  justify-content: flex-end;
+  background-color: $gray;
+  min-height: 770px;
+  padding-bottom: 40px;
+
+  & * {
+    position: relative;
+    z-index: 10;
+  }
+
+  & .container {
+    width: 100%;
+    position: static;
+  }
+
+  &__title {
+    font-size: 42px;
+    letter-spacing: -0.84px;
+    margin-bottom: 18px;
+    line-height: 1.2;
+    font-weight: 500;
+  }
+
+  &__text {
+    font-size: 18px;
+    max-width: 550px;
+    line-height: 1.5;
+    color: rgba($black100, .64);
+    letter-spacing: -0.54px;
+  }
+
+  &__img {
+    @include objectCoverBg;
+    position: absolute;
+    right: 0;
+    top: 20px;
+    width: 63%;
+    z-index: 7;
+  }
+}
