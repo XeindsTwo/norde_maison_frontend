@@ -24,7 +24,7 @@ const GenderCategorySection = ({gender, category, subcategories, loading = false
           ) : (
             <li key={item.id}>
               <Link
-                to={`/catalog?gender=${gender}&subcategory={item.id}`}
+                to={`/catalog?gender=${gender}&subcategory=${item.id}`}
                 className="gender-section__link"
               >
                 <div className="gender-section__image-wrap">

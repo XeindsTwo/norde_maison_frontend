@@ -1,19 +1,26 @@
-// src/api/catalog.js
 import { api } from './http';
 
-// КАТЕГОРИИ
+// ===== Категории =====
 export const getCategories = (params) =>
-  api.get('catalog/categories/', { params });
+    api.get('catalog/categories/', { params });
 
-// ПОДКАТЕГОРИИ
+// ===== Подкатегории =====
 export const getSubcategories = (params) =>
-  api.get('catalog/subcategories/', { params });
+    api.get('catalog/subcategories/', { params });
 
-// ТОВАРЫ (СПИСОК / КАТАЛОГ)
-// params могут содержать: subcategory, category, gender, visible и т.д.
+// ===== Каталог товаров подкатегории =====
 export const getProducts = (params) =>
-  api.get('catalog/products/', { params });
+    api.get('catalog/products/', {
+        params: {
+            subcategory: params.subcategory,
+            gender: params.gender,
+            page: params.page || 1,
+            page_size: params.page_size || 16,
+            ordering: params.ordering || '-created_at',
+            visible: true,
+        },
+    });
 
-// ОДИН ТОВАР (ДЕТАЛЬНАЯ КАРТОЧКА)
+// ===== Детальная карточка товара =====
 export const getProductDetail = (id) =>
-  api.get(`catalog/products/${id}/`);
+    api.get(`catalog/products/${id}/`);
