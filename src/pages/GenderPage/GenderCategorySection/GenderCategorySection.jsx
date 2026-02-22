@@ -6,6 +6,7 @@ import './GenderCategorySection.scss';
 const GenderCategorySection = ({gender, category, subcategories, loading = false}) => {
   const skeletonCount = 4;
   const list = loading ? Array.from({length: skeletonCount}) : subcategories;
+  const genderParam = gender === 'M' ? 'M' : 'F';
 
   return (
     <section className="gender-section">
@@ -24,7 +25,7 @@ const GenderCategorySection = ({gender, category, subcategories, loading = false
           ) : (
             <li key={item.id}>
               <Link
-                to={`/catalog?gender=${gender}&subcategory=${item.id}`}
+                to={`/catalog?gender=${genderParam}&subcategory=${item.id}`}
                 className="gender-section__link"
               >
                 <div className="gender-section__image-wrap">

@@ -1,5 +1,13 @@
-.catalog {
-  &__grid {
+.similar-products {
+  &__title {
+    font-size: 28px;
+    font-weight: 500;
+    margin-bottom: 32px;
+    letter-spacing: -0.28px;
+    color: rgba($black100, .8);
+  }
+
+  &__list {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 26px;

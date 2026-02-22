@@ -1,26 +1,28 @@
-import { api } from './http';
+import {api} from './http';
 
-// ===== Категории =====
+// Категории
 export const getCategories = (params) =>
-    api.get('catalog/categories/', { params });
+  api.get('catalog/categories/', {params});
 
-// ===== Подкатегории =====
+// Подкатегории
 export const getSubcategories = (params) =>
-    api.get('catalog/subcategories/', { params });
+  api.get('catalog/subcategories/', {params});
 
-// ===== Каталог товаров подкатегории =====
+// Товары подкатегории
 export const getProducts = (params) =>
-    api.get('catalog/products/', {
-        params: {
-            subcategory: params.subcategory,
-            gender: params.gender,
-            page: params.page || 1,
-            page_size: params.page_size || 16,
-            ordering: params.ordering || '-created_at',
-            visible: true,
-        },
-    });
+  api.get('catalog/products/', {
+    params: {
+      subcategory: params.subcategory,
+      page: params.page || 1,
+      page_size: params.page_size || 16,
+      ordering: params.ordering || '-created_at',
+      visible: true,
+    },
+  });
 
-// ===== Детальная карточка товара =====
+// Детальная подкатегория
+export const getSubcategoryDetail = (id) =>
+  api.get(`catalog/subcategories/${id}/`);
+
 export const getProductDetail = (id) =>
-    api.get(`catalog/products/${id}/`);
+  api.get(`catalog/products/${id}/`);

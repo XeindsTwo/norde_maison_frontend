@@ -10,8 +10,10 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@tanstack/react-query": "^5.90.21",
     "axios": "^1.13.2",
     "date-fns": "^4.1.0",
+    "lightgallery": "^2.9.0",
     "path": "^0.12.7",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",

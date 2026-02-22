@@ -16,6 +16,18 @@ body {
   }
 }
 
+#root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.app-layout {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
 ::selection {
   color: $white;
   background: $black100;
