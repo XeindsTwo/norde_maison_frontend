@@ -1,8 +1,22 @@
-export const formatPrice = (value) => {
-  if (!value && value !== 0) return "";
+export const formatPrice = (value, currency = "rub") => {
+  if (value === null || value === undefined || value === "") return "";
 
-  return new Intl.NumberFormat("ru-RU", {
+  const symbols = {
+    rub: "₽",
+    kzt: "₸",
+    byn: "Br",
+  };
+
+  const number = Number(value);
+
+  if (isNaN(number)) return "";
+
+  const formattedNumber = new Intl.NumberFormat("ru-RU", {
     minimumFractionDigits: 0,
     maximumFractionDigits: 2,
-  }).format(Number(value));
+  }).format(number);
+
+  const symbol = symbols[currency] || symbols.rub;
+
+  return `${formattedNumber} ${symbol}`;
 };

@@ -12,23 +12,55 @@ export default function PriceFilter({
                                       setActiveDropdown,
                                       applyQuery,
                                       resetFilters,
-                                      dropdownRefs
+                                      dropdownRefs,
+                                      currency
                                     }) {
 
-  const label = () => {
+  const placeholderMap = {
+    rub: {
+      min: "от 0 ₽",
+      max: "до 200 000 ₽"
+    },
+    kzt: {
+      min: "от 0 ₸",
+      max: "до 100 000 ₸"
+    },
+    byn: {
+      min: "от 0 Br",
+      max: "до 50 000 Br"
+    }
+  };
 
-    if (!priceMin && !priceMax) return "Цена";
+  const placeholders = placeholderMap[currency] || placeholderMap.rub;
 
-    if (priceMin && !priceMax)
-      return <>Цена <span className="filters__muted">от {formatPrice(priceMin)}</span></>;
+  const buildPriceText = () => {
 
-    if (!priceMin && priceMax)
-      return <>Цена <span className="filters__muted">0 - {formatPrice(priceMax)}</span></>;
+    const minFormatted = priceMin ? formatPrice(priceMin, currency) : null;
+    const maxFormatted = priceMax ? formatPrice(priceMax, currency) : null;
+
+    if (!minFormatted && !maxFormatted) return "Цена";
+
+    if (minFormatted && !maxFormatted) {
+      return (
+        <>
+          Цена <span className="filters__muted">от {minFormatted}</span>
+        </>
+      );
+    }
+
+    if (!minFormatted && maxFormatted) {
+      return (
+        <>
+          Цена <span className="filters__muted">до {maxFormatted}</span>
+        </>
+      );
+    }
 
     return (
       <>
-        Цена <span className="filters__muted">
-          {formatPrice(priceMin)} — {formatPrice(priceMax)}
+        Цена{" "}
+        <span className="filters__muted">
+          {minFormatted} — {maxFormatted}
         </span>
       </>
     );
@@ -43,7 +75,7 @@ export default function PriceFilter({
           setActiveDropdown(activeDropdown === "price" ? null : "price")
         }
       >
-        {label()}
+        {buildPriceText()}
 
         {(priceMin || priceMax) && (
           <ResetFilters
@@ -55,7 +87,11 @@ export default function PriceFilter({
           />
         )}
 
-        <DownLine className={`filters__arrow ${activeDropdown === "price" ? "is-rotated" : ""}`}/>
+        <DownLine
+          className={`filters__arrow ${
+            activeDropdown === "price" ? "is-rotated" : ""
+          }`}
+        />
       </button>
 
       <AnimatePresence>
@@ -69,13 +105,12 @@ export default function PriceFilter({
           >
             <div className="filters__price-grid">
               <input
-                placeholder="от 6 500"
+                placeholder={`${placeholders.min}`}
                 value={priceMin}
                 onChange={e => setPriceMin(e.target.value)}
               />
-
               <input
-                placeholder="до 32 000"
+                placeholder={`${placeholders.max}`}
                 value={priceMax}
                 onChange={e => setPriceMax(e.target.value)}
               />
@@ -84,7 +119,6 @@ export default function PriceFilter({
             <button className="filters__apply" onClick={() => applyQuery()}>
               Применить
             </button>
-
           </motion.div>
         )}
       </AnimatePresence>

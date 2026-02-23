@@ -11,6 +11,15 @@ export default function buildFiltersQuery(
   if (subcategory) params.set("subcategory", subcategory);
   if (gender) params.set("gender", gender);
 
+  // ВАЛЮТА
+  const currency =
+    override.currency ??
+    searchParams.get("currency") ??
+    state.currency ??
+    "rub";
+
+  params.set("currency", currency);
+
   const sizeData = override.size ?? state.sizes;
   const colorData = override.color ?? state.colors;
 
@@ -23,8 +32,13 @@ export default function buildFiltersQuery(
   const minPrice = override.min_price ?? state.priceMin;
   const maxPrice = override.max_price ?? state.priceMax;
 
-  minPrice ? params.set("min_price", minPrice) : params.delete("min_price");
-  maxPrice ? params.set("max_price", maxPrice) : params.delete("max_price");
+  minPrice
+    ? params.set("min_price", minPrice)
+    : params.delete("min_price");
+
+  maxPrice
+    ? params.set("max_price", maxPrice)
+    : params.delete("max_price");
 
   const sortValue = override.sort ?? state.sort;
 

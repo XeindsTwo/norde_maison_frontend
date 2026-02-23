@@ -8,6 +8,7 @@ import ColorFilter from "./components/ColorFilter";
 import SortFilter from "./components/SortFilter";
 
 import sortSizes from "@/utils/sortSizes";
+import {useCurrency} from "@/context/CurrencyContext";
 
 import "./FiltersPanel.scss";
 
@@ -15,6 +16,8 @@ const FiltersPanel = ({filters = {}}) => {
 
   const dropdownRefs = useRef({});
   const [activeDropdown, setActiveDropdown] = useState(null);
+
+  const {currency} = useCurrency();
 
   const {
     priceMin,
@@ -49,6 +52,7 @@ const FiltersPanel = ({filters = {}}) => {
           applyQuery={applyQuery}
           resetFilters={resetFilters}
           dropdownRefs={dropdownRefs}
+          currency={currency}
         />
 
         <SizeFilter
@@ -86,7 +90,6 @@ const FiltersPanel = ({filters = {}}) => {
         />
 
       </div>
-
     </div>
   );
 };

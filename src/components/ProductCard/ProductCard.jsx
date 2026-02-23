@@ -5,8 +5,12 @@ import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import FavoriteIcon from "@/assets/images/icons/bx_star.svg";
 import {formatPrice} from "@/utils/formatPrice.js";
+import {useCurrency} from "@/context/CurrencyContext";
 
 const ProductCard = ({product}) => {
+
+  const {currency} = useCurrency();
+
   const [hoverIndex, setHoverIndex] = useState(0);
   const imageRef = useRef(null);
 
@@ -15,8 +19,9 @@ const ProductCard = ({product}) => {
 
     return [
       product.main_image,
-      ...(product.gallery?.map((img) => img.image) || []),
+      ...(product.gallery?.map(img => img.image) || [])
     ].filter(Boolean);
+
   }, [product]);
 
   const handleMouseMove = (e) => {
@@ -24,6 +29,7 @@ const ProductCard = ({product}) => {
 
     const rect = imageRef.current.getBoundingClientRect();
     const x = e.clientX - rect.left;
+
     const ratio = x / rect.width;
     const index = Math.floor(ratio * images.length);
 
@@ -40,25 +46,34 @@ const ProductCard = ({product}) => {
     return (
       <div className="product-card product-card--skeleton">
         <div className="product-card__image">
-          <Skeleton height="100%" />
+          <Skeleton height="100%"/>
         </div>
 
         <div className="product-card__name">
-          <Skeleton height={22} width="75%" />
+          <Skeleton height={22} width="75%"/>
         </div>
 
         <div className="product-card__info">
-          <Skeleton height={26} width={90} />
+          <Skeleton height={26} width={90}/>
         </div>
       </div>
     );
   }
+
+  const priceMap = {
+    rub: product.price_rub,
+    kzt: product.price_kzt,
+    byn: product.price_byn
+  };
+
+  const currentPrice = priceMap[currency] ?? product.price_rub;
 
   const currentImage =
     images[hoverIndex] || product.main_image;
 
   return (
     <div className="product-card">
+
       <Link to={`/product/${product.id}`}>
 
         <div
@@ -85,6 +100,7 @@ const ProductCard = ({product}) => {
               ))}
             </div>
           )}
+
           <button
             type="button"
             title="Добавить в избранное"
@@ -93,6 +109,7 @@ const ProductCard = ({product}) => {
           >
             <FavoriteIcon/>
           </button>
+
         </div>
 
         <div className="product-card__name">
@@ -100,8 +117,9 @@ const ProductCard = ({product}) => {
         </div>
 
         <div className="product-card__info">
+
           <div className="product-card__price">
-            {formatPrice(product.price)} ₽
+            {formatPrice(currentPrice, currency)}
           </div>
 
           {product.colors?.length > 0 && (
@@ -116,6 +134,7 @@ const ProductCard = ({product}) => {
               ))}
             </div>
           )}
+
         </div>
 
       </Link>

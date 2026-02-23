@@ -1,5 +1,5 @@
-import {useEffect, useState} from "react";
-import {useSearchParams} from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import buildFiltersQuery from "../utils/filtersQueryBuilder";
 
 export default function useFiltersState() {
@@ -11,24 +11,32 @@ export default function useFiltersState() {
   const [sort, setSort] = useState("default");
   const [sizes, setSizes] = useState([]);
   const [colors, setColors] = useState([]);
+  const [currency, setCurrency] = useState("rub");
 
   useEffect(() => {
     setPriceMin(searchParams.get("min_price") || "");
     setPriceMax(searchParams.get("max_price") || "");
     setSort(searchParams.get("sort") || "default");
-
     setSizes(searchParams.getAll("size"));
     setColors(searchParams.getAll("color"));
+    setCurrency(searchParams.get("currency") || "rub");
   }, [searchParams]);
 
   const applyQuery = (override = {}) => {
     const params = buildFiltersQuery(
       searchParams,
-      {sizes, colors, priceMin, priceMax, sort},
+      {
+        sizes,
+        colors,
+        priceMin,
+        priceMax,
+        sort,
+        currency
+      },
       override
     );
 
-    setSearchParams(params, {replace: true});
+    setSearchParams(params, { replace: true });
   };
 
   const toggleMulti = (key, value) => {
@@ -39,7 +47,7 @@ export default function useFiltersState() {
         : [...sizes, value];
 
       setSizes(next);
-      applyQuery({size: next});
+      applyQuery({ size: next });
     }
 
     if (key === "color") {
@@ -48,7 +56,7 @@ export default function useFiltersState() {
         : [...colors, value];
 
       setColors(next);
-      applyQuery({color: next});
+      applyQuery({ color: next });
     }
   };
 
@@ -73,7 +81,7 @@ export default function useFiltersState() {
     }
 
     params.set("page", "1");
-    setSearchParams(params, {replace: true});
+    setSearchParams(params, { replace: true });
   };
 
   return {
@@ -82,6 +90,8 @@ export default function useFiltersState() {
     sort,
     sizes,
     colors,
+    currency,
+    setCurrency,
     setPriceMin,
     setPriceMax,
     setSort,

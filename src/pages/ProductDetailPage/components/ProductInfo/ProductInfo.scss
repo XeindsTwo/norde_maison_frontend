@@ -43,9 +43,6 @@
   }
 
   &__description {
-    font-size: 16px;
-    color: rgba($black100, .8);
-    line-height: 1.4;
     margin-top: 48px;
     padding-top: 32px;
     border-top: 1px solid rgba($black100, .1);
@@ -53,5 +50,38 @@
 
   &__content {
     max-width: 470px;
+    font-size: 16px;
+    color: rgba($black100, .8);
+    line-height: 1.4;
+    font-weight: 400;
+    letter-spacing: -0.32px;
+
+    h3 {
+      font-weight: 500;
+      font-size: 18px;
+      letter-spacing: -0.48px;
+      line-height: 1.5;
+      margin-top: 24px;
+    }
+
+    ul {
+      padding-left: 10px;
+      margin-bottom: 20px;
+
+      li {
+        position: relative;
+        padding-left: 10px;
+
+        &::before {
+          @include pseudo;
+          @include topLeft50;
+          width: 5px;
+          height: 5px;
+          background-color: rgba($black100, .8);
+          border-radius: 50%;
+          left: 0;
+        }
+      }
+    }
   }
 }

@@ -11,6 +11,7 @@ import Pagination from "@/components/Pagination/Pagination.jsx";
 import FiltersPanel from "./FiltersPanel/FiltersPanel.jsx";
 
 import {getProducts, getSubcategoryDetail} from "@/api/catalog.js";
+import {useCurrency} from "@/context/CurrencyContext";
 
 import "./CatalogPage.scss";
 
@@ -20,6 +21,8 @@ const CatalogPage = () => {
 
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
+
+  const {currency} = useCurrency();
 
   const [cachedFilters, setCachedFilters] = useState({});
 
@@ -41,7 +44,8 @@ const CatalogPage = () => {
       color,
       minPrice,
       maxPrice,
-      sort
+      sort,
+      currency
     ],
     enabled: !!subcategory,
     keepPreviousData: true,
@@ -53,7 +57,8 @@ const CatalogPage = () => {
         color,
         min_price: minPrice,
         max_price: maxPrice,
-        sort
+        sort,
+        currency
       });
 
       return res.data;
@@ -157,12 +162,15 @@ const CatalogPage = () => {
             <aside className="catalog__filters">
               <FiltersPanel filters={filters}/>
             </aside>
+
             <div className="catalog__content">
+
               {!loading && products.length === 0 && (
                 <p className="catalog__empty">
                   Товаров не найдено по данным условиям ¯\_(ツ)_/¯
                 </p>
               )}
+
               <div className="catalog__grid">
                 {loading
                   ? Array.from({length: PAGE_SIZE}).map((_, i) => (
@@ -176,6 +184,7 @@ const CatalogPage = () => {
                   ))
                 }
               </div>
+
               {!loading && totalPages > 1 && (
                 <Pagination
                   currentPage={page}
@@ -187,6 +196,7 @@ const CatalogPage = () => {
                   }}
                 />
               )}
+
             </div>
           </div>
         </div>
