@@ -9,16 +9,19 @@ export const getSubcategories = (params) =>
   api.get('catalog/subcategories/', {params});
 
 // Товары подкатегории
-export const getProducts = (params) =>
-  api.get('catalog/products/', {
-    params: {
-      subcategory: params.subcategory,
-      page: params.page || 1,
-      page_size: params.page_size || 16,
-      ordering: params.ordering || '-created_at',
-      visible: true,
-    },
+export const getProducts = (params) => {
+  const urlParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+    if (Array.isArray(value)) {
+      value.forEach(v => urlParams.append(key, v));
+    } else if (value !== undefined && value !== null && value !== "") {
+      urlParams.set(key, value);
+    }
   });
+
+  return api.get("catalog/products/?" + urlParams.toString());
+};
 
 // Детальная подкатегория
 export const getSubcategoryDetail = (id) =>
