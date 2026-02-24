@@ -1,7 +1,7 @@
 import {useEffect, useRef, useState} from 'react';
 import {useLocation, useNavigationType} from 'react-router-dom';
 
-export const useRouteLoading = (delay = 400) => {
+export const useRouteLoading = (delay = 600) => {
   const location = useLocation();
   const navigationType = useNavigationType();
   const [loading, setLoading] = useState(false);

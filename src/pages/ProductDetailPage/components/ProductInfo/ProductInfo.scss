@@ -1,0 +1,87 @@
+.product-info {
+  &__title {
+    display: inline-block;
+    font-size: 28px;
+    letter-spacing: -0.28px;
+    font-weight: 500;
+    line-height: 1.2;
+    margin-bottom: 10px;
+  }
+
+  &__favorite {
+    @include flex-center;
+    display: inline-flex;
+    transform: translateY(2px);
+    margin-left: 10px;
+    width: 28px;
+    height: 28px;
+  }
+
+  &__price {
+    font-size: 32px;
+    letter-spacing: -0.32px;
+    font-weight: 600;
+    color: $black100;
+    margin-bottom: 42px;
+  }
+
+  &__block {
+    @include flex-column(10);
+    margin-bottom: 20px;
+  }
+
+  &__top {
+    @include flex-between-center-gap(20);
+  }
+
+  &__subtitle {
+    line-height: 1.5;
+    font-size: 18px;
+    font-weight: 500;
+    color: rgba($black100, .8);
+    letter-spacing: -0.48px;
+  }
+
+  &__description {
+    margin-top: 48px;
+    padding-top: 32px;
+    border-top: 1px solid rgba($black100, .1);
+  }
+
+  &__content {
+    max-width: 470px;
+    font-size: 16px;
+    color: rgba($black100, .8);
+    line-height: 1.4;
+    font-weight: 400;
+    letter-spacing: -0.32px;
+
+    h3 {
+      font-weight: 500;
+      font-size: 18px;
+      letter-spacing: -0.48px;
+      line-height: 1.5;
+      margin-top: 24px;
+    }
+
+    ul {
+      padding-left: 10px;
+      margin-bottom: 20px;
+
+      li {
+        position: relative;
+        padding-left: 10px;
+
+        &::before {
+          @include pseudo;
+          @include topLeft50;
+          width: 5px;
+          height: 5px;
+          background-color: rgba($black100, .8);
+          border-radius: 50%;
+          left: 0;
+        }
+      }
+    }
+  }
+}

@@ -3,8 +3,9 @@ import SearchIcon from '@/assets/images/icons/bx_search.svg';
 import CartIcon from '@/assets/images/icons/bx_cart.svg';
 import ArrowTopIcon from '@/assets/images/icons/arrow-top.svg';
 import ButtonValute from '@/assets/images/icons/button-valute.svg';
-import { Link } from "react-router-dom";
-import { useEffect, useRef, useState } from 'react';
+import {Link} from "react-router-dom";
+import {useEffect, useRef, useState} from 'react';
+import {useCurrency} from "@/context/CurrencyContext";
 
 const handleScrollTop = (e) => {
   e.preventDefault();
@@ -14,7 +15,14 @@ const handleScrollTop = (e) => {
   });
 };
 
+const currencyMap = {
+  rub: "Россия (RUB ₽)",
+  kzt: "Казахстан (KZT ₸)",
+  byn: "Беларусь (BYN Br)",
+};
+
 const Footer = () => {
+  const {currency, setCurrency} = useCurrency();
   const [isCurrencyOpen, setIsCurrencyOpen] = useState(false);
   const valuteRef = useRef(null);
 
@@ -31,6 +39,11 @@ const Footer = () => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [isCurrencyOpen]);
 
+  const handleSelect = (val) => {
+    setCurrency(val);
+    setIsCurrencyOpen(false);
+  };
+
   return (
     <footer className="footer">
       <div className="footer__top">
@@ -46,23 +59,25 @@ const Footer = () => {
                 />
               </Link>
             </div>
+
             <nav className="footer__nav">
               <Link className="footer__link" to="">
                 Авторизация
               </Link>
               <Link className="footer__link" to="">
-                <SearchIcon />
+                <SearchIcon/>
                 Поиск
               </Link>
               <Link className="footer__link" to="">
-                <CartIcon />
+                <CartIcon/>
                 Корзина
               </Link>
             </nav>
+
             <div className="footer__right">
               <button className="footer__up" type="button" onClick={handleScrollTop}>
                 Наверх
-                <ArrowTopIcon />
+                <ArrowTopIcon/>
               </button>
             </div>
           </div>
@@ -71,25 +86,37 @@ const Footer = () => {
 
       <div className="container container--padding">
         <div className="footer__bottom">
+
           <div className="footer__valute" ref={valuteRef}>
             <button
               className={`footer__btn ${isCurrencyOpen ? 'is-open' : ''}`}
               type="button"
               onClick={() => setIsCurrencyOpen((v) => !v)}
             >
-              Российская Федерация (RUB ₽)
-              <ButtonValute />
+              {currencyMap[currency]}
+              <ButtonValute/>
             </button>
 
             <div className={`footer__valute-dropdown ${isCurrencyOpen ? 'footer__valute-dropdown--open' : ''}`}>
-              <button className="footer__valute-item" type="button">
-                Российская Федерация (RUB ₽)
+              <button
+                className="footer__valute-item"
+                onClick={() => handleSelect("rub")}
+              >
+                Россия (RUB ₽)
               </button>
-              <button className="footer__valute-item" type="button">
-                Евросоюз (EUR €)
+
+              <button
+                className="footer__valute-item"
+                onClick={() => handleSelect("kzt")}
+              >
+                Казахстан (KZT ₸)
               </button>
-              <button className="footer__valute-item" type="button">
-                США (USD $)
+
+              <button
+                className="footer__valute-item"
+                onClick={() => handleSelect("byn")}
+              >
+                Беларусь (BYN Br)
               </button>
             </div>
           </div>
@@ -97,6 +124,7 @@ const Footer = () => {
           <p className="footer__author">
             Все права защищены © Norde Maison, 2026
           </p>
+
         </div>
       </div>
     </footer>

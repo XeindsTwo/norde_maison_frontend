@@ -1,19 +1,40 @@
-// src/api/catalog.js
-import { api } from './http';
+import { api } from "./http";
 
-// КАТЕГОРИИ
+// Категории
 export const getCategories = (params) =>
-  api.get('catalog/categories/', { params });
+  api.get("catalog/categories/", { params });
 
-// ПОДКАТЕГОРИИ
+// Подкатегории
 export const getSubcategories = (params) =>
-  api.get('catalog/subcategories/', { params });
+  api.get("catalog/subcategories/", { params });
 
-// ТОВАРЫ (СПИСОК / КАТАЛОГ)
-// params могут содержать: subcategory, category, gender, visible и т.д.
-export const getProducts = (params) =>
-  api.get('catalog/products/', { params });
+// Товары
+export const getProducts = (params) => {
+  const urlParams = new URLSearchParams();
 
-// ОДИН ТОВАР (ДЕТАЛЬНАЯ КАРТОЧКА)
+  const currency = params?.currency || "rub";
+  urlParams.set("currency", currency);
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+    if (key === "currency") return;
+
+    if (Array.isArray(value)) {
+      value.forEach(v => urlParams.append(key, v));
+    } else if (
+      value !== undefined &&
+      value !== null &&
+      value !== ""
+    ) {
+      urlParams.set(key, value);
+    }
+  });
+
+  return api.get("catalog/products/?" + urlParams.toString());
+};
+
+// Детальная подкатегория
+export const getSubcategoryDetail = (id) =>
+  api.get(`catalog/subcategories/${id}/`);
+
 export const getProductDetail = (id) =>
   api.get(`catalog/products/${id}/`);

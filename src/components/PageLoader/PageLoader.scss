@@ -8,7 +8,6 @@
   justify-content: center;
   opacity: 0;
   pointer-events: none;
-  transition: opacity .25s ease;
 
   &--visible {
     opacity: 1;

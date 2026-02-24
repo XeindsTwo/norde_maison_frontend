@@ -1,53 +1,42 @@
-import {useEffect, useState} from 'react';
+import './GenderPage.scss';
+import {useQuery} from '@tanstack/react-query';
+import {getCategories, getSubcategories} from '@/api/catalog.js';
+
 import Header from '@/components/Header/Header.jsx';
 import Footer from '@/components/Footer/Footer.jsx';
-import {getCategories, getSubcategories} from '@/api/catalog.js';
 import Breadcrumbs from '@/components/Breadcrumbs/Breadcrumbs.jsx';
-import GenderHero from './GenderHero/GenderHero.jsx';
+import GenderHero from '../../components/GenderHero/GenderHero.jsx';
 import GenderCategorySection from './GenderCategorySection/GenderCategorySection.jsx';
-import GenderMaterialsSection from './GenderMaterialsSection/GenderMaterialsSection.jsx';
-
-import './GenderPage.scss';
 
 const GenderPage = ({gender}) => {
-  const [categories, setCategories] = useState([]);
-  const [subcategories, setSubcategories] = useState([]);
-  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const loadData = async () => {
-      try {
-        const catRes = await getCategories({gender});
-        const cats = catRes.data;
+  const {data: categories = [], isLoading: categoriesLoading} = useQuery({
+    queryKey: ['categories', gender],
+    queryFn: async () => {
+      const res = await getCategories({gender});
+      return res.data;
+    }
+  });
 
-        const subcatRes = await getSubcategories({});
-        const sc = subcatRes.data;
+  const {data: subcategories = [], isLoading: subcategoriesLoading} = useQuery({
+    queryKey: ['subcategories'],
+    queryFn: async () => {
+      const res = await getSubcategories({});
+      return res.data;
+    }
+  });
 
-        const filteredSubcats = sc.filter(
-          (item) => item.category.gender === gender,
-        );
+  const loading = categoriesLoading || subcategoriesLoading;
 
-        setCategories(cats);
-        setSubcategories(filteredSubcats);
-      } catch (e) {
-        console.error('Failed to load gender page data', e);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const sortedCategories = [...categories].sort((a, b) => {
+    if (a.name === "Материалы") return 1;
+    if (b.name === "Материалы") return -1;
+    return a.order - b.order;
+  });
 
-    setLoading(true);
-    setCategories([]);
-    setSubcategories([]);
-    loadData();
-  }, [gender]);
-
-  const materialCategories = categories.filter((c) => c.is_material);
-  const regularCategories = categories.filter((c) => !c.is_material);
-
-  const subcatsByCategoryId = regularCategories.reduce((acc, cat) => {
+  const subcatsByCategoryId = sortedCategories.reduce((acc, cat) => {
     acc[cat.id] = subcategories.filter(
-      (sc) => sc.category.id === cat.id,
+      sc => sc.category.id === cat.id
     );
     return acc;
   }, {});
@@ -64,11 +53,15 @@ const GenderPage = ({gender}) => {
   return (
     <>
       <Header/>
+
       <main className="gender">
         <div className="container container--padding">
-          <Breadcrumbs items={breadcrumbItems} className="gender__breadcrumbs"/>
+
+          <Breadcrumbs items={breadcrumbItems}/>
           <GenderHero gender={gender}/>
+
           <section className="gender__sections">
+
             {loading
               ? skeletonSections.map((_, index) => (
                 <GenderCategorySection
@@ -79,7 +72,8 @@ const GenderPage = ({gender}) => {
                   loading={true}
                 />
               ))
-              : regularCategories.map((cat) => {
+              : sortedCategories.map(cat => {
+
                 const list = subcatsByCategoryId[cat.id] || [];
                 if (!list.length) return null;
 
@@ -92,18 +86,14 @@ const GenderPage = ({gender}) => {
                     loading={false}
                   />
                 );
+
               })}
 
-            {materialCategories.length > 0 && (
-              <GenderMaterialsSection
-                gender={gender}
-                materials={materialCategories}
-                loading={loading}
-              />
-            )}
           </section>
+
         </div>
       </main>
+
       <Footer/>
     </>
   );

@@ -1,0 +1,23 @@
+.product-detail {
+  margin-bottom: 40px;
+
+  &__grid {
+    display: grid;
+    grid-template-columns: 1fr 540px;
+    gap: 50px;
+    align-items: flex-start;
+  }
+
+  &__similar {
+    margin-top: 100px;
+  }
+}
+
+@media (max-width: 1100px) {
+  .product-detail {
+    &__grid {
+      grid-template-columns: 1fr;
+      gap: 40px;
+    }
+  }
+}
