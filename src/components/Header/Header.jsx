@@ -4,6 +4,7 @@ import { getCategories, getSubcategories } from '@/api/catalog.js';
 import MegaMenu from '../MegaMenu/MegaMenu.jsx';
 import SearchIcon from '@/assets/images/icons/bx_search.svg';
 import CartIcon from '@/assets/images/icons/bx_cart.svg';
+import {useAuth} from "@/context/AuthContext";
 import { Link, useLocation } from 'react-router-dom';
 
 const Header = () => {
@@ -19,6 +20,7 @@ const Header = () => {
 
   const hoverLockRef = useRef({ type: null, locked: false });
   const location = useLocation();
+  const {openAuth} = useAuth();
 
   useEffect(() => {
     const loadData = async () => {
@@ -168,7 +170,12 @@ const Header = () => {
           </div>
 
           <div className="header__right">
-            <button className="header__link">Авторизация</button>
+            <button
+              className="header__link"
+              onClick={openAuth}
+            >
+              Авторизация
+            </button>
             <button className="header__link">
               <SearchIcon />
               Поиск
