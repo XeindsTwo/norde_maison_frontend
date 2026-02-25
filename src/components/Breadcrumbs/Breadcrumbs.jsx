@@ -4,7 +4,7 @@ import './Breadcrumbs.scss';
 const Breadcrumbs = ({items, className = ''}) => {
   if (!items?.length) return null;
 // авпвап
-// здесь была группа ИП-3
+// здесь была группа ИП-3 и ИП-2
   return (
     <nav className={`breadcrumbs ${className}`}>
       {items.map((item, index) => {
