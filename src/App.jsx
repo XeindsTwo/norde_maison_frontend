@@ -1,25 +1,24 @@
 import {Routes, Route} from "react-router-dom";
-import HomePage from "./pages/Home/HomePage.jsx";
-import GenderPage from "@/pages/GenderPage/GenderPage.jsx";
-import CatalogPage from "@/pages/CatalogPage/CatalogPage.jsx";
-import About from "@/pages/About/About.jsx";
-import ProductDetailPage from "@/pages/ProductDetailPage/ProductDetailPage.jsx";
-import PageLoader from "@/components/PageLoader/PageLoader.jsx";
-import AuthModal from "@/components/AuthModal/AuthModal.jsx";
-import {useRouteLoading} from "@/hooks/useRouteLoading.js";
-import {useAuth} from "@/context/AuthContext";
+import {useRouteLoading} from "@/hooks/useRouteLoading";
+
+import HomePage from "@/pages/Home/HomePage";
+import GenderPage from "@/pages/GenderPage/GenderPage";
+import CatalogPage from "@/pages/CatalogPage/CatalogPage";
+import About from "@/pages/About/About";
+import ProductDetailPage from "@/pages/ProductDetailPage/ProductDetailPage";
+
+import PageLoader from "@/components/PageLoader/PageLoader";
+import AuthModal from "@/components/AuthModal/AuthModal";
+import SuccessModal from "@/components/AuthModal/components/SuccessModal.jsx";
 
 function App() {
-
-  const {loading: routeLoading} = useRouteLoading(500);
-  const {authOpen, closeAuth} = useAuth();
+  const {loading} = useRouteLoading(500);
 
   return (
     <div className="app-layout">
+      <PageLoader visible={loading}/>
 
-      <PageLoader visible={routeLoading}/>
-
-      {!routeLoading && (
+      {!loading && (
         <>
           <Routes>
             <Route path="/" element={<HomePage/>}/>
@@ -31,13 +30,10 @@ function App() {
             <Route path="*" element={<HomePage/>}/>
           </Routes>
 
-          <AuthModal
-            isOpen={authOpen}
-            onClose={closeAuth}
-          />
+          <AuthModal/>
+          <SuccessModal/>
         </>
       )}
-
     </div>
   );
 }

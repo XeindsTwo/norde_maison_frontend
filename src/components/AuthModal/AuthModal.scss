@@ -141,6 +141,13 @@
   }
 }
 
+.auth-error {
+  color: darkred;
+  font-size: 14px;
+  display: block;
+  font-weight: 400;
+}
+
 /* простой адаптив */
 @media (max-width: 720px) {
   .auth-modal {

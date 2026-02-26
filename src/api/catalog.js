@@ -1,12 +1,12 @@
-import { api } from "./http";
+import {api} from "./http";
 
 // Категории
 export const getCategories = (params) =>
-  api.get("catalog/categories/", { params });
+  api.get("catalog/categories/", {params});
 
 // Подкатегории
 export const getSubcategories = (params) =>
-  api.get("catalog/subcategories/", { params });
+  api.get("catalog/subcategories/", {params});
 
 // Товары
 export const getProducts = (params) => {

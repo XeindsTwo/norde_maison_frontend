@@ -1,216 +1,144 @@
-import React, {useEffect, useState} from "react";
+import {useEffect, useState} from "react";
 import {AnimatePresence, motion} from "framer-motion";
+import {useAuthForm} from "./hooks/useAuthForm";
+import AuthTabs from "./components/AuthTabs.jsx";
+import AuthField from "./components/AuthField";
+import {useAuth} from "@/context/AuthContext";
 import "./AuthModal.scss";
 
-const AuthModal = ({isOpen, onClose}) => {
+const AuthModal = () => {
 
+  const {authOpen, closeAuth} = useAuth();
   const [mode, setMode] = useState("register");
 
+  const {
+    form,
+    error,
+    delayedError,
+    loading,
+    handleChange,
+    handleSubmit,
+    resetError
+  } = useAuthForm(mode);
+
+  // Очистка ошибок при открытии modal или смене mode
   useEffect(() => {
-    if (!isOpen) return;
+    resetError();
+  }, [authOpen, mode, resetError]);
+
+  useEffect(() => {
+    if (!authOpen) return;
 
     const escHandler = (e) => {
-      if (e.key === "Escape") onClose();
+      if (e.key === "Escape") closeAuth();
     };
 
     document.addEventListener("keydown", escHandler);
-    return () => document.removeEventListener("keydown", escHandler);
-
-  }, [isOpen, onClose]);
-
-  useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "";
-    }
+    document.body.style.overflow = "hidden";
 
     return () => {
+      document.removeEventListener("keydown", escHandler);
       document.body.style.overflow = "";
     };
-  }, [isOpen]);
 
-  const switchMode = (next) => {
-    if (next !== mode) setMode(next);
-  };
+  }, [authOpen, closeAuth]);
 
-  const backdropVariants = {
-    hidden: {opacity: 0},
-    visible: {opacity: 1},
-    exit: {opacity: 0, transition: {duration: 0.25}}
-  };
-
-  const modalVariants = {
-    hidden: {
-      y: -40,
-      opacity: 0,
-      scale: 0.97
-    },
-
-    visible: {
-      y: 0,
-      opacity: 1,
-      scale: 1,
-      transition: {
-        type: "spring",
-        stiffness: 220,
-        damping: 25
-      }
-    },
-
-    exit: {
-      y: 40,
-      opacity: 0,
-      scale: 0.97,
-      transition: {
-        duration: 0.2
-      }
-    }
-  };
-
-  const formVariants = {
-    hiddenLeft: {x: -30, opacity: 0},
-    hiddenRight: {x: 30, opacity: 0},
-    visible: {
-      x: 0,
-      opacity: 1,
-      transition: {duration: 0.22}
-    },
-    exitLeft: {x: -30, opacity: 0, transition: {duration: 0.18}},
-    exitRight: {x: 30, opacity: 0, transition: {duration: 0.18}}
-  };
+  if (!authOpen) return null;
 
   return (
-    <AnimatePresence mode="wait">
+    <AnimatePresence>
 
-      {isOpen && (
+      <motion.div
+        className="auth-backdrop"
+        initial={{opacity: 0}}
+        animate={{opacity: 1}}
+        exit={{opacity: 0}}
+        onClick={closeAuth}
+      >
+
         <motion.div
-          className="auth-backdrop"
-          variants={backdropVariants}
-          initial="hidden"
-          animate="visible"
-          exit="exit"
+          className="auth-modal"
+          initial={{y: -40, opacity: 0}}
+          animate={{y: 0, opacity: 1}}
+          exit={{y: 40, opacity: 0}}
+          onClick={e => e.stopPropagation()}
         >
 
-          <motion.div
-            className="auth-modal"
-            role="dialog"
-            aria-modal="true"
-            variants={modalVariants}
-            initial="hidden"
-            animate="visible"
-            exit="exit"
-            onClick={(e) => e.stopPropagation()}
-          >
+          <button className="auth-modal__close" onClick={closeAuth}>
+            ×
+          </button>
+
+          <AuthTabs mode={mode} onSwitch={setMode}/>
+
+          {(error || delayedError) && (
+            <div className="auth-error">
+              {delayedError || error}
+            </div>
+          )}
+
+          <div className="auth-form">
+
+            {mode === "register" && (
+              <>
+                <AuthField
+                  label="Имя"
+                  name="first_name"
+                  value={form.first_name}
+                  onChange={handleChange}
+                />
+
+                <AuthField
+                  label="Фамилия"
+                  name="last_name"
+                  value={form.last_name}
+                  onChange={handleChange}
+                />
+              </>
+            )}
+
+            <AuthField
+              label="E-mail"
+              name="email"
+              type="email"
+              value={form.email}
+              onChange={handleChange}
+            />
+
+            <AuthField
+              label="Пароль"
+              name="password"
+              type="password"
+              value={form.password}
+              onChange={handleChange}
+            />
+
+            {mode === "register" && (
+              <AuthField
+                label="Повторите пароль"
+                name="password2"
+                type="password"
+                value={form.password2}
+                onChange={handleChange}
+              />
+            )}
 
             <button
-              className="auth-modal__close"
-              onClick={onClose}
-              aria-label="Close"
+              className="auth-primary-btn"
+              onClick={handleSubmit}
+              disabled={loading}
             >
-              ×
+              {loading
+                ? "..."
+                : mode === "register"
+                  ? "Создать аккаунт"
+                  : "Войти"}
             </button>
 
-            <div className="auth-modal__tabs">
-              <button
-                className={
-                  "auth-modal__tab" +
-                  (mode === "register" ? " auth-modal__tab--active" : "")
-                }
-                onClick={() => switchMode("register")}
-              >
-                Регистрация
-              </button>
-
-              <span className="auth-modal__slash">/</span>
-
-              <button
-                className={
-                  "auth-modal__tab" +
-                  (mode === "login" ? " auth-modal__tab--active" : "")
-                }
-                onClick={() => switchMode("login")}
-              >
-                Вход
-              </button>
-            </div>
-
-            <AnimatePresence mode="wait">
-
-              {mode === "register" ? (
-                <motion.div
-                  key="register"
-                  className="auth-form"
-                  variants={formVariants}
-                  initial="hiddenRight"
-                  animate="visible"
-                  exit="exitLeft"
-                >
-                  <div className="auth-field">
-                    <label>Имя</label>
-                    <input type="text" placeholder="Имя"/>
-                  </div>
-
-                  <div className="auth-field">
-                    <label>Фамилия</label>
-                    <input type="text" placeholder="Фамилия"/>
-                  </div>
-
-                  <div className="auth-field">
-                    <label>E-mail</label>
-                    <input type="email"/>
-                  </div>
-
-                  <div className="auth-field">
-                    <label>Пароль</label>
-                    <input type="password"/>
-                  </div>
-
-                  <div className="auth-field">
-                    <label>Повторите пароль</label>
-                    <input type="password"/>
-                  </div>
-
-                  <button className="auth-primary-btn">
-                    Создать аккаунт
-                  </button>
-                </motion.div>
-              ) : (
-                <motion.div
-                  key="login"
-                  className="auth-form"
-                  variants={formVariants}
-                  initial="hiddenLeft"
-                  animate="visible"
-                  exit="exitRight"
-                >
-                  <div className="auth-field">
-                    <label>E-mail</label>
-                    <input type="email"/>
-                  </div>
-
-                  <div className="auth-field">
-                    <label>Пароль</label>
-                    <input type="password"/>
-                  </div>
-
-                  <div className="auth-modal__forgot">
-                    <button type="button">Забыли пароль?</button>
-                    <button type="button">Восстановить</button>
-                  </div>
-
-                  <button className="auth-primary-btn">
-                    Войти
-                  </button>
-                </motion.div>
-              )}
-
-            </AnimatePresence>
-
-          </motion.div>
+          </div>
 
         </motion.div>
-      )}
+
+      </motion.div>
 
     </AnimatePresence>
   );
