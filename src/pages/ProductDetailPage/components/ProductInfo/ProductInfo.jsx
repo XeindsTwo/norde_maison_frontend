@@ -1,5 +1,5 @@
 import "./ProductInfo.scss";
-import {useEffect, useState, useMemo} from "react";
+import {useState, useEffect, useMemo} from "react";
 import {useCurrency} from "@/context/CurrencyContext";
 import {normalizeHex} from "@/utils/color";
 import {formatPrice} from "@/utils/formatPrice.js";
@@ -7,11 +7,9 @@ import ColorSelector from "../ColorSelector/ColorSelector";
 import SizeSelector from "../SizeSelector/SizeSelector";
 import QuantitySelector from "../QuantitySelector/QuantitySelector";
 import AddToCartButton from "../AddToCartButton/AddToCartButton";
-import FavoriteIcon from "@/assets/images/icons/bx_star.svg";
-import {useAuth} from "@/context/AuthContext";
+import FavoriteButton from "@/components/FavoriteButton/FavoriteButton.jsx";
 
-const ProductInfo = ({product}) => {
-  const {isAuth, openAuth} = useAuth();
+const ProductInfo = ({product, initialFavorite = false}) => {
   const {currency} = useCurrency();
 
   const [selectedColor, setSelectedColor] = useState(null);
@@ -67,21 +65,12 @@ const ProductInfo = ({product}) => {
     <div className="product-info">
       <h1 className="product-info__title">
         {product.name}
-        <button
-          type="button"
-          className="product-info__favorite"
-          onClick={() => {
-            if (!isAuth) {
-              openAuth();
-              return;
-            }
 
-            // TODO: здесь логика добавления в избранное
-            console.log("Add to favorites");
-          }}
-        >
-          <FavoriteIcon/>
-        </button>
+        <FavoriteButton
+          productId={product.id}
+          className="product-info__favorite"
+          isFavorite={initialFavorite}
+        />
       </h1>
 
       <div className="product-info__price">

@@ -16,6 +16,24 @@
     margin-left: 10px;
     width: 28px;
     height: 28px;
+
+    &:hover {
+      svg path {
+        fill: rgba(darkred, .4);
+      }
+    }
+
+    svg {
+      color: transparent;
+
+      path {
+        fill: rgba($black100, .2);
+      }
+    }
+
+    svg.active path {
+      fill: orangered;
+    }
   }
 
   &__price {

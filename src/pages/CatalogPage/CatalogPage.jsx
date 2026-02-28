@@ -12,6 +12,7 @@ import FiltersPanel from "./FiltersPanel/FiltersPanel.jsx";
 
 import {getProducts, getSubcategoryDetail} from "@/api/catalog.js";
 import {useCurrency} from "@/context/CurrencyContext";
+import {useFavorites} from "@/hooks/useFavorites";
 
 import "./CatalogPage.scss";
 
@@ -34,6 +35,12 @@ const CatalogPage = () => {
   const minPrice = searchParams.get("min_price");
   const maxPrice = searchParams.get("max_price");
   const sort = searchParams.get("sort");
+
+  const {data: favoritesData, isLoading: favoritesLoading} = useFavorites();
+
+  const favoriteSet = new Set(
+    favoritesData?.data?.map(f => f.product.id) || []
+  );
 
   const productsQuery = useQuery({
     queryKey: [
@@ -93,52 +100,10 @@ const CatalogPage = () => {
   const loading =
     productsQuery.isLoading ||
     productsQuery.isFetching ||
-    subcategoryQuery.isLoading;
+    subcategoryQuery.isLoading ||
+    favoritesLoading;
 
   const isMen = subcategoryInfo?.category?.gender === "M";
-
-  useEffect(() => {
-    if (!subcategoryInfo) return;
-
-    const params = new URLSearchParams(searchParams);
-
-    const genderPath =
-      subcategoryInfo.category.gender === "M" ? "men" : "women";
-
-    if (params.get("gender") !== genderPath) {
-      params.set("gender", genderPath);
-      params.set("subcategory", subcategory);
-      params.set("page", page);
-
-      navigate(`/catalog?${params.toString()}`, {replace: true});
-    }
-  }, [
-    subcategoryInfo,
-    navigate,
-    searchParams,
-    subcategory,
-    page
-  ]);
-
-  useEffect(() => {
-    const catalog = document.querySelector(".catalog");
-
-    if (catalog) {
-      catalog.scrollIntoView({
-        behavior: "smooth",
-        block: "start"
-      });
-    }
-  }, [page, subcategory]);
-
-  const breadcrumbItems = [
-    {label: "Главная", to: "/"},
-    {
-      label: isMen ? "Мужчинам" : "Женщинам",
-      to: `/${isMen ? "men" : "women"}`
-    },
-    subcategoryInfo && {label: subcategoryInfo.name}
-  ].filter(Boolean);
 
   return (
     <>
@@ -147,7 +112,14 @@ const CatalogPage = () => {
       <main className="catalog">
         <div className="container container--padding">
 
-          <Breadcrumbs items={breadcrumbItems}/>
+          <Breadcrumbs items={[
+            {label: "Главная", to: "/"},
+            {
+              label: isMen ? "Мужчинам" : "Женщинам",
+              to: `/${isMen ? "men" : "women"}`
+            },
+            subcategoryInfo && {label: subcategoryInfo.name}
+          ].filter(Boolean)}/>
 
           {subcategoryInfo && (
             <GenderHero
@@ -180,6 +152,7 @@ const CatalogPage = () => {
                     <ProductCard
                       key={product.id}
                       product={product}
+                      initialFavorite={favoriteSet.has(product.id)}
                     />
                   ))
                 }

@@ -10,8 +10,15 @@ import Header from "@/components/Header/Header.jsx";
 import Footer from "@/components/Footer/Footer.jsx";
 import Breadcrumbs from "@/components/Breadcrumbs/Breadcrumbs.jsx";
 
+import {useFavorites} from "@/hooks/useFavorites";
+
 const ProductDetailPage = () => {
   const {id} = useParams();
+  const {data: favoritesData} = useFavorites();
+
+  const favoriteSet = new Set(
+    favoritesData?.data?.map(f => f.product.id) || []
+  );
 
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -42,18 +49,15 @@ const ProductDetailPage = () => {
   };
 
   const breadcrumbs = [
-    { label: "Главная", to: "/" },
-
+    {label: "Главная", to: "/"},
     product?.gender && {
       label: genderLabelMap[product.gender] || "Каталог",
       to: `/${genderPathMap[product.gender] || "catalog"}`
     },
-
     product?.subcategory && {
       label: product.subcategory.name,
       to: `/catalog?subcategory=${product.subcategory.id}`
     },
-
     product?.name && {
       label: product.name
     }
@@ -96,8 +100,12 @@ const ProductDetailPage = () => {
             <Breadcrumbs items={breadcrumbs}/>
             <div className="product-detail__grid">
               <Gallery product={product}/>
-              <ProductInfo product={product}/>
+              <ProductInfo
+                product={product}
+                initialFavorite={favoriteSet.has(product.id)}
+              />
             </div>
+
             {product?.similar_products?.length > 0 && (
               <div className="product-detail__similar">
                 <SimilarProducts products={product.similar_products}/>

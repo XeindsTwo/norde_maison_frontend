@@ -1,6 +1,6 @@
 import {createContext, useContext, useEffect, useState} from "react";
 import * as authApi from "@/api/auth";
-import {useNotification} from "@/components/Notification/NotificationContext";
+import {showNotification} from "@/components/Notification/Notification";
 
 const AuthContext = createContext();
 
@@ -10,9 +10,8 @@ export const AuthProvider = ({children}) => {
   const [successOpen, setSuccessOpen] = useState(false);
   const [user, setUser] = useState(null);
   const [loadingUser, setLoadingUser] = useState(true);
-  const {showNotification} = useNotification();
 
-  const isAuth = !!user;
+  const isAuth = !!user && !loadingUser;
 
   const openAuth = () => setAuthOpen(true);
   const closeAuth = () => setAuthOpen(false);
@@ -42,7 +41,7 @@ export const AuthProvider = ({children}) => {
   const register = async (data) => {
     const res = await authApi.register(data);
 
-    if (!res?.status || res.status !== 200 && res.status !== 201) {
+    if (!res?.status || (res.status !== 200 && res.status !== 201)) {
       throw new Error("Ошибка регистрации");
     }
 
@@ -53,8 +52,7 @@ export const AuthProvider = ({children}) => {
   const logout = async () => {
     try {
       await authApi.logout();
-    } catch {
-    }
+    } catch {}
 
     localStorage.removeItem("token");
     setUser(null);
@@ -69,12 +67,8 @@ export const AuthProvider = ({children}) => {
     }
 
     authApi.getMe()
-      .then(res => {
-        setUser(res.data);
-      })
-      .catch(() => {
-        setUser(null);
-      })
+      .then(res => setUser(res.data))
+      .catch(() => setUser(null))
       .finally(() => setLoadingUser(false));
 
   }, []);

@@ -1,8 +1,5 @@
 .notification {
   @include flex-between-center-gap(20);
-  position: fixed;
-  top: 140px;
-  right: 40px;
   min-width: 280px;
   padding: 10px 12px;
   background: $white;

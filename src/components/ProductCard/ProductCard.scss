@@ -22,7 +22,7 @@
   &__favorite {
     position: absolute;
     top: 14px;
-    right: 14px;
+    right: 18px;
     width: 22px;
     height: 22px;
     z-index: 3;
@@ -31,10 +31,22 @@
     padding: 0;
     cursor: pointer;
 
-    img {
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
+    &:hover {
+      svg path {
+        fill: rgba(darkred, .4);
+      }
+    }
+
+    svg {
+      color: transparent;
+
+      path {
+        fill: rgba($black100, .2);
+      }
+    }
+
+    svg.active path {
+      fill: orangered;
     }
   }
 

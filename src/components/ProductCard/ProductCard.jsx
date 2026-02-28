@@ -3,13 +3,13 @@ import {useState, useMemo, useRef} from "react";
 import {Link} from "react-router-dom";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
-import FavoriteIcon from "@/assets/images/icons/bx_star.svg";
-import {formatPrice} from "@/utils/formatPrice.js";
-import {useAuth} from "@/context/AuthContext";
-import {useCurrency} from "@/context/CurrencyContext";
 
-const ProductCard = ({product}) => {
-  const {isAuth, openAuth} = useAuth();
+import {formatPrice} from "@/utils/formatPrice.js";
+import {useCurrency} from "@/context/CurrencyContext";
+import FavoriteButton from "@/components/FavoriteButton/FavoriteButton.jsx";
+
+const ProductCard = ({product, initialFavorite = false}) => {
+
   const {currency} = useCurrency();
 
   const [hoverIndex, setHoverIndex] = useState(0);
@@ -39,20 +39,7 @@ const ProductCard = ({product}) => {
     );
   };
 
-  const handleMouseLeave = () => {
-    setHoverIndex(0);
-  };
-
-  const handleFavoriteClick = (e) => {
-    e.preventDefault();
-
-    if (!isAuth) {
-      openAuth();
-      return;
-    }
-
-    console.log("Добавить в избранное", product);
-  };
+  const handleMouseLeave = () => setHoverIndex(0);
 
   if (!product) {
     return (
@@ -113,14 +100,12 @@ const ProductCard = ({product}) => {
             </div>
           )}
 
-          <button
-            type="button"
-            title="Добавить в избранное"
+          <FavoriteButton
+            productId={product.id}
             className="product-card__favorite"
-            onClick={handleFavoriteClick}
-          >
-            <FavoriteIcon/>
-          </button>
+            iconClassName=""
+            isFavorite={initialFavorite}
+          />
 
         </div>
 

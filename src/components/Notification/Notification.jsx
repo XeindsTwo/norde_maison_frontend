@@ -1,48 +1,56 @@
-import {AnimatePresence, motion} from "framer-motion";
-import {useNotification} from "./NotificationContext";
+import toast, {Toaster} from "react-hot-toast";
 import "./Notification.scss";
 import CrossIcon from "@/assets/images/icons/cross-modal.svg";
 
-const variants = {
-  hidden: {x: 400, opacity: 0},
-  visible: {x: 0, opacity: 1},
-  exit: {x: 400, opacity: 0}
+export const showNotification = (data) => {
+  toast.custom((t) => {
+    const visible = t.visible;
+
+    return (
+      <div
+        className={`notification notification--${data.type || "success"}`}
+        style={{
+          transform: visible ? "translateX(0)" : "translateX(150%)",
+          opacity: visible ? 1 : 0,
+          transition: "transform 0.25s ease, opacity 0.25s ease"
+        }}
+      >
+        <div className="notification__left">
+          {data.title && (
+            <div className="notification__title">
+              {data.title}
+            </div>
+          )}
+
+          {data.message && (
+            <div className="notification__message">
+              {data.message}
+            </div>
+          )}
+        </div>
+
+        <button
+          className="notification__close"
+          onClick={() => toast.dismiss(t.id)}
+        >
+          <CrossIcon/>
+        </button>
+      </div>
+    );
+  }, {
+    duration: 3000,
+    position: "top-right"
+  });
 };
 
 export const Notification = () => {
-  const {notification, hideNotification} = useNotification();
-
   return (
-    <AnimatePresence>
-      {notification && (
-        <motion.div
-          className={`notification notification--${notification.type}`}
-          initial="hidden"
-          animate="visible"
-          exit="exit"
-          variants={variants}
-          transition={{duration: 0.25}}
-        >
-          <div className="notification__left">
-            {notification.title && (
-              <div className="notification__title">
-                {notification.title}
-              </div>
-            )}
-            {notification.message && (
-              <div className="notification__message">
-                {notification.message}
-              </div>
-            )}
-          </div>
-          <button
-            className="notification__close"
-            onClick={hideNotification}
-          >
-            <CrossIcon/>
-          </button>
-        </motion.div>
-      )}
-    </AnimatePresence>
+    <Toaster
+      position="top-right"
+      containerStyle={{
+        top: 70,
+        right: 40
+      }}
+    />
   );
 };

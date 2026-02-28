@@ -6,7 +6,7 @@ import {BrowserRouter} from 'react-router-dom';
 import ScrollToTop from './components/ScrollToTop.jsx';
 import {AuthProvider} from "@/context/AuthContext";
 import {CurrencyProvider} from '@/context/CurrencyContext';
-import {NotificationProvider} from "@/components/Notification/NotificationProvider";
+import {Notification} from "@/components/Notification/Notification";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -18,17 +18,15 @@ const queryClient = new QueryClient({
   }
 });
 
-
 createRoot(document.getElementById("root")).render(
   <BrowserRouter>
     <QueryClientProvider client={queryClient}>
       <CurrencyProvider>
-        <NotificationProvider>
-          <AuthProvider>
-            <ScrollToTop/>
-            <App/>
-          </AuthProvider>
-        </NotificationProvider>
+        <AuthProvider>
+          <ScrollToTop/>
+          <App/>
+          <Notification/>
+        </AuthProvider>
       </CurrencyProvider>
     </QueryClientProvider>
   </BrowserRouter>
