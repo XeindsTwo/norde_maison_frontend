@@ -1,14 +1,16 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import {createContext, useContext, useEffect, useState} from "react";
 import * as authApi from "@/api/auth";
+import {useNotification} from "@/components/Notification/NotificationContext";
 
 const AuthContext = createContext();
 
-export const AuthProvider = ({ children }) => {
+export const AuthProvider = ({children}) => {
 
   const [authOpen, setAuthOpen] = useState(false);
   const [successOpen, setSuccessOpen] = useState(false);
   const [user, setUser] = useState(null);
   const [loadingUser, setLoadingUser] = useState(true);
+  const {showNotification} = useNotification();
 
   const isAuth = !!user;
 
@@ -19,21 +21,30 @@ export const AuthProvider = ({ children }) => {
   const closeSuccess = () => setSuccessOpen(false);
 
   const login = async (data) => {
-
     const res = await authApi.login(data);
 
-    if (!res?.data?.token)
-      throw new Error("Invalid auth response");
+    if (!res?.data?.token || !res?.data?.user) {
+      throw new Error("Неверный ответ сервера");
+    }
 
     localStorage.setItem("token", res.data.token);
-
     setUser(res.data.user);
 
     closeAuth();
+
+    showNotification({
+      title: "Вы успешно вошли в аккаунт",
+      message: "Ваш аккаунт теперь активен",
+      type: "success"
+    });
   };
 
   const register = async (data) => {
-    await authApi.register(data);
+    const res = await authApi.register(data);
+
+    if (!res?.status || res.status !== 200 && res.status !== 201) {
+      throw new Error("Ошибка регистрации");
+    }
 
     closeAuth();
     openSuccess();
@@ -42,7 +53,8 @@ export const AuthProvider = ({ children }) => {
   const logout = async () => {
     try {
       await authApi.logout();
-    } catch {}
+    } catch {
+    }
 
     localStorage.removeItem("token");
     setUser(null);
@@ -57,8 +69,12 @@ export const AuthProvider = ({ children }) => {
     }
 
     authApi.getMe()
-      .then(res => setUser(res.data))
-      .catch(() => localStorage.removeItem("token"))
+      .then(res => {
+        setUser(res.data);
+      })
+      .catch(() => {
+        setUser(null);
+      })
       .finally(() => setLoadingUser(false));
 
   }, []);

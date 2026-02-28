@@ -1,15 +1,26 @@
 .quantity-counter {
   display: flex;
   align-items: center;
-  gap: 18px;
+  gap: 6px;
 
-  button {
-    width: 38px;
-    height: 38px;
-    border-radius: 12px;
-    border: 1px solid #ddd;
-    background: #fff;
-    font-size: 20px;
-    cursor: pointer;
+  &__element {
+    @include flex-center;
+    width: 43px;
+    height: 43px;
+    border: 1px solid rgba($black100, .2);
+    transition: background-color .3s, border .3s, color .3s;
+
+    &:hover {
+      border-color: rgba($black100, .6);
+    }
+
+    &:focus {
+      background-color: rgba($black100, .05);
+      border-color: rgba($black100, .2);
+    }
+
+    &.counter {
+      pointer-events: none;
+    }
   }
 }

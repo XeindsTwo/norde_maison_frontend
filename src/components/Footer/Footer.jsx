@@ -6,6 +6,7 @@ import ButtonValute from '@/assets/images/icons/button-valute.svg';
 import {Link} from "react-router-dom";
 import {useEffect, useRef, useState} from 'react';
 import {useCurrency} from "@/context/CurrencyContext";
+import {useAuth} from "@/context/AuthContext";
 
 const handleScrollTop = (e) => {
   e.preventDefault();
@@ -22,6 +23,7 @@ const currencyMap = {
 };
 
 const Footer = () => {
+  const {isAuth, openAuth} = useAuth();
   const {currency, setCurrency} = useCurrency();
   const [isCurrencyOpen, setIsCurrencyOpen] = useState(false);
   const valuteRef = useRef(null);
@@ -61,17 +63,38 @@ const Footer = () => {
             </div>
 
             <nav className="footer__nav">
-              <Link className="footer__link" to="">
-                Авторизация
-              </Link>
-              <Link className="footer__link" to="">
+              {isAuth ? (
+                <Link className="footer__link" to="/profile">
+                  Личный кабинет
+                </Link>
+              ) : (
+                <button
+                  type="button"
+                  className="footer__link"
+                  onClick={openAuth}
+                >
+                  Авторизация
+                </button>
+              )}
+              <button className="footer__link" type="button">
                 <SearchIcon/>
                 Поиск
-              </Link>
-              <Link className="footer__link" to="">
-                <CartIcon/>
-                Корзина
-              </Link>
+              </button>
+              {isAuth ? (
+                <Link className="footer__link" to="/cart">
+                  <CartIcon/>
+                  Корзина
+                </Link>
+              ) : (
+                <button
+                  type="button"
+                  className="footer__link"
+                  onClick={openAuth}
+                >
+                  <CartIcon/>
+                  Корзина
+                </button>
+              )}
             </nav>
 
             <div className="footer__right">

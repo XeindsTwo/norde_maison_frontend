@@ -1,35 +1,36 @@
 import './Header.scss';
-import { useEffect, useState, useRef } from 'react';
-import { getCategories, getSubcategories } from '@/api/catalog.js';
+import {useEffect, useState, useRef} from 'react';
+import {getCategories, getSubcategories} from '@/api/catalog.js';
 import MegaMenu from '../MegaMenu/MegaMenu.jsx';
 import SearchIcon from '@/assets/images/icons/bx_search.svg';
 import CartIcon from '@/assets/images/icons/bx_cart.svg';
 import {useAuth} from "@/context/AuthContext";
-import { Link, useLocation } from 'react-router-dom';
+import {Link, useLocation} from 'react-router-dom';
+import HeaderActions from "./HeaderActions.jsx";
 
 const Header = () => {
+  const {openAuth, isAuth} = useAuth();
   const [openMenu, setOpenMenu] = useState(null); // 'women' | 'men' | null
   const [isMenuVisible, setIsMenuVisible] = useState(false);
-  const [womenData, setWomenData] = useState({ categories: [], materials: [] });
-  const [menData, setMenData] = useState({ categories: [], materials: [] });
+  const [womenData, setWomenData] = useState({categories: [], materials: []});
+  const [menData, setMenData] = useState({categories: [], materials: []});
   const [subcategoriesByCategory, setSubcategoriesByCategory] = useState({});
   const [loading, setLoading] = useState(true);
 
   const closeTimeoutRef = useRef(null);
   const openTimeoutRef = useRef(null);
 
-  const hoverLockRef = useRef({ type: null, locked: false });
+  const hoverLockRef = useRef({type: null, locked: false});
   const location = useLocation();
-  const {openAuth} = useAuth();
 
   useEffect(() => {
     const loadData = async () => {
       try {
         // базовые категории и материалы
         const [womenCatsRes, menCatsRes, materialsRes, subcatsRes] = await Promise.all([
-          getCategories({ gender: 'F', is_material: false }),
-          getCategories({ gender: 'M', is_material: false }),
-          getCategories({ is_material: true }),
+          getCategories({gender: 'F', is_material: false}),
+          getCategories({gender: 'M', is_material: false}),
+          getCategories({is_material: true}),
           getSubcategories(),
         ]);
 
@@ -46,10 +47,10 @@ const Header = () => {
         const menMaterialsCats = materialsRes.data.filter((c) => c.gender === 'M');
 
         const womenMaterialsSubcats = await Promise.all(
-          womenMaterialsCats.map((cat) => getSubcategories({ category: cat.id }))
+          womenMaterialsCats.map((cat) => getSubcategories({category: cat.id}))
         );
         const menMaterialsSubcats = await Promise.all(
-          menMaterialsCats.map((cat) => getSubcategories({ category: cat.id }))
+          menMaterialsCats.map((cat) => getSubcategories({category: cat.id}))
         );
 
         // плоский массив подкатегорий материалов
@@ -101,7 +102,7 @@ const Header = () => {
   const handleOpen = (type) => {
     const lock = hoverLockRef.current;
     if (lock.locked && lock.type === type) {
-      hoverLockRef.current = { type: null, locked: false };
+      hoverLockRef.current = {type: null, locked: false};
       return;
     }
 
@@ -116,7 +117,7 @@ const Header = () => {
   };
 
   const handleLinkClick = (type) => {
-    hoverLockRef.current = { type, locked: true };
+    hoverLockRef.current = {type, locked: true};
   };
 
   const currentData =
@@ -124,7 +125,7 @@ const Header = () => {
       ? womenData
       : openMenu === 'men'
         ? menData
-        : { categories: [], materials: [] };
+        : {categories: [], materials: []};
 
   return (
     <header className="header">
@@ -141,7 +142,7 @@ const Header = () => {
         <div className="header__top">
           <div className="header__left">
             <Link to="/" className="header__logo">
-              <img src="/images/logo.svg" width={189} height={24} alt="Nordé Maison" />
+              <img src="/images/logo.svg" width={189} height={24} alt="Nordé Maison"/>
             </Link>
 
             <nav className="header__nav" onMouseEnter={clearTimers} onMouseLeave={scheduleClose}>
@@ -168,23 +169,7 @@ const Header = () => {
               </Link>
             </nav>
           </div>
-
-          <div className="header__right">
-            <button
-              className="header__link"
-              onClick={openAuth}
-            >
-              Авторизация
-            </button>
-            <button className="header__link">
-              <SearchIcon />
-              Поиск
-            </button>
-            <button className="header__link">
-              <CartIcon />
-              Корзина
-            </button>
-          </div>
+          <HeaderActions />
         </div>
       </div>
 
@@ -195,7 +180,7 @@ const Header = () => {
       >
         <div className="container">
           {!loading && openMenu && (
-            <MegaMenu data={currentData} subcategoriesByCategory={subcategoriesByCategory} />
+            <MegaMenu data={currentData} subcategoriesByCategory={subcategoriesByCategory}/>
           )}
         </div>
       </div>

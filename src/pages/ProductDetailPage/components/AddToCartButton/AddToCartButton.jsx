@@ -1,4 +1,5 @@
 import "./AddToCartButton.scss";
+import {useAuth} from "@/context/AuthContext";
 
 const DELIVERY_THRESHOLD = 6500;
 
@@ -8,7 +9,7 @@ const AddToCartButton = ({
                            size,
                            quantity = 1,
                          }) => {
-
+  const {isAuth, openAuth} = useAuth();
   const price = Number(product?.price || 0);
   const total = price * Math.max(1, quantity);
 
@@ -20,6 +21,12 @@ const AddToCartButton = ({
   );
 
   const handleClick = () => {
+
+    if (!isAuth) {
+      openAuth();
+      return;
+    }
+
     if (disabled) return;
 
     console.log("Добавлено в корзину", {
@@ -28,6 +35,7 @@ const AddToCartButton = ({
       size,
       quantity
     });
+
   };
 
   return (

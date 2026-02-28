@@ -1,0 +1,29 @@
+.auth-tabs {
+  display: flex;
+  align-items: center;
+  max-width: max-content;
+
+  &__tab {
+    border-bottom: 1px solid transparent;
+    font-size: 24px;
+    letter-spacing: -0.12px;
+    color: rgba($black100, 0.6);
+    transition: border 0.3s, color 0.3s;
+
+    &:hover {
+      color: rgba($black100, 0.8);
+    }
+
+    &--active {
+      color: $black100;
+      pointer-events: none;
+      border-bottom-color: $black100;
+    }
+  }
+
+  &__slash {
+    margin: 0 8px;
+    color: #aaa;
+    user-select: none;
+  }
+}

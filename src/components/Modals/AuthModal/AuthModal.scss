@@ -1,0 +1,15 @@
+.auth-modal__forgot {
+  display: flex;
+  justify-content: flex-start;
+  gap: 8px;
+  font-size: 13px;
+
+  button {
+    border: none;
+    background: none;
+    padding: 0;
+    cursor: pointer;
+    color: #555;
+    text-decoration: underline;
+  }
+}

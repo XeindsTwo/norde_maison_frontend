@@ -5,10 +5,11 @@ import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import FavoriteIcon from "@/assets/images/icons/bx_star.svg";
 import {formatPrice} from "@/utils/formatPrice.js";
+import {useAuth} from "@/context/AuthContext";
 import {useCurrency} from "@/context/CurrencyContext";
 
 const ProductCard = ({product}) => {
-
+  const {isAuth, openAuth} = useAuth();
   const {currency} = useCurrency();
 
   const [hoverIndex, setHoverIndex] = useState(0);
@@ -40,6 +41,17 @@ const ProductCard = ({product}) => {
 
   const handleMouseLeave = () => {
     setHoverIndex(0);
+  };
+
+  const handleFavoriteClick = (e) => {
+    e.preventDefault();
+
+    if (!isAuth) {
+      openAuth();
+      return;
+    }
+
+    console.log("Добавить в избранное", product);
   };
 
   if (!product) {
@@ -105,7 +117,7 @@ const ProductCard = ({product}) => {
             type="button"
             title="Добавить в избранное"
             className="product-card__favorite"
-            onClick={(e) => e.preventDefault()}
+            onClick={handleFavoriteClick}
           >
             <FavoriteIcon/>
           </button>

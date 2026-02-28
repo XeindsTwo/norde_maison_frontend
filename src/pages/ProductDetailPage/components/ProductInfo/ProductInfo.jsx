@@ -8,9 +8,10 @@ import SizeSelector from "../SizeSelector/SizeSelector";
 import QuantitySelector from "../QuantitySelector/QuantitySelector";
 import AddToCartButton from "../AddToCartButton/AddToCartButton";
 import FavoriteIcon from "@/assets/images/icons/bx_star.svg";
+import {useAuth} from "@/context/AuthContext";
 
 const ProductInfo = ({product}) => {
-
+  const {isAuth, openAuth} = useAuth();
   const {currency} = useCurrency();
 
   const [selectedColor, setSelectedColor] = useState(null);
@@ -69,6 +70,15 @@ const ProductInfo = ({product}) => {
         <button
           type="button"
           className="product-info__favorite"
+          onClick={() => {
+            if (!isAuth) {
+              openAuth();
+              return;
+            }
+
+            // TODO: здесь логика добавления в избранное
+            console.log("Add to favorites");
+          }}
         >
           <FavoriteIcon/>
         </button>

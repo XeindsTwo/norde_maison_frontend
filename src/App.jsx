@@ -8,8 +8,10 @@ import About from "@/pages/About/About";
 import ProductDetailPage from "@/pages/ProductDetailPage/ProductDetailPage";
 
 import PageLoader from "@/components/PageLoader/PageLoader";
-import AuthModal from "@/components/AuthModal/AuthModal";
-import SuccessModal from "@/components/AuthModal/components/SuccessModal.jsx";
+import AuthModal from "@/components/Modals/AuthModal/AuthModal";
+import SuccessModal from "@/components/Modals/AuthModal/components/SuccessModal.jsx";
+import ProtectedRoute from "@/components/ProtectedRoute.jsx";
+import ProfilePage from "@/pages/ProfilePage.jsx";
 
 function App() {
   const {loading} = useRouteLoading(500);
@@ -27,6 +29,14 @@ function App() {
             <Route path="/women" element={<GenderPage gender="F"/>}/>
             <Route path="/catalog" element={<CatalogPage/>}/>
             <Route path="/product/:id" element={<ProductDetailPage/>}/>
+            <Route
+              path="/profile"
+              element={
+                <ProtectedRoute>
+                  <ProfilePage/>
+                </ProtectedRoute>
+              }
+            />
             <Route path="*" element={<HomePage/>}/>
           </Routes>
 

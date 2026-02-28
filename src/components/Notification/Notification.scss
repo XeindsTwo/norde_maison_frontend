@@ -1,0 +1,46 @@
+.notification {
+  @include flex-between-center-gap(20);
+  position: fixed;
+  top: 140px;
+  right: 40px;
+  min-width: 280px;
+  padding: 10px 12px;
+  background: $white;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, .18);
+  z-index: 3000;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  &__left {
+    @include flex-column(0);
+    line-height: 1.4;
+    font-size: 14px;
+    letter-spacing: -0.14px;
+  }
+
+  &__title {
+    color: $black100;
+  }
+
+  &__message {
+    color: rgba($black100, .64);
+  }
+
+  &__close {
+    @include flex-center;
+    width: 26px;
+    height: 26px;
+
+    &:hover {
+      svg path {
+        stroke: darkred;
+      }
+    }
+
+    svg {
+      width: 26px;
+      height: 26px;
+    }
+  }
+}
