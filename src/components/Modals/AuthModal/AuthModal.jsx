@@ -119,19 +119,19 @@ const AuthModal = () => {
             autoComplete="new-password"
           />
         )}
-
-        <button
-          type="submit"
-          className="btn modal__primary-btn"
-          disabled={isDisabled}
-        >
-          {loading
-            ? "Загрузка..."
-            : isLogin
-              ? "Войти"
-              : "Создать аккаунт"}
-        </button>
-
+        <div className="modal__actions one">
+          <button
+            type="submit"
+            className="btn modal__btn"
+            disabled={isDisabled}
+          >
+            {loading
+              ? "Загрузка..."
+              : isLogin
+                ? "Войти"
+                : "Создать аккаунт"}
+          </button>
+        </div>
       </form>
 
     </AnimatedModal>

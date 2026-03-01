@@ -1,41 +1,43 @@
 import toast, {Toaster} from "react-hot-toast";
 import "./Notification.scss";
 import CrossIcon from "@/assets/images/icons/cross-modal.svg";
+import {motion, AnimatePresence} from "framer-motion";
 
 export const showNotification = (data) => {
   toast.custom((t) => {
-    const visible = t.visible;
-
     return (
-      <div
-        className={`notification notification--${data.type || "success"}`}
-        style={{
-          transform: visible ? "translateX(0)" : "translateX(150%)",
-          opacity: visible ? 1 : 0,
-          transition: "transform 0.25s ease, opacity 0.25s ease"
-        }}
-      >
-        <div className="notification__left">
-          {data.title && (
-            <div className="notification__title">
-              {data.title}
-            </div>
-          )}
+      <AnimatePresence>
+        {t.visible && (
+          <motion.div
+            initial={{x: 200, opacity: 0}}
+            animate={{x: 0, opacity: 1}}
+            exit={{x: 200, opacity: 0}}
+            transition={{duration: 0.25, ease: "easeOut"}}
+            className={`notification notification--${data.type || "success"}`}
+          >
+            <div className="notification__left">
+              {data.title && (
+                <div className="notification__title">
+                  {data.title}
+                </div>
+              )}
 
-          {data.message && (
-            <div className="notification__message">
-              {data.message}
+              {data.message && (
+                <div className="notification__message">
+                  {data.message}
+                </div>
+              )}
             </div>
-          )}
-        </div>
 
-        <button
-          className="notification__close"
-          onClick={() => toast.dismiss(t.id)}
-        >
-          <CrossIcon/>
-        </button>
-      </div>
+            <button
+              className="notification__close"
+              onClick={() => toast.dismiss(t.id)}
+            >
+              <CrossIcon/>
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
     );
   }, {
     duration: 3000,
@@ -48,8 +50,14 @@ export const Notification = () => {
     <Toaster
       position="top-right"
       containerStyle={{
-        top: 70,
+        top: 110,
         right: 40
+      }}
+      toastOptions={{
+        style: {
+          background: "transparent",
+          boxShadow: "none"
+        }
       }}
     />
   );

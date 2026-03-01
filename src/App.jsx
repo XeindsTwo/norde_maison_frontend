@@ -12,6 +12,7 @@ import AuthModal from "@/components/Modals/AuthModal/AuthModal";
 import SuccessModal from "@/components/Modals/AuthModal/components/SuccessModal.jsx";
 import ProtectedRoute from "@/components/ProtectedRoute.jsx";
 import ProfilePage from "@/pages/ProfilePage.jsx";
+import CartPage from "@/pages/CartPage/CartPage.jsx";
 
 function App() {
   const {loading} = useRouteLoading(500);
@@ -34,6 +35,14 @@ function App() {
               element={
                 <ProtectedRoute>
                   <ProfilePage/>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/cart"
+              element={
+                <ProtectedRoute>
+                  <CartPage/>
                 </ProtectedRoute>
               }
             />

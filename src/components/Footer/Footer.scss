@@ -122,15 +122,11 @@
     position: relative;
   }
 
-  &__valute {
-    position: relative;
-  }
-
   &__btn {
     @include flex-align-center(4);
     padding: 4px 8px;
     border-radius: 4px;
-    border: 1px solid transparent;
+    border: 1px solid rgba($black100, .1);
     color: rgba($black100, .8);
     background: transparent;
     cursor: pointer;

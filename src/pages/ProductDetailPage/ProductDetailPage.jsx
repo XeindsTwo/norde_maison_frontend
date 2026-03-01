@@ -83,7 +83,7 @@ const ProductDetailPage = () => {
         <Header/>
         <main className="product-detail loading">
           <div className="container container--padding">
-            Товар не найден
+            <p className="product-detail__empty">Товар не найден</p>
           </div>
         </main>
         <Footer/>

@@ -31,6 +31,7 @@
 
   &__title {
     font-size: 24px;
+    font-weight: 500;
     letter-spacing: -0.12px;
   }
 
@@ -47,6 +48,13 @@
     }
   }
 
+  &__text {
+    font-size: 16px;
+    line-height: 1.4;
+    letter-spacing: -0.32px;
+    color: rgba($black100, .8);
+  }
+
   &__error {
     color: darkred;
     font-size: 16px;
@@ -55,13 +63,25 @@
     margin-bottom: 14px;
   }
 
-  &__primary-btn {
+  &__actions {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    margin-top: 28px;
+    justify-content: space-between;
+    align-items: center;
+
+    &.one {
+      grid-template-columns: repeat(1, 1fr);
+    }
+  }
+
+  &__btn {
     max-width: 100%;
     width: 100%;
     padding: 16px;
     font-size: 18px;
     text-transform: initial;
-    margin-top: 28px;
 
     &:hover {
       background: rgba($black100, .8);
@@ -78,6 +98,22 @@
       cursor: default;
       pointer-events: none;
       opacity: 0.6;
+    }
+
+    &--cancel {
+      background: transparent;
+      border: 1px solid rgba($black100, .3);
+      color: rgba($black100, .8);
+
+      &:hover {
+        background: rgba($black100, .05);
+        border-color: $black100;
+        color: $black100;
+      }
+
+      &:active {
+        transform: translateY(1px);
+      }
     }
   }
 }

@@ -3,14 +3,24 @@ import {useState, useEffect, useMemo} from "react";
 import {useCurrency} from "@/context/CurrencyContext";
 import {normalizeHex} from "@/utils/color";
 import {formatPrice} from "@/utils/formatPrice.js";
+import {useCart} from "@/hooks/useCart";
+
 import ColorSelector from "../ColorSelector/ColorSelector";
 import SizeSelector from "../SizeSelector/SizeSelector";
 import QuantitySelector from "../QuantitySelector/QuantitySelector";
 import AddToCartButton from "../AddToCartButton/AddToCartButton";
 import FavoriteButton from "@/components/FavoriteButton/FavoriteButton.jsx";
+import ProductDeliveryInfo from "@/pages/ProductDetailPage/ProductDeliveryInfo";
 
-const ProductInfo = ({product, initialFavorite = false}) => {
+const MAX_PER_ITEM = 5;
+
+const ProductInfo = ({
+                       product,
+                       initialFavorite = false
+                     }) => {
+
   const {currency} = useCurrency();
+  const {data: cart} = useCart();
 
   const [selectedColor, setSelectedColor] = useState(null);
   const [selectedSize, setSelectedSize] = useState(null);
@@ -27,9 +37,11 @@ const ProductInfo = ({product, initialFavorite = false}) => {
   }, [selectedColor]);
 
   const filteredSizes = useMemo(() => {
+
     if (!product?.variants || !selectedColor) return [];
 
     const colorHex = normalizeHex(selectedColor.hex);
+
     const map = {};
 
     product.variants
@@ -38,10 +50,7 @@ const ProductInfo = ({product, initialFavorite = false}) => {
         map[v.size] = (map[v.size] || 0) + v.stock;
       });
 
-    return Object.entries(map).map(([size, stock]) => ({
-      size,
-      stock
-    }));
+    return Object.entries(map).map(([size]) => ({size}));
 
   }, [product, selectedColor]);
 
@@ -59,10 +68,32 @@ const ProductInfo = ({product, initialFavorite = false}) => {
     byn: product.price_byn,
   };
 
-  const currentPrice = priceMap[currency] ?? product.price_rub;
+  const currentPrice =
+    priceMap[currency] ?? product.price_rub;
+
+  const variant = product?.variants?.find(v =>
+    selectedColor &&
+    selectedSize &&
+    normalizeHex(v.color_hex) === normalizeHex(selectedColor.hex) &&
+    v.size === selectedSize.size
+  );
+
+  const cartItem = cart?.items?.find(
+    item => item.variant === variant?.id
+  );
+
+  const stock = variant?.stock ?? 0;
+
+  const limit = Math.min(MAX_PER_ITEM, stock);
+
+  const currentQuantity = cartItem?.quantity ?? 0;
+
+  const limitReached =
+    !!variant && currentQuantity >= limit;
 
   return (
     <div className="product-info">
+
       <h1 className="product-info__title">
         {product.name}
 
@@ -92,13 +123,26 @@ const ProductInfo = ({product, initialFavorite = false}) => {
       <QuantitySelector
         quantity={quantity}
         setQuantity={setQuantity}
-        max={10}
+        max={MAX_PER_ITEM}
       />
+
+      {limitReached && (
+        <p className="product-info__warning">
+          Это максимальное количество конкретного варианта доступное для заказа
+        </p>
+      )}
 
       <AddToCartButton
         product={product}
         color={selectedColor}
         size={selectedSize}
+        quantity={quantity}
+        variant={variant}
+        limitReached={limitReached}
+      />
+
+      <ProductDeliveryInfo
+        price={currentPrice}
         quantity={quantity}
       />
 
@@ -110,6 +154,7 @@ const ProductInfo = ({product, initialFavorite = false}) => {
           }}
         />
       </div>
+
     </div>
   );
 };

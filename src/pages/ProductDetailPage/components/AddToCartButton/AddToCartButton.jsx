@@ -1,24 +1,31 @@
 import "./AddToCartButton.scss";
 import {useAuth} from "@/context/AuthContext";
+import {useCart} from "@/hooks/useCart";
+import {showNotification} from "@/components/Notification/Notification";
+import {normalizeHex} from "@/utils/color";
 
-const DELIVERY_THRESHOLD = 6500;
+const MAX_PER_ITEM = 5;
 
 const AddToCartButton = ({
                            product,
                            color,
                            size,
                            quantity = 1,
+                           variant,
+                           limitReached
                          }) => {
+
   const {isAuth, openAuth} = useAuth();
-  const price = Number(product?.price || 0);
-  const total = price * Math.max(1, quantity);
+  const {addToCart} = useCart();
 
-  const disabled = !color || !size || quantity <= 0;
+  if (!product) return null;
 
-  const remainingForFreeDelivery = Math.max(
-    0,
-    DELIVERY_THRESHOLD - total
-  );
+  const disabled =
+    !variant ||
+    !color ||
+    !size ||
+    quantity < 1 ||
+    limitReached;
 
   const handleClick = () => {
 
@@ -29,13 +36,23 @@ const AddToCartButton = ({
 
     if (disabled) return;
 
-    console.log("Добавлено в корзину", {
-      product,
-      color,
-      size,
-      quantity
-    });
+    addToCart(
+      {
+        variant: variant.id,
+        quantity
+      },
+      {
+        onSuccess: () => {
 
+          showNotification({
+            title: product?.name || "Товар",
+            message: "Добавлено в корзину",
+            type: "success"
+          });
+
+        }
+      }
+    );
   };
 
   return (
@@ -48,20 +65,6 @@ const AddToCartButton = ({
       >
         Добавить в корзину
       </button>
-
-      <div className="delivery-info">
-        <p>
-          Бесплатная доставка по России при заказе от{" "}
-          {DELIVERY_THRESHOLD.toLocaleString("ru-RU")} ₽
-        </p>
-        <p>
-          До бесплатной доставки не хватает{" "}
-          {remainingForFreeDelivery.toLocaleString("ru-RU")} ₽
-        </p>
-        <p>
-          Сделайте заказ сегодня — получите его в течение 1–3 дней
-        </p>
-      </div>
 
     </div>
   );

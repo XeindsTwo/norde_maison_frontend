@@ -1,0 +1,16 @@
+.cart-page {
+  &__title {
+    margin-top: 32px;
+    margin-bottom: 24px;
+    font-size: 28px;
+    font-weight: 500;
+    letter-spacing: -0.28px;
+  }
+
+  &__empty {
+    margin-top: 80px;
+    font-size: 18px;
+    color: rgba($black100, .8);
+    text-align: center;
+  }
+}

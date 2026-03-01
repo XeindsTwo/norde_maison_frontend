@@ -1,0 +1,26 @@
+.cart-summary {
+  padding-top: 32px;
+  margin: 40px 0 48px;
+  border-top: 1px solid rgba($black100, .15);
+
+  &__total {
+    font-size: 28px;
+    font-weight: 500;
+    letter-spacing: -0.28px;
+    color: rgba($black100, .64);
+    margin-bottom: 24px;
+
+    span {
+      color: $black100;
+    }
+  }
+
+  &__btn {
+    padding: 22px 44px;
+
+    &:disabled {
+      opacity: .5;
+      pointer-events: none;
+    }
+  }
+}

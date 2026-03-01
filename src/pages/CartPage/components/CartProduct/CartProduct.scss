@@ -1,0 +1,49 @@
+.cart-product {
+  display: flex;
+  gap: 40px;
+
+  &__image {
+    width: 100px;
+    height: 130px;
+    object-fit: cover;
+  }
+
+  &__info {
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__bottom {
+    margin-top: auto;
+  }
+
+  &__name {
+    font-weight: 500;
+    font-size: 22px;
+    letter-spacing: -0.22px;
+    margin-bottom: 6px;
+  }
+
+  &__link {
+    transition: color .3s;
+
+    &:hover {
+      color: rgba($black100, .64);
+    }
+  }
+
+  &__variant {
+    font-size: 18px;
+    color: rgba($black100, .64);
+    letter-spacing: -0.48px;
+    margin-top: auto;
+    line-height: 1.5;
+
+    span {
+      color: $black100;
+      margin-left: 5px;
+    }
+  }
+
+
+}

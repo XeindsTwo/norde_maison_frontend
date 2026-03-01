@@ -1,10 +1,16 @@
 import {Link} from "react-router-dom";
 import {useAuth} from "@/context/AuthContext";
+import {useCart} from "@/hooks/useCart";
+
 import SearchIcon from "@/assets/images/icons/bx_search.svg";
 import CartIcon from "@/assets/images/icons/bx_cart.svg";
 
 const HeaderActions = () => {
+
   const {openAuth, isAuth} = useAuth();
+  const {data: cart} = useCart();
+
+  const totalItems = cart?.items?.length || 0;
 
   return (
     <div className="header__right">
@@ -29,8 +35,11 @@ const HeaderActions = () => {
       </button>
 
       {isAuth ? (
-        <Link className="header__link" to="/cart">
+        <Link className="header__link header__cart" to="/cart">
           <CartIcon/>
+          {isAuth && totalItems > 0 && (
+            <span className="header__cart-badge">{totalItems}</span>
+          )}
           Корзина
         </Link>
       ) : (

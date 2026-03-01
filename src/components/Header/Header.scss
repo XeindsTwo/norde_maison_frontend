@@ -4,6 +4,7 @@
 
   &__info {
     border-bottom: 1px solid rgba($black100, .15);
+    padding: 3px 0;
 
     &-inner {
       @include flex-between-center-gap(30);
@@ -70,6 +71,24 @@
     &.is-active {
       color: $black100;
       border-bottom-color: $black100;
+    }
+  }
+
+  &__cart {
+    position: relative;
+
+    &-badge {
+      @include flex-center;
+      position: absolute;
+      top: -1px;
+      left: 11px;
+      background: $black100;
+      color: white;
+      font-size: 8px;
+      line-height: 1;
+      min-width: 14px;
+      height: 14px;
+      border-radius: 50%;
     }
   }
 
