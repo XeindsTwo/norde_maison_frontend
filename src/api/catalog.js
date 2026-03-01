@@ -38,3 +38,20 @@ export const getSubcategoryDetail = (id) =>
 
 export const getProductDetail = (id) =>
   api.get(`catalog/products/${id}/`);
+
+export const searchProducts = (params) => {
+  const urlParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+
+    if (Array.isArray(value)) {
+      value.forEach(v => urlParams.append(key, v));
+    }
+    else if (value !== undefined && value !== null && value !== "") {
+      urlParams.set(key, value);
+    }
+
+  });
+
+  return api.get("catalog/products/search/?" + urlParams.toString());
+};

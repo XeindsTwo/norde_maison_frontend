@@ -53,6 +53,10 @@
     line-height: 1.4;
     letter-spacing: -0.32px;
     color: rgba($black100, .8);
+
+    &.short {
+      max-width: 360px;
+    }
   }
 
   &__error {
