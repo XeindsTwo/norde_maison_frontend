@@ -14,7 +14,7 @@
     z-index: 101;
     background: #fff;
     padding: 28px 0 58px;
-    min-height: 200px;
+    min-height: 210px;
     max-height: 86vh;
     overflow-y: scroll;
     box-shadow: 0 8px 32px rgba($black100, 0.1);
@@ -61,11 +61,15 @@
 
   &__icon-btn {
     @include flex-center;
-    color: rgba($black100, 0.4);
-    transition: color 0.2s;
 
     &:hover {
-      color: $black100;
+      svg path {
+        fill-opacity: 1;
+      }
+    }
+
+    svg path {
+      fill-opacity: 0.3;
     }
   }
 
@@ -96,25 +100,19 @@
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 26px;
-    margin-bottom: 64px;
+    margin-top: -20px;
     @media (max-width: 1200px) {
       grid-template-columns: repeat(3, 1fr);
     }
   }
 
-  &__spinner {
-    width: 36px;
-    height: 36px;
-    border: 2px solid #DEDEDE;
-    border-top-color: #333333;
-    border-radius: 50%;
-    animation: spin 0.6s linear infinite;
-    margin: 8px auto;
+  &__more {
+    @include flex-center;
   }
 
-  @keyframes spin {
-    to {
-      transform: rotate(360deg);
-    }
+  &__btn {
+    margin-top: 32px;
+    padding: 14px 22px;
+    border: 1px solid rgba($black100, .2);
   }
 }

@@ -1,6 +1,6 @@
-import {useEffect, useState} from "react";
-import {useQuery} from "@tanstack/react-query";
-import {useSearchParams, useNavigate} from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { useSearchParams, useNavigate } from "react-router-dom";
 
 import Header from "@/components/Header/Header.jsx";
 import Footer from "@/components/Footer/Footer.jsx";
@@ -10,20 +10,19 @@ import GenderHero from "@/components/GenderHero/GenderHero.jsx";
 import Pagination from "@/components/Pagination/Pagination.jsx";
 import FiltersPanel from "./FiltersPanel/FiltersPanel.jsx";
 
-import {getProducts, getSubcategoryDetail} from "@/api/catalog.js";
-import {useCurrency} from "@/context/CurrencyContext";
-import {useFavorites} from "@/hooks/useFavorites";
+import { getProducts, getSubcategoryDetail } from "@/api/catalog.js";
+import { useCurrency } from "@/context/CurrencyContext";
+import { useFavorites } from "@/hooks/useFavorites";
 
 import "./CatalogPage.scss";
 
 const PAGE_SIZE = 16;
 
 const CatalogPage = () => {
-
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
 
-  const {currency} = useCurrency();
+  const { currency } = useCurrency();
 
   const [cachedFilters, setCachedFilters] = useState({});
 
@@ -36,11 +35,8 @@ const CatalogPage = () => {
   const maxPrice = searchParams.get("max_price");
   const sort = searchParams.get("sort");
 
-  const {data: favoritesData, isLoading: favoritesLoading} = useFavorites();
-
-  const favoriteSet = new Set(
-    favoritesData?.data?.map(f => f.product.id) || []
-  );
+  const favoritesHook = useFavorites();
+  const { loading: favoritesLoading } = favoritesHook;
 
   const productsQuery = useQuery({
     queryKey: [
@@ -100,26 +96,26 @@ const CatalogPage = () => {
   const loading =
     productsQuery.isLoading ||
     productsQuery.isFetching ||
-    subcategoryQuery.isLoading ||
-    favoritesLoading;
+    subcategoryQuery.isLoading;
 
   const isMen = subcategoryInfo?.category?.gender === "M";
 
   return (
     <>
-      <Header/>
+      <Header />
 
       <main className="catalog">
         <div className="container container--padding">
-
-          <Breadcrumbs items={[
-            {label: "Главная", to: "/"},
-            {
-              label: isMen ? "Мужчинам" : "Женщинам",
-              to: `/${isMen ? "men" : "women"}`
-            },
-            subcategoryInfo && {label: subcategoryInfo.name}
-          ].filter(Boolean)}/>
+          <Breadcrumbs
+            items={[
+              { label: "Главная", to: "/" },
+              {
+                label: isMen ? "Мужчинам" : "Женщинам",
+                to: `/${isMen ? "men" : "women"}`
+              },
+              subcategoryInfo && { label: subcategoryInfo.name }
+            ].filter(Boolean)}
+          />
 
           {subcategoryInfo && (
             <GenderHero
@@ -130,13 +126,11 @@ const CatalogPage = () => {
           )}
 
           <div className="catalog__layout">
-
             <aside className="catalog__filters">
-              <FiltersPanel filters={filters}/>
+              <FiltersPanel filters={filters} />
             </aside>
 
             <div className="catalog__content">
-
               {!loading && products.length === 0 && (
                 <p className="catalog__empty">
                   Товаров не найдено по данным условиям ¯\_(ツ)_/¯
@@ -145,37 +139,34 @@ const CatalogPage = () => {
 
               <div className="catalog__grid">
                 {loading
-                  ? Array.from({length: PAGE_SIZE}).map((_, i) => (
-                    <ProductCard key={i} product={null}/>
+                  ? Array.from({ length: PAGE_SIZE }).map((_, i) => (
+                    <ProductCard key={i} product={null} />
                   ))
                   : products.map(product => (
                     <ProductCard
                       key={product.id}
                       product={product}
-                      initialFavorite={favoriteSet.has(product.id)}
                     />
-                  ))
-                }
+                  ))}
               </div>
 
               {!loading && totalPages > 1 && (
                 <Pagination
                   currentPage={page}
                   totalPages={totalPages}
-                  onChange={(p) => {
+                  onChange={p => {
                     const params = new URLSearchParams(searchParams);
                     params.set("page", p);
                     navigate(`/catalog?${params.toString()}`);
                   }}
                 />
               )}
-
             </div>
           </div>
         </div>
       </main>
 
-      <Footer/>
+      <Footer />
     </>
   );
 };

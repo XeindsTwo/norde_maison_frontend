@@ -1,14 +1,7 @@
 import "./SimilarProducts.scss";
 import ProductCard from "@/components/ProductCard/ProductCard.jsx";
-import {useFavorites} from "@/hooks/useFavorites";
 
 const SimilarProducts = ({ products }) => {
-
-  const { data: favoritesData, isLoading } = useFavorites();
-
-  const favoriteSet = new Set(
-    favoritesData?.data?.map(f => f.product.id) || []
-  );
 
   if (!products?.length) return null;
 
@@ -21,10 +14,10 @@ const SimilarProducts = ({ products }) => {
           <ProductCard
             key={p.id}
             product={p}
-            initialFavorite={favoriteSet.has(p.id)}
           />
         ))}
       </div>
+
     </section>
   );
 };

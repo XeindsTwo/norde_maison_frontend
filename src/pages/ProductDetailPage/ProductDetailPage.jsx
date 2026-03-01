@@ -1,42 +1,32 @@
 import "./ProductDetailPage.scss";
 import {useParams} from "react-router-dom";
-import {useEffect, useState} from "react";
+import {useQuery} from "@tanstack/react-query";
+
 import {getProductDetail} from "@/api/catalog";
 
 import Gallery from "./components/Gallery/Gallery";
 import ProductInfo from "./components/ProductInfo/ProductInfo";
 import SimilarProducts from "./components/SimilarProductsSection/SimilarProducts";
+
 import Header from "@/components/Header/Header.jsx";
 import Footer from "@/components/Footer/Footer.jsx";
 import Breadcrumbs from "@/components/Breadcrumbs/Breadcrumbs.jsx";
 
-import {useFavorites} from "@/hooks/useFavorites";
-
 const ProductDetailPage = () => {
+
   const {id} = useParams();
-  const {data: favoritesData} = useFavorites();
 
-  const favoriteSet = new Set(
-    favoritesData?.data?.map(f => f.product.id) || []
-  );
+  const {data, isLoading, isError} = useQuery({
+    queryKey: ["product-detail", id],
+    queryFn: async () => {
+      const res = await getProductDetail(id);
+      return res.data;
+    },
+    staleTime: 0,
+    retry: false
+  });
 
-  const [product, setProduct] = useState(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchProduct = async () => {
-      try {
-        const {data} = await getProductDetail(id);
-        setProduct(data);
-      } catch (err) {
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchProduct();
-  }, [id]);
+  const product = data;
 
   const genderPathMap = {
     M: "men",
@@ -63,7 +53,7 @@ const ProductDetailPage = () => {
     }
   ].filter(Boolean);
 
-  if (loading) {
+  if (isLoading) {
     return (
       <>
         <Header/>
@@ -77,7 +67,7 @@ const ProductDetailPage = () => {
     );
   }
 
-  if (!product) {
+  if (isError || !product) {
     return (
       <>
         <Header/>
@@ -94,16 +84,16 @@ const ProductDetailPage = () => {
   return (
     <>
       <Header/>
+
       <main className="product-detail">
         <section>
           <div className="container container--padding">
+
             <Breadcrumbs items={breadcrumbs}/>
+
             <div className="product-detail__grid">
               <Gallery product={product}/>
-              <ProductInfo
-                product={product}
-                initialFavorite={favoriteSet.has(product.id)}
-              />
+              <ProductInfo product={product}/>
             </div>
 
             {product?.similar_products?.length > 0 && (
@@ -111,9 +101,11 @@ const ProductDetailPage = () => {
                 <SimilarProducts products={product.similar_products}/>
               </div>
             )}
+
           </div>
         </section>
       </main>
+
       <Footer/>
     </>
   );

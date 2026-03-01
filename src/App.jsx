@@ -13,6 +13,7 @@ import SuccessModal from "@/components/Modals/AuthModal/components/SuccessModal.
 import ProtectedRoute from "@/components/ProtectedRoute.jsx";
 import ProfilePage from "@/pages/ProfilePage.jsx";
 import CartPage from "@/pages/CartPage/CartPage.jsx";
+import SearchPageResult from "@/pages/SearchPage/SearchPageResult.jsx";
 
 function App() {
   const {loading} = useRouteLoading(500);
@@ -30,6 +31,7 @@ function App() {
             <Route path="/women" element={<GenderPage gender="F"/>}/>
             <Route path="/catalog" element={<CatalogPage/>}/>
             <Route path="/product/:id" element={<ProductDetailPage/>}/>
+            <Route path="/search" element={<SearchPageResult/>}/>
             <Route
               path="/profile"
               element={

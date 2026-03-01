@@ -14,10 +14,7 @@ import ProductDeliveryInfo from "@/pages/ProductDetailPage/ProductDeliveryInfo";
 
 const MAX_PER_ITEM = 5;
 
-const ProductInfo = ({
-                       product,
-                       initialFavorite = false
-                     }) => {
+const ProductInfo = ({product}) => {
 
   const {currency} = useCurrency();
   const {data: cart} = useCart();
@@ -100,7 +97,7 @@ const ProductInfo = ({
         <FavoriteButton
           productId={product.id}
           className="product-info__favorite"
-          isFavorite={initialFavorite}
+          iconClassName=""
         />
       </h1>
 

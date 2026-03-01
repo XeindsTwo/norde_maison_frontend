@@ -1,61 +1,27 @@
-import {useState} from "react";
 import FavoriteIcon from "@/assets/images/icons/bx_star.svg";
-import {useAuth} from "@/context/AuthContext";
-import {toggleFavorite} from "@/api/favorite";
-import {useQueryClient} from "@tanstack/react-query";
-import {showNotification} from "@/components/Notification/Notification";
+import { useAuth } from "@/context/AuthContext";
+import { useFavorites } from "@/hooks/useFavorites";
 
 const FavoriteButton = ({
                           productId,
                           className = "",
-                          iconClassName = "",
-                          isFavorite = false
+                          iconClassName = ""
                         }) => {
+  const { isAuth, openAuth } = useAuth();
+  const { isFavorite, toggle } = useFavorites();
 
-  const {isAuth, openAuth} = useAuth();
-  const queryClient = useQueryClient();
+  const favorite = isFavorite(productId);
 
-  const [loading, setLoading] = useState(false);
-  const [favorite, setFavorite] = useState(isFavorite);
-
-  const handleClick = async (e) => {
+  const handleClick = e => {
     e.preventDefault();
+    e.stopPropagation();
 
     if (!isAuth) {
       openAuth();
       return;
     }
 
-    try {
-      setLoading(true);
-
-      const res = await toggleFavorite(productId);
-
-      const newState = res.data.favorite;
-
-      setFavorite(newState);
-
-      queryClient.invalidateQueries({
-        queryKey: ["favorites"]
-      });
-
-      showNotification({
-        title: "Избранное",
-        message: newState
-          ? "Товар добавлен в избранное"
-          : "Товар удалён из избранного",
-        type: "success"
-      });
-
-    } catch {
-      showNotification({
-        title: "Ошибка",
-        message: "Не удалось обновить избранное",
-        type: "error"
-      });
-    } finally {
-      setLoading(false);
-    }
+    toggle(productId);
   };
 
   return (
@@ -63,9 +29,10 @@ const FavoriteButton = ({
       type="button"
       className={className}
       onClick={handleClick}
-      disabled={loading}
     >
-      <FavoriteIcon className={favorite ? iconClassName + " active" : iconClassName}/>
+      <FavoriteIcon
+        className={`${iconClassName} ${favorite ? "active" : ""}`.trim()}
+      />
     </button>
   );
 };
