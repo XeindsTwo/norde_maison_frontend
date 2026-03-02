@@ -11,3 +11,6 @@ export const getMe = () =>
 
 export const logout = () =>
   api.post("auth/logout/");
+
+export const updateProfile = (data) =>
+  api.patch("auth/me/", data);

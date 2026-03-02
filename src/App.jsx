@@ -11,7 +11,7 @@ import PageLoader from "@/components/PageLoader/PageLoader";
 import AuthModal from "@/components/Modals/AuthModal/AuthModal";
 import SuccessModal from "@/components/Modals/AuthModal/components/SuccessModal.jsx";
 import ProtectedRoute from "@/components/ProtectedRoute.jsx";
-import ProfilePage from "@/pages/ProfilePage.jsx";
+import ProfilePage from "@/pages/Profile/ProfilePage.jsx";
 import CartPage from "@/pages/CartPage/CartPage.jsx";
 import SearchPageResult from "@/pages/SearchPage/SearchPageResult.jsx";
 
@@ -33,7 +33,7 @@ function App() {
             <Route path="/product/:id" element={<ProductDetailPage/>}/>
             <Route path="/search" element={<SearchPageResult/>}/>
             <Route
-              path="/profile"
+              path="/profile/*"
               element={
                 <ProtectedRoute>
                   <ProfilePage/>

@@ -1,10 +1,12 @@
 import {createContext, useContext, useEffect, useState} from "react";
 import * as authApi from "@/api/auth";
 import {showNotification} from "@/components/Notification/Notification";
+import {useQueryClient} from "@tanstack/react-query";
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({children}) => {
+  const queryClient = useQueryClient();
 
   const [authOpen, setAuthOpen] = useState(false);
   const [successOpen, setSuccessOpen] = useState(false);
@@ -22,12 +24,10 @@ export const AuthProvider = ({children}) => {
   const login = async (data) => {
     const res = await authApi.login(data);
 
-    if (!res?.data?.token || !res?.data?.user) {
-      throw new Error("Неверный ответ сервера");
-    }
-
     localStorage.setItem("token", res.data.token);
     setUser(res.data.user);
+
+    queryClient.invalidateQueries({queryKey: ["favorites"]});
 
     closeAuth();
 
@@ -41,12 +41,10 @@ export const AuthProvider = ({children}) => {
   const register = async (data) => {
     const res = await authApi.register(data);
 
-    if (!res?.status || (res.status !== 200 && res.status !== 201)) {
-      throw new Error("Ошибка регистрации");
+    if (res.status === 200 || res.status === 201) {
+      closeAuth();
+      openSuccess();
     }
-
-    closeAuth();
-    openSuccess();
   };
 
   const logout = async () => {
@@ -56,6 +54,8 @@ export const AuthProvider = ({children}) => {
 
     localStorage.removeItem("token");
     setUser(null);
+
+    queryClient.clear();
   };
 
   useEffect(() => {
@@ -70,7 +70,6 @@ export const AuthProvider = ({children}) => {
       .then(res => setUser(res.data))
       .catch(() => setUser(null))
       .finally(() => setLoadingUser(false));
-
   }, []);
 
   return (

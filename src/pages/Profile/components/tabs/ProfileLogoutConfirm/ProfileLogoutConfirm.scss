@@ -1,0 +1,11 @@
+.profile-logout-confirm {
+  &__text {
+    line-height: 1.5;
+    margin-bottom: 32px;
+    color: rgba($black100, .8);
+  }
+
+  &__confirm {
+    padding: 16px 36px;
+  }
+}
