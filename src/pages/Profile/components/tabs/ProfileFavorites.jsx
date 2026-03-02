@@ -21,6 +21,8 @@ const ProfileFavorites = () => {
 
   const handleRemove = async (productId) => {
 
+    if (removingRef.current) return;
+
     removingRef.current = true;
 
     setList(prev =>
@@ -29,13 +31,13 @@ const ProfileFavorites = () => {
       )
     );
 
-    await new Promise(resolve => setTimeout(resolve, 180));
-
-    toggle(productId);
-
-    setTimeout(() => {
-      removingRef.current = false;
-    }, 300);
+    try {
+      await toggle(productId);
+    } finally {
+      setTimeout(() => {
+        removingRef.current = false;
+      }, 200);
+    }
   };
 
   if (isLoading) {

@@ -14,42 +14,10 @@
     gap: 22px 18px;
     justify-content: start;
   }
-}
 
-.profile-form {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  max-width: 520px;
-}
-
-.profile-form__header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.profile-form input,
-.profile-form textarea {
-  padding: 10px 12px;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-}
-
-.profile-form textarea {
-  min-height: 110px;
-  resize: vertical;
-}
-
-.profile-form button {
-  padding: 10px 16px;
-  border: none;
-  border-radius: 6px;
-  background: #111;
-  color: white;
-}
-
-.profile-form button:disabled {
-  opacity: .5;
-  cursor: not-allowed;
+  &__tab-title {
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 30px;
+  }
 }

@@ -1,0 +1,36 @@
+.profile-form {
+  display: flex;
+  flex-direction: column;
+  max-width: 480px;
+
+  &__fields {
+    @include flex-column(10);
+  }
+
+  &__input {
+    padding: 10px 12px;
+    font-size: 16px;
+    border: 1px solid rgba($black100, .15);
+    transition: border .3s;
+
+    &:hover {
+      border-color: $black100;
+    }
+
+    &--email {
+      pointer-events: none;
+      background-color: #f7f7f7;
+    }
+  }
+
+  &__button {
+    padding: 16px 32px;
+    margin-top: 24px;
+
+    &:disabled {
+      opacity: .5;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+  }
+}

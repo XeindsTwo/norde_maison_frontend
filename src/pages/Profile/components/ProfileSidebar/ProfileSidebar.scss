@@ -16,6 +16,11 @@
     display: block;
     margin-bottom: 24px;
     color: rgba($black100, .8);
+    font-size: 18px;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   &__actions {

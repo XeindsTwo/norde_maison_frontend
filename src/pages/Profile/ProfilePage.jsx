@@ -6,7 +6,7 @@ import ProfileSidebar from "./components/ProfileSidebar/ProfileSidebar";
 import ProfileContent from "./ProfileContent";
 
 const ProfilePage = () => {
-  const [tab, setTab] = useState("favorites");
+  const [tab, setTab] = useState("orders");
 
   return (
     <>
