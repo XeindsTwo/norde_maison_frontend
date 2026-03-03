@@ -4,6 +4,7 @@ import {useState, useEffect, useMemo} from "react";
 import {updateProfile} from "@/api/auth";
 import {showNotification} from "@/components/Notification/Notification";
 import AddressField from "@/components/AddressField/AddressField.jsx";
+import ProfilePasswordChange from "@/pages/Profile/components/ProfilePasswordChange/ProfilePasswordChange.jsx";
 
 const normalize = (str = "") =>
   str.trim().toLowerCase().replace(/\s+/g, " ");
@@ -85,7 +86,7 @@ const ProfileInfo = () => {
           placeholder="Email"
         />
         <input
-          className="profile-form__input profile-form__input--first-name"
+          className="profile-form__input"
           placeholder="Имя"
           maxLength="100"
           value={form.first_name}
@@ -97,7 +98,7 @@ const ProfileInfo = () => {
           }
         />
         <input
-          className="profile-form__input profile-form__input--last-name"
+          className="profile-form__input"
           placeholder="Фамилия"
           maxLength="100"
           value={form.last_name}
@@ -109,7 +110,7 @@ const ProfileInfo = () => {
           }
         />
         <input
-          className="profile-form__input profile-form__input--phone"
+          className="profile-form__input"
           placeholder="Телефон"
           value={form.phone}
           onChange={e =>
@@ -120,7 +121,7 @@ const ProfileInfo = () => {
           }
         />
         <input
-          className="profile-form__input profile-form__input--telegram"
+          className="profile-form__input"
           placeholder="Telegram"
           value={form.tg_username}
           onChange={e =>
@@ -144,6 +145,7 @@ const ProfileInfo = () => {
       >
         {loading ? "Сохранение..." : "Сохранить изменения"}
       </button>
+      <ProfilePasswordChange />
     </div>
   );
 };

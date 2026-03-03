@@ -14,3 +14,6 @@ export const logout = () =>
 
 export const updateProfile = (data) =>
   api.patch("auth/me/", data);
+
+export const changePassword = (data) =>
+  api.post("auth/change-password/", data);

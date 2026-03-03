@@ -5,6 +5,10 @@
 
   &__fields {
     @include flex-column(10);
+
+    input {
+      width: 100%;
+    }
   }
 
   &__input {
@@ -12,9 +16,19 @@
     font-size: 16px;
     border: 1px solid rgba($black100, .15);
     transition: border .3s;
+    color: #111;
 
     &:hover {
       border-color: $black100;
+    }
+
+    &:-webkit-autofill,
+    &:-webkit-autofill:hover,
+    &:-webkit-autofill:focus,
+    &:-webkit-autofill:active {
+      -webkit-box-shadow: 0 0 0 1000px white inset !important;
+      -webkit-text-fill-color: #111 !important;
+      transition: background-color 5000s ease-in-out 0s;
     }
 
     &--email {

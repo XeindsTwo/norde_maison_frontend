@@ -6,6 +6,7 @@ import {useQueryClient} from "@tanstack/react-query";
 const AuthContext = createContext();
 
 export const AuthProvider = ({children}) => {
+
   const queryClient = useQueryClient();
 
   const [authOpen, setAuthOpen] = useState(false);
@@ -22,9 +23,11 @@ export const AuthProvider = ({children}) => {
   const closeSuccess = () => setSuccessOpen(false);
 
   const login = async (data) => {
+
     const res = await authApi.login(data);
 
     localStorage.setItem("token", res.data.token);
+
     setUser(res.data.user);
 
     queryClient.invalidateQueries({queryKey: ["favorites"]});
@@ -33,12 +36,13 @@ export const AuthProvider = ({children}) => {
 
     showNotification({
       title: "Вы успешно вошли в аккаунт",
-      message: "Ваш аккаунт теперь активен",
+      message: "Ваш аккаунт активен",
       type: "success"
     });
   };
 
   const register = async (data) => {
+
     const res = await authApi.register(data);
 
     if (res.status === 200 || res.status === 201) {
@@ -48,17 +52,20 @@ export const AuthProvider = ({children}) => {
   };
 
   const logout = async () => {
+
     try {
       await authApi.logout();
     } catch {}
 
     localStorage.removeItem("token");
+
     setUser(null);
 
     queryClient.clear();
   };
 
-  useEffect(() => {
+  const refreshAuth = async () => {
+
     const token = localStorage.getItem("token");
 
     if (!token) {
@@ -66,10 +73,19 @@ export const AuthProvider = ({children}) => {
       return;
     }
 
-    authApi.getMe()
-      .then(res => setUser(res.data))
-      .catch(() => setUser(null))
-      .finally(() => setLoadingUser(false));
+    try {
+      const res = await authApi.getMe();
+      setUser(res.data);
+    } catch {
+      setUser(null);
+      localStorage.removeItem("token");
+    } finally {
+      setLoadingUser(false);
+    }
+  };
+
+  useEffect(() => {
+    refreshAuth();
   }, []);
 
   return (
