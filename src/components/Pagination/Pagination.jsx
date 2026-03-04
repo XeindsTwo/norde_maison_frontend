@@ -1,5 +1,5 @@
-import {useState} from "react";
-import './Pagination.scss';
+import { useState } from "react";
+import "./Pagination.scss";
 
 import ArrowLeft from "@/assets/images/icons/arrow-nav-left.svg";
 import ArrowRight from "@/assets/images/icons/arrow-nav-right.svg";
@@ -19,17 +19,23 @@ const Pagination = ({
 
     try {
       setLoading(true);
+
       await onChange(page);
+
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+      });
+
     } finally {
       setLoading(false);
     }
   };
 
-  const pages = [];
-
-  for (let i = 1; i <= totalPages; i++) {
-    pages.push(i);
-  }
+  const pages = Array.from(
+    { length: totalPages },
+    (_, i) => i + 1
+  );
 
   return (
     <div className="pagination">
@@ -39,15 +45,13 @@ const Pagination = ({
         disabled={loading || currentPage === 1}
         onClick={() => safeChange(currentPage - 1)}
       >
-        <ArrowLeft/>
+        <ArrowLeft />
       </button>
 
       {pages.map(page => (
         <button
           key={page}
-          className={`pagination__item ${
-            page === currentPage ? 'is-active' : ''
-          }`}
+          className={`pagination__item ${page === currentPage ? "is-active" : ""}`}
           disabled={loading}
           onClick={() => safeChange(page)}
         >
@@ -60,7 +64,7 @@ const Pagination = ({
         disabled={loading || currentPage === totalPages}
         onClick={() => safeChange(currentPage + 1)}
       >
-        <ArrowRight/>
+        <ArrowRight />
       </button>
 
     </div>
