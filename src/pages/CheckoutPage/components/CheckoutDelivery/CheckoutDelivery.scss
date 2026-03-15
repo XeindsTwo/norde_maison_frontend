@@ -60,6 +60,7 @@
       font-size: 16px;
       letter-spacing: -0.48px;
       font-weight: 500;
+      text-align: left;
       margin-bottom: 6px;
       color: rgba($black100, 0.8);
     }
@@ -73,6 +74,7 @@
     &-price {
       letter-spacing: -0.48px;
       font-size: 16px;
+      margin-top: auto;
 
       b {
         font-weight: 500;
@@ -86,19 +88,68 @@
   }
 
   &__checkbox {
-    display: flex;
-    align-items: center;
-    gap: 9px;
-    font-size: 13px;
-    color: rgba(#000, 0.55);
-    cursor: pointer;
+    @include flex-align-center(8);
+    font-size: 14px;
+    color: rgba($black100, 0.8);
     user-select: none;
+    margin-bottom: 40px;
 
     input[type="checkbox"] {
-      width: 15px;
-      height: 15px;
+      appearance: none;
+      -webkit-appearance: none;
+      width: 16px;
+      height: 16px;
+      min-width: 16px;
+      border: 1.5px solid rgba(#000, 0.22);
+      background: #fff;
       cursor: pointer;
-      accent-color: #111;
+      position: relative;
+      transition: all 0.2s ease;
+      flex-shrink: 0;
+      margin: 0;
+
+      &::after {
+        content: "";
+        position: absolute;
+        left: 5px;
+        top: 1px;
+        width: 4px;
+        height: 9px;
+        border: 1.5px solid #fff;
+        border-top: none;
+        border-left: none;
+        transform: rotate(45deg) scale(0);
+        transition: transform 0.15s ease;
+      }
+
+      &:checked {
+        background: #111;
+        border-color: #111;
+
+        &::after {
+          transform: rotate(45deg) scale(1);
+        }
+      }
+
+      &:hover:not(:checked) {
+        border-color: rgba(#000, 0.45);
+      }
+
+      &:focus-visible {
+        outline: 2px solid rgba(#111, 0.3);
+        outline-offset: 2px;
+      }
     }
+
+    span {
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+  }
+
+  &__extra-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
   }
 }

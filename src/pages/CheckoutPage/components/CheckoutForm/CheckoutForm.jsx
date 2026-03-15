@@ -2,12 +2,13 @@ import {useForm} from "react-hook-form";
 import IomoneyIcon from "@/assets/images/icons/iomoney.svg";
 import "./CheckoutForm.scss";
 
-const CheckoutForm = ({onSubmit, isPending, deliverySlot}) => {
-  const {register, handleSubmit, formState: {errors}} = useForm();
+const CheckoutForm = ({onSubmit, isPending, deliverySlot, defaultValues}) => {
+  const methods = useForm({defaultValues});
+  const {register, handleSubmit, formState: {errors}, watch, setValue} = methods;
 
   return (
     <form className="checkout-form" onSubmit={handleSubmit(onSubmit)}>
-      <section className="checkout-form__section">
+      <div className="checkout-form__section">
         <h2 className="checkout-form__section-title">Личные данные</h2>
 
         <div className="checkout-form__row">
@@ -50,9 +51,7 @@ const CheckoutForm = ({onSubmit, isPending, deliverySlot}) => {
           <input
             className={`checkout-page__input ${errors.phone ? "checkout-page__input--error" : ""}`}
             placeholder="+7 901 234 56-78"
-            {...register("phone", {
-              required: "Введите телефон",
-            })}
+            {...register("phone", {required: "Введите телефон"})}
           />
           {errors.phone && (
             <span className="checkout-page__error">{errors.phone.message}</span>
@@ -67,24 +66,19 @@ const CheckoutForm = ({onSubmit, isPending, deliverySlot}) => {
             {...register("telegram")}
           />
         </div>
-      </section>
+      </div>
 
-      {deliverySlot}
+      <div className="checkout-form__section">
+        <h2 className="checkout-form__section-title">Доставка</h2>
+        {deliverySlot({register, errors, watch, setValue})}
+      </div>
+
       <button
         type="submit"
         className="checkout-form__submit"
         disabled={isPending}
       >
-        {isPending ?
-          <>
-            Оформляем
-          </>
-          :
-          <>
-            <IomoneyIcon/>
-            Перейти к оплате
-          </>
-        }
+        {isPending ? <>Оформляем</> : <><IomoneyIcon/>Перейти к оплате</>}
       </button>
     </form>
   );
