@@ -1,6 +1,6 @@
 import ProfileFavorites from "./components/tabs/ProfileFavorites.jsx";
 import ProfileInfo from "./components/tabs/ProfileInfo/ProfileInfo.jsx";
-import ProfileOrdersTab from "./components/tabs/ProfileOrdersTab";
+import ProfileOrdersTab from "./components/tabs/ProfileOrdersTab/ProfileOrdersTab.jsx";
 import ProfileLogoutConfirm from "./components/tabs/ProfileLogoutConfirm/ProfileLogoutConfirm.jsx";
 import {AnimatePresence, motion} from "framer-motion";
 

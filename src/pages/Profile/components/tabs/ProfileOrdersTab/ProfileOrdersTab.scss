@@ -1,0 +1,76 @@
+.orders-tab {
+  padding-bottom: 60px;
+
+  &__list {
+    @include flex-column(16);
+  }
+}
+
+.order {
+  border: 1px solid rgba($black100, .15);
+  padding: 18px;
+  transition: border .3s;
+  cursor: pointer;
+
+  &:hover {
+    border-color: $black100;
+  }
+
+  &__content {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 24px;
+  }
+
+  &__left {
+    flex: 1;
+  }
+
+  &__date {
+    font-size: 22px;
+    font-weight: 500;
+    margin-bottom: 6px;
+  }
+
+  &__price, &__status {
+    font-size: 18px;
+    font-weight: 500;
+    letter-spacing: -0.18px;
+  }
+
+  &__price {
+    color: rgba($black100, .8);
+    margin-bottom: 30px;
+  }
+
+  &__status {
+    @include flex-align-center(8);
+    line-height: 1;
+  }
+
+  &__images {
+    display: flex;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+
+  &__image, &__more {
+    width: 78px;
+    height: 104px;
+  }
+
+  &__image {
+    @include objectCoverBg;
+    background-color: $gray;
+  }
+
+  &__more {
+    @include flex-center;
+    background: $gray100;
+    color: rgba($black100, .8);
+    font-weight: 500;
+    letter-spacing: -0.24px;
+    font-size: 24px;
+  }
+}

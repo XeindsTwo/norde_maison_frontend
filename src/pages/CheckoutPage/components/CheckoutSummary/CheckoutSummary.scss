@@ -112,6 +112,7 @@
 
   &__delivery {
     display: inline-block;
+    color: $black100;
 
     span:nth-child(2) {
       text-decoration: line-through;
