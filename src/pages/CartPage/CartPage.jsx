@@ -29,6 +29,7 @@ const CartPage = () => {
 
   const items = cart?.items || [];
   const isCartEmpty = !isLoading && items.length === 0;
+  const hasUnavailable = items.some(item => !item.is_available);
 
   const handleQuantityChange = (itemId, quantity) => {
 
@@ -97,6 +98,7 @@ const CartPage = () => {
               <CartSummary
                 cart={cart}
                 currency={currency}
+                hasUnavailable={hasUnavailable}
               />
             </>
           )}

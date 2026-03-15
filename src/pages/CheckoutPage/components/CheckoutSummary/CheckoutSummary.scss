@@ -1,0 +1,121 @@
+.checkout-summary {
+  border: 1px solid rgba(#000, 0.12);
+  overflow: hidden;
+  padding: 24px 26px;
+
+  &__items {
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__item {
+    padding: 22px 0;
+    @include flex-align-center(18);
+    border-bottom: 1px solid rgba(#000, 0.15);
+    transition: opacity .3s;
+
+    &:hover {
+      opacity: .7;
+    }
+
+    &:first-child {
+      padding-top: 0;
+    }
+  }
+
+  &__image {
+    width: 50px;
+    height: 67px;
+    object-fit: cover;
+    background: rgba(#000, 0.04);
+
+    &--placeholder {
+      background: rgba(#000, 0.06);
+    }
+  }
+
+  &__name {
+    font-size: 18px;
+    font-weight: 500;
+    margin-bottom: 6px;
+    line-height: 1.3;
+  }
+
+  &__variant {
+    line-height: 1.4;
+    font-size: 16px;
+    color: rgba(#000, 0.64);
+  }
+
+  &__price {
+    font-size: 18px;
+    font-weight: 500;
+    white-space: nowrap;
+    letter-spacing: -0.36px;
+    margin-left: auto;
+    margin-bottom: auto;
+
+    span {
+      color: rgba($black100, .64);
+    }
+  }
+
+  &__footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 16px;
+    padding-top: 16px;
+  }
+
+  &__footer-left {
+    @include flex-column(8);
+  }
+
+  &__total-label {
+    font-size: 22px;
+  }
+
+  &__grand {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    font-size: 22px;
+    letter-spacing: -0.22px;
+
+    span {
+      font-size: 22px;
+      font-weight: 600;
+    }
+  }
+
+  &__grand-old {
+    font-weight: 400;
+    color: rgba($black100, .54);
+    text-decoration: line-through;
+  }
+
+  &__rows {
+    @include flex-column(8);
+    text-align: right;
+  }
+
+  &__row {
+    color: rgba($black100, 0.55);
+
+    span {
+      display: inline-block;
+      margin-left: 6px;
+      color: $black100;
+    }
+  }
+
+  &__delivery {
+    display: inline-block;
+
+    span:nth-child(2) {
+      text-decoration: line-through;
+      color: rgba($black100, .64);
+    }
+  }
+}

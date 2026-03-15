@@ -1,0 +1,58 @@
+.checkout-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+
+  &__section {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  &__section-title {
+    font-size: 22px;
+    letter-spacing: -0.22px;
+    font-weight: 500;
+    margin-bottom: 4px;
+  }
+
+  &__row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  &__optional {
+    font-weight: 400;
+    text-transform: none;
+    letter-spacing: 0;
+    font-size: 11px;
+  }
+
+  &__submit {
+    @include flex-align-center(8);
+    justify-content: center;
+    width: 100%;
+    padding: 22px;
+    font-size: 20px;
+    font-weight: 600;
+    background: #7c3aed;
+    color: $white;
+    cursor: pointer;
+    transition: opacity 0.3s, transform 0.3s;
+    letter-spacing: -0.4px;
+
+    &:hover:not(:disabled) {
+      opacity: 0.88;
+    }
+
+    &:active:not(:disabled) {
+      transform: scale(0.99);
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+}

@@ -1,0 +1,104 @@
+.checkout-delivery {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 32px 0 40px;
+
+  &__title {
+    font-size: 20px;
+    font-weight: 500;
+    margin-bottom: 6px;
+  }
+
+  &__select-wrap {
+    position: relative;
+
+    &::after {
+      content: "";
+      position: absolute;
+      right: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 0;
+      height: 0;
+      border-left: 5px solid transparent;
+      border-right: 5px solid transparent;
+      border-top: 6px solid rgba(#000, 0.4);
+      pointer-events: none;
+    }
+  }
+
+  &__methods {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  &__icon {
+    margin-bottom: 12px;
+  }
+
+  &__method {
+    @include flex-column(0);
+    align-items: flex-start;
+    padding: 18px;
+    border: 1px solid rgba($black100, 0.1);
+    background: transparent;
+    transition: border-color 0.3s, background 0.3s;
+
+    &:hover {
+      border-color: rgba(#000, 0.25);
+    }
+
+    &--active {
+      pointer-events: none;
+      border-color: rgba($black100, 0.6);
+      background: rgba($black100, .03);
+    }
+
+    &-name {
+      font-size: 16px;
+      letter-spacing: -0.48px;
+      font-weight: 500;
+      margin-bottom: 6px;
+      color: rgba($black100, 0.8);
+    }
+
+    &-time {
+      font-size: 14px;
+      margin-bottom: 12px;
+      color: rgba($black100, 0.64);
+    }
+
+    &-price {
+      letter-spacing: -0.48px;
+      font-size: 16px;
+
+      b {
+        font-weight: 500;
+      }
+
+      s {
+        color: rgba($black100, .64);
+        margin-left: 6px;
+      }
+    }
+  }
+
+  &__checkbox {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    font-size: 13px;
+    color: rgba(#000, 0.55);
+    cursor: pointer;
+    user-select: none;
+
+    input[type="checkbox"] {
+      width: 15px;
+      height: 15px;
+      cursor: pointer;
+      accent-color: #111;
+    }
+  }
+}

@@ -1,18 +1,17 @@
 import {Routes, Route} from "react-router-dom";
 import {useRouteLoading} from "@/hooks/useRouteLoading";
-
 import HomePage from "@/pages/Home/HomePage";
 import GenderPage from "@/pages/GenderPage/GenderPage";
 import CatalogPage from "@/pages/CatalogPage/CatalogPage";
 import About from "@/pages/About/About";
 import ProductDetailPage from "@/pages/ProductDetailPage/ProductDetailPage";
-
 import PageLoader from "@/components/PageLoader/PageLoader";
 import AuthModal from "@/components/Modals/AuthModal/AuthModal";
 import SuccessModal from "@/components/Modals/AuthModal/components/SuccessModal.jsx";
 import ProtectedRoute from "@/components/ProtectedRoute.jsx";
 import ProfilePage from "@/pages/Profile/ProfilePage.jsx";
 import CartPage from "@/pages/CartPage/CartPage.jsx";
+import CheckoutPage from "@/pages/CheckoutPage/CheckoutPage.jsx"; // 🆕
 import SearchPageResult from "@/pages/SearchPage/SearchPageResult.jsx";
 
 function App() {
@@ -45,6 +44,14 @@ function App() {
               element={
                 <ProtectedRoute>
                   <CartPage/>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/checkout"
+              element={
+                <ProtectedRoute>
+                  <CheckoutPage/>
                 </ProtectedRoute>
               }
             />
