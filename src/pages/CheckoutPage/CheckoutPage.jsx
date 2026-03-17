@@ -1,4 +1,5 @@
 import {useState, useMemo} from "react";
+import {useNavigate} from "react-router-dom";
 import Header from "@/components/Header/Header.jsx";
 import Footer from "@/components/Footer/Footer.jsx";
 import {useOrderPreview} from "@/hooks/useOrderPreview";
@@ -11,7 +12,6 @@ import CheckoutDeliveryCountry from "./components/CheckoutDelivery/CheckoutDeliv
 import CheckoutDeliveryMethods from "./components/CheckoutDelivery/CheckoutDeliveryMethods";
 import CheckoutDeliveryAddress from "./components/CheckoutDelivery/CheckoutDeliveryAddress";
 import CheckoutSummary from "./components/CheckoutSummary/CheckoutSummary";
-import CheckoutSuccessModal from "./components/CheckoutSuccessModal";
 import Skeleton from "react-loading-skeleton";
 import "./CheckoutPage.scss";
 
@@ -21,12 +21,19 @@ const CheckoutPage = () => {
   const {data: preview, isLoading} = useOrderPreview();
   const {currency} = useCurrency();
   const {user} = useAuth();
+  const navigate = useNavigate();
 
-  const [delivery, setDelivery] = useState({country: "RU", method: "cdek_pvz"});
-  const [successOrder, setSuccessOrder] = useState(null);
+  const [delivery, setDelivery] = useState({
+    country: "RU",
+    method: "cdek_pvz"
+  });
 
   const {mutate: submitOrder, isPending} = useCreateOrder({
-    onSuccess: (data) => setSuccessOrder(data.order_number),
+    onSuccess: (order) => {
+      navigate("/profile", {
+        state: { orderSuccess: true, orderData: order }
+      });
+    }
   });
 
   const profileDefaults = useMemo(() => ({
@@ -37,7 +44,7 @@ const CheckoutPage = () => {
     address: user?.profile?.address || "",
     middle_name: "",
     comment: "",
-    save_address: false,
+    save_address: false
   }), [user]);
 
   const regions = preview?.delivery_regions || [];
@@ -46,30 +53,27 @@ const CheckoutPage = () => {
   const deliveryCurrency = COUNTRY_CURRENCY[delivery.country] || "rub";
 
   const deliveryPrice = useMemo(() => {
-    const region = currentRegion;
-    if (!region || delivery.method === "pickup") return 0;
-
+    if (!currentRegion || delivery.method === "pickup") return 0;
     const prices = {
       rub: {
-        pvz: Number(region.cdek_pvz_price),
-        pvz_free: Number(region.cdek_pvz_free_from),
-        courier: Number(region.cdek_courier_price),
-        courier_free: Number(region.cdek_courier_free_from),
+        pvz: Number(currentRegion.cdek_pvz_price),
+        pvz_free: Number(currentRegion.cdek_pvz_free_from),
+        courier: Number(currentRegion.cdek_courier_price),
+        courier_free: Number(currentRegion.cdek_courier_free_from)
       },
       kzt: {
-        pvz: Number(region.cdek_pvz_price_kzt),
-        pvz_free: Number(region.cdek_pvz_free_from_kzt),
-        courier: Number(region.cdek_courier_price_kzt),
-        courier_free: Number(region.cdek_courier_free_from_kzt),
+        pvz: Number(currentRegion.cdek_pvz_price_kzt),
+        pvz_free: Number(currentRegion.cdek_pvz_free_from_kzt),
+        courier: Number(currentRegion.cdek_courier_price_kzt),
+        courier_free: Number(currentRegion.cdek_courier_free_from_kzt)
       },
       byn: {
-        pvz: Number(region.cdek_pvz_price_byn),
-        pvz_free: Number(region.cdek_pvz_free_from_byn),
-        courier: Number(region.cdek_courier_price_byn),
-        courier_free: Number(region.cdek_courier_free_from_byn),
-      },
+        pvz: Number(currentRegion.cdek_pvz_price_byn),
+        pvz_free: Number(currentRegion.cdek_pvz_free_from_byn),
+        courier: Number(currentRegion.cdek_courier_price_byn),
+        courier_free: Number(currentRegion.cdek_courier_free_from_byn)
+      }
     };
-
     const p = prices[deliveryCurrency];
     const subtotalInDeliveryCurrency = convertPrice(subtotal, currency, deliveryCurrency);
 
@@ -87,21 +91,13 @@ const CheckoutPage = () => {
       country: delivery.country,
       delivery_method: delivery.method,
       delivery_price: deliveryPrice,
-      delivery_extra: {
-        entrance: entrance || "",
-        floor: floor || "",
-        apartment: apartment || ""
-      },
+      delivery_extra: {entrance: entrance || "", floor: floor || "", apartment: apartment || ""}
     });
   };
 
   const deliverySlot = ({register, errors, watch, setValue}) => (
     <>
-      <CheckoutDeliveryCountry
-        regions={regions}
-        delivery={delivery}
-        onChange={setDelivery}
-      />
+      <CheckoutDeliveryCountry regions={regions} delivery={delivery} onChange={setDelivery}/>
       <CheckoutDeliveryMethods
         regions={regions}
         delivery={delivery}
@@ -118,15 +114,8 @@ const CheckoutPage = () => {
         setValue={setValue}
       />
       <div className="checkout-page__field">
-        <label className="checkout-page__label">
-          Комментарий <span className="checkout-delivery__optional">(опционально)</span>
-        </label>
-        <textarea
-          className="checkout-page__input checkout-page__textarea"
-          placeholder="Ваше сообщение"
-          rows={4}
-          {...register("comment")}
-        />
+        <label className="checkout-page__label">Комментарий</label>
+        <textarea className="checkout-page__input checkout-page__textarea" rows={4} {...register("comment")}/>
       </div>
       <label className="checkout-delivery__checkbox">
         <input type="checkbox" {...register("save_address")}/>
@@ -135,35 +124,17 @@ const CheckoutPage = () => {
     </>
   );
 
-  if (isLoading) {
-    return (
-      <>
-        <Header/>
-        <main className="checkout-page">
-          <div className="container container--padding">
-            <CheckoutSkeleton/>
-          </div>
-        </main>
-        <Footer/>
-      </>
-    );
-  }
-
-  if (!preview?.items?.length) {
-    return (
-      <>
-        <Header/>
-        <main className="checkout-page">
-          <div className="container container--padding">
-            <div className="checkout-page__empty">
-              <p>Корзина пуста, вы ещё не добавили товары</p>
-            </div>
-          </div>
-        </main>
-        <Footer/>
-      </>
-    );
-  }
+  if (isLoading) return (
+    <>
+      <Header/>
+      <main className="checkout-page">
+        <div className="container container--padding">
+          <Skeleton height={500}/>
+        </div>
+      </main>
+      <Footer/>
+    </>
+  );
 
   return (
     <>
@@ -197,26 +168,8 @@ const CheckoutPage = () => {
         </div>
       </main>
       <Footer/>
-
-      <CheckoutSuccessModal
-        isOpen={!!successOrder}
-        orderNumber={successOrder}
-        onClose={() => setSuccessOrder(null)}
-      />
     </>
   );
 };
-
-const CheckoutSkeleton = () => (
-  <div className="checkout-page__layout">
-    <div className="checkout-page__left">
-      <Skeleton height={420}/>
-      <Skeleton height={320}/>
-    </div>
-    <div className="checkout-page__right">
-      <Skeleton height={380}/>
-    </div>
-  </div>
-);
 
 export default CheckoutPage;
