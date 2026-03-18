@@ -2,9 +2,15 @@ import {useForm} from "react-hook-form";
 import IomoneyIcon from "@/assets/images/icons/iomoney.svg";
 import "./CheckoutForm.scss";
 
-const CheckoutForm = ({onSubmit, isPending, deliverySlot, defaultValues}) => {
+const CheckoutForm = ({onSubmit, isPending, deliverySlot, defaultValues, orderCreated, paymentUrl, orderNumber}) => {
   const methods = useForm({defaultValues});
   const {register, handleSubmit, formState: {errors}, watch, setValue} = methods;
+
+  const handlePayment = () => {
+    if (paymentUrl) {
+      window.open(paymentUrl, '_blank', 'noopener,noreferrer');
+    }
+  };
 
   return (
     <form className="checkout-form" onSubmit={handleSubmit(onSubmit)}>
@@ -73,13 +79,24 @@ const CheckoutForm = ({onSubmit, isPending, deliverySlot, defaultValues}) => {
         {deliverySlot({register, errors, watch, setValue})}
       </div>
 
-      <button
-        type="submit"
-        className="checkout-form__submit"
-        disabled={isPending}
-      >
-        {isPending ? <>Оформляем</> : <><IomoneyIcon/>Перейти к оплате</>}
-      </button>
+      {!orderCreated ? (
+        <button
+          type="submit"
+          className="checkout-form__submit"
+          disabled={isPending}
+        >
+          {isPending ? <>Оформляем</> : <><IomoneyIcon/>Перейти к оплате</>}
+        </button>
+      ) : (
+        <button
+          type="button"
+          className="checkout-form__submit"
+          onClick={handlePayment}
+          disabled={isPending}
+        >
+          <IomoneyIcon/>Оплатить заказ #{orderNumber}
+        </button>
+      )}
     </form>
   );
 };

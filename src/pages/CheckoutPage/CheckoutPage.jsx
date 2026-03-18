@@ -1,12 +1,13 @@
-import {useState, useMemo} from "react";
-import {useNavigate} from "react-router-dom";
+import { useState, useMemo, useEffect } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import Header from "@/components/Header/Header.jsx";
 import Footer from "@/components/Footer/Footer.jsx";
-import {useOrderPreview} from "@/hooks/useOrderPreview";
-import {useCreateOrder} from "@/hooks/useCreateOrder";
-import {useCurrency} from "@/context/CurrencyContext";
-import {useAuth} from "@/context/AuthContext";
-import {getSubtotal, convertPrice} from "@/utils/formatPrice";
+import { useOrderPreview } from "@/hooks/useOrderPreview";
+import { useCreateOrder } from "@/hooks/useCreateOrder";
+import { useCurrency } from "@/context/CurrencyContext";
+import { useAuth } from "@/context/AuthContext";
+import { getSubtotal, convertPrice } from "@/utils/formatPrice";
+
 import CheckoutForm from "./components/CheckoutForm/CheckoutForm";
 import CheckoutDeliveryCountry from "./components/CheckoutDelivery/CheckoutDeliveryCountry";
 import CheckoutDeliveryMethods from "./components/CheckoutDelivery/CheckoutDeliveryMethods";
@@ -15,26 +16,53 @@ import CheckoutSummary from "./components/CheckoutSummary/CheckoutSummary";
 import Skeleton from "react-loading-skeleton";
 import "./CheckoutPage.scss";
 
-const COUNTRY_CURRENCY = {RU: "rub", KZ: "kzt", BY: "byn"};
+const COUNTRY_CURRENCY = { RU: "rub", KZ: "kzt", BY: "byn" };
 
 const CheckoutPage = () => {
-  const {data: preview, isLoading} = useOrderPreview();
-  const {currency} = useCurrency();
-  const {user} = useAuth();
+  const [searchParams] = useSearchParams();
+  const { data: preview = {}, isLoading, error } = useOrderPreview();
+  const { currency } = useCurrency();
+  const { user } = useAuth();
   const navigate = useNavigate();
 
-  const [delivery, setDelivery] = useState({
-    country: "RU",
-    method: "cdek_pvz"
-  });
+  const [delivery, setDelivery] = useState({ country: "RU", method: "cdek_pvz" });
+  const [paymentUrl, setPaymentUrl] = useState(null);
+  const [paymentId, setPaymentId] = useState(null);
+  const [orderNumber, setOrderNumber] = useState(null);
+  const [orderStatus, setOrderStatus] = useState("pending");
 
-  const {mutate: submitOrder, isPending} = useCreateOrder({
-    onSuccess: (order) => {
-      navigate("/profile", {
-        state: { orderSuccess: true, orderData: order }
-      });
+  const { mutate: submitOrder, isPending } = useCreateOrder({
+    onSuccess: (data) => {
+      setPaymentUrl(data.payment_url);
+      setOrderNumber(data.order_number);
+      setPaymentId(data.payment_id);
     }
   });
+
+  useEffect(() => {
+    const orderFromUrl = searchParams.get("order");
+    if (orderFromUrl && orderFromUrl === orderNumber && orderStatus === "assembly") {
+      navigate("/profile");
+    }
+  }, [searchParams, orderNumber, orderStatus, navigate]);
+
+  useEffect(() => {
+    let interval;
+    if (paymentId) {
+      interval = setInterval(async () => {
+        try {
+          const { data } = await api.get(`orders/payment/${paymentId}/status/`);
+          if (data.succeeded) {
+            navigate("/profile");
+            clearInterval(interval);
+          }
+        } catch (e) {
+          console.log("Polling payment status error:", e);
+        }
+      }, 2000);
+    }
+    return () => clearInterval(interval);
+  }, [paymentId, navigate]);
 
   const profileDefaults = useMemo(() => ({
     first_name: user?.first_name || "",
@@ -47,7 +75,7 @@ const CheckoutPage = () => {
     save_address: false
   }), [user]);
 
-  const regions = preview?.delivery_regions || [];
+  const regions = preview.delivery_regions || [];
   const currentRegion = regions.find(r => r.code === delivery.country);
   const subtotal = getSubtotal(preview, currency);
   const deliveryCurrency = COUNTRY_CURRENCY[delivery.country] || "rub";
@@ -76,7 +104,6 @@ const CheckoutPage = () => {
     };
     const p = prices[deliveryCurrency];
     const subtotalInDeliveryCurrency = convertPrice(subtotal, currency, deliveryCurrency);
-
     if (delivery.method === "cdek_pvz") return subtotalInDeliveryCurrency >= p.pvz_free ? 0 : p.pvz;
     if (delivery.method === "cdek_courier") return subtotalInDeliveryCurrency >= p.courier_free ? 0 : p.courier;
     return 0;
@@ -85,19 +112,20 @@ const CheckoutPage = () => {
   const deliveryPriceConverted = convertPrice(deliveryPrice, deliveryCurrency, currency);
   const total = subtotal + deliveryPriceConverted;
 
-  const handleSubmit = ({entrance, floor, apartment, ...formData}) => {
+  const handleSubmit = ({ entrance, floor, apartment, ...formData }) => {
     submitOrder({
       ...formData,
       country: delivery.country,
       delivery_method: delivery.method,
       delivery_price: deliveryPrice,
-      delivery_extra: {entrance: entrance || "", floor: floor || "", apartment: apartment || ""}
+      currency,
+      delivery_extra: { entrance: entrance || "", floor: floor || "", apartment: apartment || "" }
     });
   };
 
-  const deliverySlot = ({register, errors, watch, setValue}) => (
+  const deliverySlot = ({ register, errors, watch, setValue }) => (
     <>
-      <CheckoutDeliveryCountry regions={regions} delivery={delivery} onChange={setDelivery}/>
+      <CheckoutDeliveryCountry regions={regions} delivery={delivery} onChange={setDelivery} />
       <CheckoutDeliveryMethods
         regions={regions}
         delivery={delivery}
@@ -115,30 +143,44 @@ const CheckoutPage = () => {
       />
       <div className="checkout-page__field">
         <label className="checkout-page__label">Комментарий</label>
-        <textarea className="checkout-page__input checkout-page__textarea" rows={4} {...register("comment")}/>
+        <textarea className="checkout-page__input checkout-page__textarea" rows={4} {...register("comment")} />
       </div>
       <label className="checkout-delivery__checkbox">
-        <input type="checkbox" {...register("save_address")}/>
+        <input type="checkbox" {...register("save_address")} />
         <span>Сохранить адрес доставки</span>
       </label>
     </>
   );
 
-  if (isLoading) return (
-    <>
-      <Header/>
-      <main className="checkout-page">
-        <div className="container container--padding">
-          <Skeleton height={500}/>
-        </div>
-      </main>
-      <Footer/>
-    </>
-  );
+  if (isLoading)
+    return (
+      <>
+        <Header />
+        <main className="checkout-page">
+          <div className="container container--padding">
+            <Skeleton height={500} />
+          </div>
+        </main>
+        <Footer />
+      </>
+    );
+
+  if (error)
+    return (
+      <>
+        <Header />
+        <main className="checkout-page">
+          <div className="container container--padding">
+            <p className="checkout-page__empty">Корзина пустая ¯\_(ツ)_/¯</p>
+          </div>
+        </main>
+        <Footer />
+      </>
+    );
 
   return (
     <>
-      <Header/>
+      <Header />
       <main className="checkout-page">
         <div className="container container--padding">
           <div className="checkout-page__layout">
@@ -149,11 +191,14 @@ const CheckoutPage = () => {
                 isPending={isPending}
                 defaultValues={profileDefaults}
                 deliverySlot={deliverySlot}
+                orderCreated={!!paymentUrl}
+                paymentUrl={paymentUrl}
+                orderNumber={orderNumber}
               />
             </div>
             <div className="checkout-page__right">
               <CheckoutSummary
-                items={preview.items}
+                items={preview.items || []}
                 subtotal={subtotal}
                 deliveryPrice={deliveryPrice}
                 deliveryPriceConverted={deliveryPriceConverted}
@@ -167,7 +212,7 @@ const CheckoutPage = () => {
           </div>
         </div>
       </main>
-      <Footer/>
+      <Footer />
     </>
   );
 };

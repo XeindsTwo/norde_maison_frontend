@@ -3,8 +3,8 @@ import "./CheckoutSummary.scss";
 import {Link} from "react-router-dom";
 
 const CheckoutSummary = ({
-                           items,
-                           subtotal,
+                           items = preview?.items || [],
+                           subtotal = getSubtotal(preview || {}, currency) || 0,
                            deliveryPrice,
                            deliveryPriceConverted,
                            currentRegion,
