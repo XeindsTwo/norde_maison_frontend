@@ -8,7 +8,7 @@ const CheckoutForm = ({onSubmit, isPending, deliverySlot, defaultValues, orderCr
 
   const handlePayment = () => {
     if (paymentUrl) {
-      window.open(paymentUrl, '_blank', 'noopener,noreferrer');
+      window.location.href = paymentUrl;
     }
   };
 
@@ -94,7 +94,7 @@ const CheckoutForm = ({onSubmit, isPending, deliverySlot, defaultValues, orderCr
           onClick={handlePayment}
           disabled={isPending}
         >
-          <IomoneyIcon/>Оплатить заказ #{orderNumber}
+          <IomoneyIcon/>Оплатить заказ
         </button>
       )}
     </form>

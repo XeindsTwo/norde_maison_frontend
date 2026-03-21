@@ -7,6 +7,7 @@ import { useCreateOrder } from "@/hooks/useCreateOrder";
 import { useCurrency } from "@/context/CurrencyContext";
 import { useAuth } from "@/context/AuthContext";
 import { getSubtotal, convertPrice } from "@/utils/formatPrice";
+import { api } from "@/api/http";
 
 import CheckoutForm from "./components/CheckoutForm/CheckoutForm";
 import CheckoutDeliveryCountry from "./components/CheckoutDelivery/CheckoutDeliveryCountry";
@@ -20,16 +21,19 @@ const COUNTRY_CURRENCY = { RU: "rub", KZ: "kzt", BY: "byn" };
 
 const CheckoutPage = () => {
   const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
+
   const { data: preview = {}, isLoading, error } = useOrderPreview();
   const { currency } = useCurrency();
   const { user } = useAuth();
-  const navigate = useNavigate();
 
   const [delivery, setDelivery] = useState({ country: "RU", method: "cdek_pvz" });
   const [paymentUrl, setPaymentUrl] = useState(null);
   const [paymentId, setPaymentId] = useState(null);
   const [orderNumber, setOrderNumber] = useState(null);
-  const [orderStatus, setOrderStatus] = useState("pending");
+
+  // 👉 ВАЖНО: ловим возврат из ЮKassa
+  const orderFromUrl = searchParams.get("order");
 
   const { mutate: submitOrder, isPending } = useCreateOrder({
     onSuccess: (data) => {
@@ -39,30 +43,58 @@ const CheckoutPage = () => {
     }
   });
 
+  // 🔥 1. Если вернулись с ЮKassa → начинаем polling
   useEffect(() => {
-    const orderFromUrl = searchParams.get("order");
-    if (orderFromUrl && orderFromUrl === orderNumber && orderStatus === "assembly") {
-      navigate("/profile");
-    }
-  }, [searchParams, orderNumber, orderStatus, navigate]);
+    if (!orderFromUrl) return;
 
-  useEffect(() => {
-    let interval;
-    if (paymentId) {
-      interval = setInterval(async () => {
-        try {
-          const { data } = await api.get(`orders/payment/${paymentId}/status/`);
-          if (data.succeeded) {
-            navigate("/profile");
-            clearInterval(interval);
-          }
-        } catch (e) {
-          console.log("Polling payment status error:", e);
+    let interval = setInterval(async () => {
+      try {
+        const { data } = await api.get(`orders/${orderFromUrl}/status/`);
+
+        if (data.status === "assembly") {
+          clearInterval(interval);
+
+          // 👉 ГЛАВНОЕ: редирект в профиль с данными
+          navigate("/profile", {
+            state: {
+              orderSuccess: true,
+              orderNumber: orderFromUrl
+            }
+          });
         }
-      }, 2000);
-    }
+      } catch (e) {
+        console.error("Polling error:", e);
+      }
+    }, 1500);
+
     return () => clearInterval(interval);
-  }, [paymentId, navigate]);
+  }, [orderFromUrl, navigate]);
+
+  // 🔥 2. Polling если оплата открыта в новой вкладке
+  useEffect(() => {
+    if (!paymentId) return;
+
+    let interval = setInterval(async () => {
+      try {
+        const { data } = await api.get(`orders/payment/${paymentId}/status/`);
+
+        if (data.succeeded) {
+          clearInterval(interval);
+
+          navigate("/profile", {
+            state: {
+              orderSuccess: true,
+              orderNumber
+            }
+          });
+        }
+      } catch (e) {
+        console.error("Polling error:", e);
+      }
+    }, 1500);
+
+    return () => clearInterval(interval);
+  }, [paymentId, orderNumber, navigate]);
 
   const profileDefaults = useMemo(() => ({
     first_name: user?.first_name || "",
@@ -77,37 +109,35 @@ const CheckoutPage = () => {
 
   const regions = preview.delivery_regions || [];
   const currentRegion = regions.find(r => r.code === delivery.country);
+
   const subtotal = getSubtotal(preview, currency);
   const deliveryCurrency = COUNTRY_CURRENCY[delivery.country] || "rub";
 
   const deliveryPrice = useMemo(() => {
     if (!currentRegion || delivery.method === "pickup") return 0;
+
     const prices = {
       rub: {
         pvz: Number(currentRegion.cdek_pvz_price),
         pvz_free: Number(currentRegion.cdek_pvz_free_from),
         courier: Number(currentRegion.cdek_courier_price),
         courier_free: Number(currentRegion.cdek_courier_free_from)
-      },
-      kzt: {
-        pvz: Number(currentRegion.cdek_pvz_price_kzt),
-        pvz_free: Number(currentRegion.cdek_pvz_free_from_kzt),
-        courier: Number(currentRegion.cdek_courier_price_kzt),
-        courier_free: Number(currentRegion.cdek_courier_free_from_kzt)
-      },
-      byn: {
-        pvz: Number(currentRegion.cdek_pvz_price_byn),
-        pvz_free: Number(currentRegion.cdek_pvz_free_from_byn),
-        courier: Number(currentRegion.cdek_courier_price_byn),
-        courier_free: Number(currentRegion.cdek_courier_free_from_byn)
       }
     };
+
     const p = prices[deliveryCurrency];
-    const subtotalInDeliveryCurrency = convertPrice(subtotal, currency, deliveryCurrency);
-    if (delivery.method === "cdek_pvz") return subtotalInDeliveryCurrency >= p.pvz_free ? 0 : p.pvz;
-    if (delivery.method === "cdek_courier") return subtotalInDeliveryCurrency >= p.courier_free ? 0 : p.courier;
+    const subtotalConverted = convertPrice(subtotal, currency, deliveryCurrency);
+
+    if (delivery.method === "cdek_pvz") {
+      return subtotalConverted >= p.pvz_free ? 0 : p.pvz;
+    }
+
+    if (delivery.method === "cdek_courier") {
+      return subtotalConverted >= p.courier_free ? 0 : p.courier;
+    }
+
     return 0;
-  }, [currentRegion, delivery.method, deliveryCurrency, subtotal, currency]);
+  }, [currentRegion, delivery.method, subtotal, currency, deliveryCurrency]);
 
   const deliveryPriceConverted = convertPrice(deliveryPrice, deliveryCurrency, currency);
   const total = subtotal + deliveryPriceConverted;
@@ -119,7 +149,11 @@ const CheckoutPage = () => {
       delivery_method: delivery.method,
       delivery_price: deliveryPrice,
       currency,
-      delivery_extra: { entrance: entrance || "", floor: floor || "", apartment: apartment || "" }
+      delivery_extra: {
+        entrance: entrance || "",
+        floor: floor || "",
+        apartment: apartment || ""
+      }
     });
   };
 
@@ -152,7 +186,7 @@ const CheckoutPage = () => {
     </>
   );
 
-  if (isLoading)
+  if (isLoading) {
     return (
       <>
         <Header />
@@ -164,8 +198,9 @@ const CheckoutPage = () => {
         <Footer />
       </>
     );
+  }
 
-  if (error)
+  if (error) {
     return (
       <>
         <Header />
@@ -177,6 +212,7 @@ const CheckoutPage = () => {
         <Footer />
       </>
     );
+  }
 
   return (
     <>
