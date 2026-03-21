@@ -6,15 +6,16 @@ import { useOrderPreview } from "@/hooks/useOrderPreview";
 import { useCreateOrder } from "@/hooks/useCreateOrder";
 import { useCurrency } from "@/context/CurrencyContext";
 import { useAuth } from "@/context/AuthContext";
-import { getSubtotal, convertPrice } from "@/utils/formatPrice";
+import { getSubtotal, convertPrice, formatPrice } from "@/utils/formatPrice";
 import { api } from "@/api/http";
-
 import CheckoutForm from "./components/CheckoutForm/CheckoutForm";
 import CheckoutDeliveryCountry from "./components/CheckoutDelivery/CheckoutDeliveryCountry";
 import CheckoutDeliveryMethods from "./components/CheckoutDelivery/CheckoutDeliveryMethods";
 import CheckoutDeliveryAddress from "./components/CheckoutDelivery/CheckoutDeliveryAddress";
 import CheckoutSummary from "./components/CheckoutSummary/CheckoutSummary";
 import Skeleton from "react-loading-skeleton";
+import IomoneyIcon from "@/assets/images/icons/iomoney.svg";
+import PendingOrder from "@/components/PendingOrder/PendingOrder.jsx";
 import "./CheckoutPage.scss";
 
 const COUNTRY_CURRENCY = { RU: "rub", KZ: "kzt", BY: "byn" };
@@ -22,17 +23,14 @@ const COUNTRY_CURRENCY = { RU: "rub", KZ: "kzt", BY: "byn" };
 const CheckoutPage = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-
   const { data: preview = {}, isLoading, error } = useOrderPreview();
   const { currency } = useCurrency();
   const { user } = useAuth();
-
   const [delivery, setDelivery] = useState({ country: "RU", method: "cdek_pvz" });
   const [paymentUrl, setPaymentUrl] = useState(null);
   const [paymentId, setPaymentId] = useState(null);
   const [orderNumber, setOrderNumber] = useState(null);
-
-  // 👉 ВАЖНО: ловим возврат из ЮKassa
+  const [pendingOrder, setPendingOrder] = useState(null);
   const orderFromUrl = searchParams.get("order");
 
   const { mutate: submitOrder, isPending } = useCreateOrder({
@@ -43,56 +41,51 @@ const CheckoutPage = () => {
     }
   });
 
-  // 🔥 1. Если вернулись с ЮKassa → начинаем polling
+  // Получаем pending order
+  useEffect(() => {
+    if (!user) return;
+    const fetchPending = async () => {
+      try {
+        const { data } = await api.get("/orders/checkout/current-pending/");
+        if (data.has_pending) setPendingOrder(data);
+      } catch (e) {
+        console.error("Error fetching pending order:", e);
+      }
+    };
+    fetchPending();
+  }, [user]);
+
+  // Проверка статуса созданного заказа через URL
   useEffect(() => {
     if (!orderFromUrl) return;
-
-    let interval = setInterval(async () => {
+    const interval = setInterval(async () => {
       try {
         const { data } = await api.get(`orders/${orderFromUrl}/status/`);
-
         if (data.status === "assembly") {
           clearInterval(interval);
-
-          // 👉 ГЛАВНОЕ: редирект в профиль с данными
-          navigate("/profile", {
-            state: {
-              orderSuccess: true,
-              orderNumber: orderFromUrl
-            }
-          });
+          navigate("/profile", { state: { orderSuccess: true, orderNumber: orderFromUrl } });
         }
       } catch (e) {
         console.error("Polling error:", e);
       }
     }, 1500);
-
     return () => clearInterval(interval);
   }, [orderFromUrl, navigate]);
 
-  // 🔥 2. Polling если оплата открыта в новой вкладке
+  // Проверка оплаты
   useEffect(() => {
     if (!paymentId) return;
-
-    let interval = setInterval(async () => {
+    const interval = setInterval(async () => {
       try {
         const { data } = await api.get(`orders/payment/${paymentId}/status/`);
-
         if (data.succeeded) {
           clearInterval(interval);
-
-          navigate("/profile", {
-            state: {
-              orderSuccess: true,
-              orderNumber
-            }
-          });
+          navigate("/profile", { state: { orderSuccess: true, orderNumber } });
         }
       } catch (e) {
         console.error("Polling error:", e);
       }
     }, 1500);
-
     return () => clearInterval(interval);
   }, [paymentId, orderNumber, navigate]);
 
@@ -109,13 +102,11 @@ const CheckoutPage = () => {
 
   const regions = preview.delivery_regions || [];
   const currentRegion = regions.find(r => r.code === delivery.country);
-
   const subtotal = getSubtotal(preview, currency);
   const deliveryCurrency = COUNTRY_CURRENCY[delivery.country] || "rub";
 
   const deliveryPrice = useMemo(() => {
     if (!currentRegion || delivery.method === "pickup") return 0;
-
     const prices = {
       rub: {
         pvz: Number(currentRegion.cdek_pvz_price),
@@ -124,18 +115,10 @@ const CheckoutPage = () => {
         courier_free: Number(currentRegion.cdek_courier_free_from)
       }
     };
-
     const p = prices[deliveryCurrency];
     const subtotalConverted = convertPrice(subtotal, currency, deliveryCurrency);
-
-    if (delivery.method === "cdek_pvz") {
-      return subtotalConverted >= p.pvz_free ? 0 : p.pvz;
-    }
-
-    if (delivery.method === "cdek_courier") {
-      return subtotalConverted >= p.courier_free ? 0 : p.courier;
-    }
-
+    if (delivery.method === "cdek_pvz") return subtotalConverted >= p.pvz_free ? 0 : p.pvz;
+    if (delivery.method === "cdek_courier") return subtotalConverted >= p.courier_free ? 0 : p.courier;
     return 0;
   }, [currentRegion, delivery.method, subtotal, currency, deliveryCurrency]);
 
@@ -149,11 +132,7 @@ const CheckoutPage = () => {
       delivery_method: delivery.method,
       delivery_price: deliveryPrice,
       currency,
-      delivery_extra: {
-        entrance: entrance || "",
-        floor: floor || "",
-        apartment: apartment || ""
-      }
+      delivery_extra: { entrance: entrance || "", floor: floor || "", apartment: apartment || "" }
     });
   };
 
@@ -186,33 +165,29 @@ const CheckoutPage = () => {
     </>
   );
 
-  if (isLoading) {
-    return (
-      <>
-        <Header />
-        <main className="checkout-page">
-          <div className="container container--padding">
-            <Skeleton height={500} />
-          </div>
-        </main>
-        <Footer />
-      </>
-    );
-  }
+  const hasItems = (preview.items || []).length > 0;
 
-  if (error) {
-    return (
-      <>
-        <Header />
-        <main className="checkout-page">
-          <div className="container container--padding">
-            <p className="checkout-page__empty">Корзина пустая ¯\_(ツ)_/¯</p>
-          </div>
-        </main>
-        <Footer />
-      </>
-    );
-  }
+  if (isLoading) return (
+    <>
+      <Header />
+      <main className="checkout-page">
+        <div className="container container--padding"><Skeleton height={500} /></div>
+      </main>
+      <Footer />
+    </>
+  );
+
+  if (error && !pendingOrder) return (
+    <>
+      <Header />
+      <main className="checkout-page">
+        <div className="container container--padding">
+          <p className="checkout-page__empty">Корзина пустая ¯\_(ツ)_/¯</p>
+        </div>
+      </main>
+      <Footer />
+    </>
+  );
 
   return (
     <>
@@ -222,28 +197,42 @@ const CheckoutPage = () => {
           <div className="checkout-page__layout">
             <div className="checkout-page__left">
               <h1 className="checkout-page__title">Оформление заказа</h1>
-              <CheckoutForm
-                onSubmit={handleSubmit}
-                isPending={isPending}
-                defaultValues={profileDefaults}
-                deliverySlot={deliverySlot}
-                orderCreated={!!paymentUrl}
-                paymentUrl={paymentUrl}
-                orderNumber={orderNumber}
-              />
+
+              {pendingOrder ? (
+                <PendingOrder
+                  order={pendingOrder}
+                  currency={currency}
+                  onPayClick={() => window.location.href = pendingOrder.payment_url}
+                />
+              ) : hasItems ? (
+                <CheckoutForm
+                  onSubmit={handleSubmit}
+                  isPending={isPending}
+                  defaultValues={profileDefaults}
+                  deliverySlot={deliverySlot}
+                  orderCreated={!!paymentUrl}
+                  paymentUrl={paymentUrl}
+                  orderNumber={orderNumber}
+                />
+              ) : (
+                <p className="checkout-page__empty">Корзина пустая ¯\_(ツ)_/¯</p>
+              )}
             </div>
+
             <div className="checkout-page__right">
-              <CheckoutSummary
-                items={preview.items || []}
-                subtotal={subtotal}
-                deliveryPrice={deliveryPrice}
-                deliveryPriceConverted={deliveryPriceConverted}
-                currentRegion={currentRegion}
-                deliveryMethod={delivery.method}
-                currency={currency}
-                deliveryCurrency={deliveryCurrency}
-                total={total}
-              />
+              {!pendingOrder && hasItems && (
+                <CheckoutSummary
+                  items={preview.items || []}
+                  subtotal={subtotal}
+                  deliveryPrice={deliveryPrice}
+                  deliveryPriceConverted={deliveryPriceConverted}
+                  currentRegion={currentRegion}
+                  deliveryMethod={delivery.method}
+                  currency={currency}
+                  deliveryCurrency={deliveryCurrency}
+                  total={total}
+                />
+              )}
             </div>
           </div>
         </div>

@@ -34,7 +34,7 @@
   }
 
   &__submit {
-    @include flex-align-center(8);
+    @include flex-align-center(9);
     justify-content: center;
     width: 100%;
     padding: 22px;
@@ -57,6 +57,11 @@
     &:disabled {
       opacity: 0.5;
       cursor: not-allowed;
+    }
+
+    &.small {
+      font-size: 18px;
+      padding: 18px;
     }
   }
 }

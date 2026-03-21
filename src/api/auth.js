@@ -20,3 +20,6 @@ export const changePassword = (data) =>
 
 export const getUserOrders = () =>
   api.get("auth/orders/");
+
+export const getPendingOrder = () =>
+  api.get("orders/checkout/current-pending/");
