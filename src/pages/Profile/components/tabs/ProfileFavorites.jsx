@@ -1,81 +1,98 @@
 import ProductCard from "@/components/ProductCard/ProductCard";
-import {useFavorites} from "@/hooks/useFavorites";
-import {useAuth} from "@/context/AuthContext";
+import { useFavorites } from "@/hooks/useFavorites";
+import { useAuth } from "@/context/AuthContext";
 import Skeleton from "react-loading-skeleton";
-import {AnimatePresence, motion} from "framer-motion";
-import {useEffect, useState, useRef} from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import { useState, useRef } from "react";
 
 const ProfileFavorites = () => {
+  const { isAuth } = useAuth();
 
-  const {isAuth} = useAuth();
-  const {favorites, isLoading, toggle} = useFavorites(isAuth);
+  const {
+    favorites,
+    isLoading,
+    mutation,
+    isFavorite,
+  } = useFavorites(isAuth, {
+    skipInvalidate: true,
+  });
 
-  const [list, setList] = useState([]);
-  const removingRef = useRef(false);
+  const initialList = Array.isArray(favorites)
+    ? favorites
+    : favorites?.data || [];
 
-  useEffect(() => {
-    if (!removingRef.current) {
-      setList(favorites);
-    }
-  }, [favorites]);
+  const [uiList, setUiList] = useState(initialList);
+  const initialized = useRef(false);
 
-  const handleRemove = async (productId) => {
+  if (!initialized.current && initialList.length) {
+    setUiList(initialList);
+    initialized.current = true;
+  }
 
-    if (removingRef.current) return;
+  const handleRemove = (productId) => {
+    if (!isAuth) return;
 
-    removingRef.current = true;
+    let removedItem;
 
-    setList(prev =>
-      prev.filter(
-        item => String(item?.product?.id) !== String(productId)
-      )
-    );
+    setUiList((prev) => {
+      const next = prev.filter((item) => {
+        const match =
+          String(item?.product?.id) === String(productId);
+        if (match) removedItem = item;
+        return !match;
+      });
+      return next;
+    });
 
-    try {
-      await toggle(productId);
-    } finally {
-      setTimeout(() => {
-        removingRef.current = false;
-      }, 200);
-    }
+    mutation.mutate(productId, {
+      onError: () => {
+        if (!removedItem) return;
+        setUiList((prev) => [removedItem, ...prev]);
+      },
+    });
   };
 
-  if (isLoading) {
+  if (isLoading && !uiList.length) {
     return (
       <div className="profile__grid">
-        {Array(3).fill(0).map((_, i) =>
-          <Skeleton key={i} height={480}/>
-        )}
+        {Array(3)
+          .fill(0)
+          .map((_, i) => (
+            <Skeleton key={i} height={480} />
+          ))}
       </div>
     );
   }
 
-  if (!Array.isArray(list) || list.length === 0) {
+  if (!uiList.length) {
     return <p>Избранных товаров на данный момент не имеется</p>;
   }
 
   return (
     <div className="profile__grid">
-      <AnimatePresence mode="popLayout">
-        {list.map(item => (
-          item?.product && (
+      <AnimatePresence mode="popLayout" initial={false}>
+        {uiList.map((item) =>
+          item?.product ? (
             <motion.div
-              key={item.product.id}
-              layout="position"
-              initial={{opacity: 0, scale: 0.97}}
-              animate={{opacity: 1, scale: 1}}
-              exit={{opacity: 0, scale: 0.85}}
-              transition={{duration: 0.18, ease: "easeOut"}}
+              key={String(item.product.id)}
+              layout
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: -20 }}
+              transition={{
+                duration: 0.25,
+                ease: [0.25, 0.46, 0.45, 0.94],
+              }}
             >
               <ProductCard
                 product={item.product}
-                onFavoriteRemove={() =>
-                  handleRemove(item.product.id)
-                }
+                onFavoriteRemove={handleRemove}
+                isFavorite={isFavorite}
+                toggleFavorite={mutation.mutate}
               />
             </motion.div>
-          )
-        ))}
+          ) : null
+        )}
       </AnimatePresence>
     </div>
   );

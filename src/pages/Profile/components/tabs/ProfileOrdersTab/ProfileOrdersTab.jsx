@@ -64,7 +64,7 @@ const ProfileOrdersTab = ({ orders = [], isLoading, onOrderClick, pendingOrder, 
           {orders.map(order => (
             <motion.div
               layout
-              key={order.id}
+              key={order.order_number || `${order.id}-${order.created_at}`}
               className="order"
               onClick={() => onOrderClick(order)}
               initial={{ opacity: 0, y: 10 }}
@@ -83,7 +83,12 @@ const ProfileOrdersTab = ({ orders = [], isLoading, onOrderClick, pendingOrder, 
                 </div>
                 <div className="order__images">
                   {order.items?.slice(0, 5).map((item, i) => (
-                    <img key={item.product_id || i} src={item.main_image} alt={item.product_name} className="order__image" />
+                    <img
+                      key={`${order.order_number}-${i}`}
+                      src={item.main_image}
+                      alt={item.product_name}
+                      className="order__image"
+                    />
                   ))}
                   {order.items?.length > 5 && <div className="order__more">+{order.items.length - 5}</div>}
                 </div>

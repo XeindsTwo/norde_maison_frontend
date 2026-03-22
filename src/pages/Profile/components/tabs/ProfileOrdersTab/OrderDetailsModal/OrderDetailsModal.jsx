@@ -51,7 +51,7 @@ const OrderDetailsModal = ({order, onClose}) => {
           <ul className="order-modal__items">
             {items.map((item, index) => (
               <Link
-                key={item.product_id || item.id || index}
+                key={`order-${order.order_number}-${item.product_id || index}`}
                 to={`/product/${item.product_id || ''}`}
                 className="order-modal__item"
                 target="_blank"

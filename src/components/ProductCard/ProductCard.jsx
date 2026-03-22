@@ -7,22 +7,37 @@ import "react-loading-skeleton/dist/skeleton.css";
 import { formatPrice } from "@/utils/formatPrice.js";
 import { useCurrency } from "@/context/CurrencyContext";
 import FavoriteButton from "@/components/FavoriteButton/FavoriteButton.jsx";
+import { useAuth } from "@/context/AuthContext";
+import { useFavorites } from "@/hooks/useFavorites";
 
-const ProductCard = ({ product }) => {
+const ProductCard = ({
+                       product,
+                       onFavoriteRemove,
+                       isFavorite: externalIsFavorite,
+                       toggleFavorite,
+                     }) => {
   const { currency } = useCurrency();
+  const { isAuth } = useAuth();
+
   const [hoverIndex, setHoverIndex] = useState(0);
   const imageRef = useRef(null);
+
+  const useExternal = externalIsFavorite && toggleFavorite;
+
+  const { isFavorite, toggle } = useExternal
+    ? { isFavorite: externalIsFavorite, toggle: toggleFavorite }
+    : useFavorites(isAuth);
 
   const images = useMemo(() => {
     if (!product) return [];
 
     return [
       product.main_image,
-      ...(product.gallery?.map(img => img.image) || [])
+      ...(product.gallery?.map((img) => img.image) || []),
     ].filter(Boolean);
   }, [product]);
 
-  const handleMouseMove = e => {
+  const handleMouseMove = (e) => {
     if (!imageRef.current || images.length <= 1) return;
 
     const rect = imageRef.current.getBoundingClientRect();
@@ -31,7 +46,9 @@ const ProductCard = ({ product }) => {
     const ratio = x / rect.width;
     const index = Math.floor(ratio * images.length);
 
-    setHoverIndex(Math.min(Math.max(index, 0), images.length - 1));
+    setHoverIndex(
+      Math.min(Math.max(index, 0), images.length - 1)
+    );
   };
 
   const handleMouseLeave = () => setHoverIndex(0);
@@ -57,7 +74,7 @@ const ProductCard = ({ product }) => {
   const priceMap = {
     rub: product.price_rub,
     kzt: product.price_kzt,
-    byn: product.price_byn
+    byn: product.price_byn,
   };
 
   const currentPrice = priceMap[currency] ?? product.price_rub;
@@ -94,6 +111,9 @@ const ProductCard = ({ product }) => {
           <FavoriteButton
             productId={product.id}
             className="product-card__favorite"
+            isFavorite={isFavorite}
+            toggle={toggle}
+            onRemove={onFavoriteRemove}
           />
         </div>
 

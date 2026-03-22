@@ -4,17 +4,24 @@ import {useFavorites} from "@/hooks/useFavorites";
 
 const FavoriteButton = ({
                           productId,
-                          className="",
-                          iconClassName="",
-                          onRemove
+                          className = "",
+                          iconClassName = "",
+                          onRemove,
+                          isFavorite: externalIsFavorite,
+                          toggle: externalToggle,
+                          label,
                         }) => {
-
   const {isAuth, openAuth} = useAuth();
-  const {isFavorite, toggle} = useFavorites(isAuth);
+
+  const useExternal = externalIsFavorite && externalToggle;
+
+  const {isFavorite, toggle} = useExternal
+    ? {isFavorite: externalIsFavorite, toggle: externalToggle}
+    : useFavorites(isAuth);
 
   const favorite = isFavorite(productId);
 
-  const handleClick = e => {
+  const handleClick = (e) => {
     e.preventDefault();
     e.stopPropagation();
 
@@ -23,11 +30,12 @@ const FavoriteButton = ({
       return;
     }
 
-    toggle(productId);
-
-    if (favorite && onRemove) {
-      onRemove();
+    if (onRemove) {
+      onRemove(productId);
+      return;
     }
+
+    toggle(productId);
   };
 
   const iconClasses = [iconClassName, favorite ? "active" : ""]
@@ -37,6 +45,7 @@ const FavoriteButton = ({
   return (
     <button type="button" className={className} onClick={handleClick}>
       <FavoriteIcon className={iconClasses}/>
+      {label && <span className="favorite-button__label">{label}</span>}
     </button>
   );
 };

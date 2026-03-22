@@ -21,6 +21,13 @@
       border-color: rgba($black100, .2);
     }
 
+    &:disabled {
+      color: rgba($black100, .3);
+      background-color: rgba($black100, .03);
+      border-color: rgba($black100, .05);
+      cursor: not-allowed;
+    }
+
     &.counter {
       pointer-events: none;
     }

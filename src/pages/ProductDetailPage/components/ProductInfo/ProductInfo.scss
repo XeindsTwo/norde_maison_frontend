@@ -5,18 +5,19 @@
     letter-spacing: -0.28px;
     font-weight: 500;
     line-height: 1.2;
-    margin-bottom: 10px;
+    margin-bottom: 8px;
+    max-width: 420px;
   }
 
   &__favorite {
-    @include flex-center;
-    display: inline-flex;
+    @include flex-align-center(10);
+    margin-bottom: 34px;
     transform: translateY(2px);
-    margin-left: 10px;
-    width: 28px;
-    height: 28px;
+    transition: color .3s;
 
     &:hover {
+      color: darkred;
+
       svg path {
         fill: rgba(darkred, .4);
       }

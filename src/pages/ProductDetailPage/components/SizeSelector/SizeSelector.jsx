@@ -1,7 +1,6 @@
 import "./SizeSelector.scss";
 
-const SizeSelector = ({sizes = [], selected, onSelect}) => {
-
+const SizeSelector = ({ sizes = [], selected, onSelect }) => {
   if (!sizes.length) return null;
 
   return (
@@ -11,22 +10,20 @@ const SizeSelector = ({sizes = [], selected, onSelect}) => {
       </div>
       <div className="size-selector__list">
         {sizes.map((item, index) => {
-
           const active = selected?.size === item.size;
           const disabled = item.stock === 0;
 
           return (
             <button
               key={index}
-              className={`size-selector__item ${active ? "active" : ""}`}
+              className={`size-selector__item ${active ? "active" : ""} ${disabled ? "disabled" : ""}`}
               disabled={disabled}
-              onClick={() => onSelect(item)}
+              onClick={() => !disabled && onSelect(item)}
             >
               {item.size}
             </button>
           );
         })}
-
       </div>
     </div>
   );
