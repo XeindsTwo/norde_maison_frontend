@@ -1,6 +1,6 @@
 import "./Profile.scss";
+import {useLocation, useSearchParams,} from "react-router-dom";
 import {useState, useEffect, useCallback} from "react";
-import {useLocation} from "react-router-dom";
 import {useQuery} from "@tanstack/react-query";
 import Header from "@/components/Header/Header";
 import Footer from "@/components/Footer/Footer";
@@ -12,6 +12,7 @@ import {getUserOrders, getPendingOrder} from "@/api/auth";
 
 const ProfilePage = () => {
   const location = useLocation();
+  const [searchParams] = useSearchParams();
 
   const [tab, setTab] = useState("orders");
   const [showSuccessModal, setShowSuccessModal] = useState(false);
@@ -42,15 +43,27 @@ const ProfilePage = () => {
   }, []);
 
   useEffect(() => {
-    if (!location.state?.orderSuccess || !orders.length) return;
-    const orderNumber = location.state.orderNumber;
+    const orderFromState = location.state?.orderNumber;
+    const orderFromSearch = searchParams.get("order_number");
+
+    const orderNumber = orderFromState || orderFromSearch;
+    const isFromCheckout =
+      location.state?.orderSuccess ||
+      (searchParams.has("order_success") && searchParams.get("order_success") === "true");
+
+    if (!isFromCheckout || !orderNumber || !orders.length) return;
+
     const order = orders.find(o => o.order_number === orderNumber);
     if (order) {
       setSelectedOrder(order);
       setShowSuccessModal(true);
-      window.history.replaceState({}, "", "/profile");
+
+      const url = new URL(window.location.href);
+      url.searchParams.delete("order_success");
+      url.searchParams.delete("order_number");
+      window.history.replaceState({}, "", url.toString());
     }
-  }, [location.state, orders]);
+  }, [location.state, searchParams, orders]);
 
   const closeSuccessModal = () => setShowSuccessModal(false);
 

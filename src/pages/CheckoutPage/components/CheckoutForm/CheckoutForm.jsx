@@ -1,22 +1,29 @@
+import {useState} from "react";
 import {useForm} from "react-hook-form";
 import IomoneyIcon from "@/assets/images/icons/iomoney.svg";
 import "./CheckoutForm.scss";
 
-const CheckoutForm = ({onSubmit, isPending, deliverySlot, defaultValues, orderCreated, paymentUrl, orderNumber}) => {
+const CheckoutForm = ({onSubmit, isPending, deliverySlot, defaultValues, orderCreated, paymentUrl}) => {
   const methods = useForm({defaultValues});
-  const {register, handleSubmit, formState: {errors}, watch, setValue} = methods;
+  const {
+    register,
+    handleSubmit,
+    formState: {errors},
+    watch,
+    setValue
+  }
+    = methods;
+  const [isButtonDisabled, setIsButtonDisabled] = useState(false);
 
-  const handlePayment = () => {
-    if (paymentUrl) {
-      window.location.href = paymentUrl;
-    }
+  const handlePaymentClick = (data) => {
+    setIsButtonDisabled(true);
+    onSubmit(data);
   };
 
   return (
-    <form className="checkout-form" onSubmit={handleSubmit(onSubmit)}>
+    <form className="checkout-form" onSubmit={handleSubmit(handlePaymentClick)}>
       <div className="checkout-form__section">
         <h2 className="checkout-form__section-title">Личные данные</h2>
-
         <div className="checkout-form__row">
           <div className="checkout-page__field">
             <label className="checkout-page__label">Имя</label>
@@ -25,11 +32,8 @@ const CheckoutForm = ({onSubmit, isPending, deliverySlot, defaultValues, orderCr
               placeholder="Влад"
               {...register("first_name", {required: "Введите имя"})}
             />
-            {errors.first_name && (
-              <span className="checkout-page__error">{errors.first_name.message}</span>
-            )}
+            {errors.first_name && <span className="checkout-page__error">{errors.first_name.message}</span>}
           </div>
-
           <div className="checkout-page__field">
             <label className="checkout-page__label">Фамилия</label>
             <input
@@ -37,12 +41,9 @@ const CheckoutForm = ({onSubmit, isPending, deliverySlot, defaultValues, orderCr
               placeholder="Иванов"
               {...register("last_name", {required: "Введите фамилию"})}
             />
-            {errors.last_name && (
-              <span className="checkout-page__error">{errors.last_name.message}</span>
-            )}
+            {errors.last_name && <span className="checkout-page__error">{errors.last_name.message}</span>}
           </div>
         </div>
-
         <div className="checkout-page__field">
           <label className="checkout-page__label">Отчество</label>
           <input
@@ -51,7 +52,6 @@ const CheckoutForm = ({onSubmit, isPending, deliverySlot, defaultValues, orderCr
             {...register("middle_name")}
           />
         </div>
-
         <div className="checkout-page__field">
           <label className="checkout-page__label">Номер телефона</label>
           <input
@@ -59,11 +59,8 @@ const CheckoutForm = ({onSubmit, isPending, deliverySlot, defaultValues, orderCr
             placeholder="+7 901 234 56-78"
             {...register("phone", {required: "Введите телефон"})}
           />
-          {errors.phone && (
-            <span className="checkout-page__error">{errors.phone.message}</span>
-          )}
+          {errors.phone && <span className="checkout-page__error">{errors.phone.message}</span>}
         </div>
-
         <div className="checkout-page__field">
           <label className="checkout-page__label">Telegram (опционально)</label>
           <input
@@ -79,24 +76,13 @@ const CheckoutForm = ({onSubmit, isPending, deliverySlot, defaultValues, orderCr
         {deliverySlot({register, errors, watch, setValue})}
       </div>
 
-      {!orderCreated ? (
-        <button
-          type="submit"
-          className="checkout-form__submit"
-          disabled={isPending}
-        >
-          {isPending ? <>Оформляем</> : <><IomoneyIcon/>Перейти к оплате</>}
-        </button>
-      ) : (
-        <button
-          type="button"
-          className="checkout-form__submit"
-          onClick={handlePayment}
-          disabled={isPending}
-        >
-          <IomoneyIcon/>Оплатить заказ
-        </button>
-      )}
+      <button
+        type="submit"
+        className="checkout-form__submit"
+        disabled={isPending || isButtonDisabled}
+      >
+        <IomoneyIcon/>Перейти к оплате
+      </button>
     </form>
   );
 };

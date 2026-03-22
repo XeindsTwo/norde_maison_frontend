@@ -85,7 +85,7 @@ const CartPage = () => {
             />
           )}
 
-          {isLoading ? (
+          {pendingOrder && !pendingOrderLoading ? null : isLoading ? (
             <CartTableSkeleton/>
           ) : isCartEmpty ? (
             <p className="cart-page__empty">Товаров в корзине ещё нет ¯\_(ツ)_/¯</p>
@@ -101,7 +101,6 @@ const CartPage = () => {
                 cart={cart}
                 currency={currency}
                 hasUnavailable={hasUnavailable}
-                pendingOrder={pendingOrder && !pendingOrderLoading ? pendingOrder : null}
               />
             </>
           )}

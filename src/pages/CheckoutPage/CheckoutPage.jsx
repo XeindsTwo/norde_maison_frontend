@@ -1,5 +1,5 @@
 import {useState, useMemo, useEffect} from "react";
-import {useNavigate, useSearchParams} from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 import Header from "@/components/Header/Header.jsx";
 import Footer from "@/components/Footer/Footer.jsx";
 import {useOrderPreview} from "@/hooks/useOrderPreview";
@@ -20,58 +20,42 @@ import "./CheckoutPage.scss";
 const COUNTRY_CURRENCY = {RU: "rub", KZ: "kzt", BY: "byn"};
 
 const CheckoutPage = () => {
-  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const {data: preview = {}, isLoading, error} = useOrderPreview();
   const {currency} = useCurrency();
   const {user} = useAuth();
   const [delivery, setDelivery] = useState({country: "RU", method: "cdek_pvz"});
-  const [paymentUrl, setPaymentUrl] = useState(null);
-  const [paymentId, setPaymentId] = useState(null);
-  const [orderNumber, setOrderNumber] = useState(null);
+  const [paymentUrl] = useState(null);
+  const [paymentId] = useState(null);
+  const [orderNumber] = useState(null);
   const [pendingOrder, setPendingOrder] = useState(null);
-  const orderFromUrl = searchParams.get("order");
 
   const {mutate: submitOrder, isPending} = useCreateOrder({
     onSuccess: (data) => {
-      setPaymentUrl(data.payment_url);
-      setOrderNumber(data.order_number);
-      setPaymentId(data.payment_id);
+      window.location.assign(data.payment_url);
     }
   });
 
   // Получаем pending order
   useEffect(() => {
     if (!user) return;
+
     const fetchPending = async () => {
       try {
-        const { data } = await api.get("/orders/checkout/current-pending/");
+        const {data} = await api.get("/orders/checkout/current-pending/");
         if (data.has_pending) setPendingOrder(data);
         else setPendingOrder(undefined);
-      } catch (e) {
-        console.error("Error fetching pending order:", e);
+      } catch {
         setPendingOrder(undefined);
       }
     };
-    fetchPending();
-  }, [user]);
 
-  // Проверка статуса созданного заказа через URL
-  useEffect(() => {
-    if (!orderFromUrl) return;
-    const interval = setInterval(async () => {
-      try {
-        const {data} = await api.get(`orders/${orderFromUrl}/status/`);
-        if (data.status === "assembly") {
-          clearInterval(interval);
-          navigate("/profile", {state: {orderSuccess: true, orderNumber: orderFromUrl}});
-        }
-      } catch (e) {
-        console.error("Polling error:", e);
-      }
-    }, 1500);
+    fetchPending();
+
+    const interval = setInterval(fetchPending, 5000);
+
     return () => clearInterval(interval);
-  }, [orderFromUrl, navigate]);
+  }, [user]);
 
   // Проверка оплаты
   useEffect(() => {
@@ -108,32 +92,36 @@ const CheckoutPage = () => {
 
   const deliveryPrice = useMemo(() => {
     if (!currentRegion || delivery.method === "pickup") return 0;
-    const prices = {
-      rub: {
-        pvz: Number(currentRegion.cdek_pvz_price),
-        pvz_free: Number(currentRegion.cdek_pvz_free_from),
-        courier: Number(currentRegion.cdek_courier_price),
-        courier_free: Number(currentRegion.cdek_courier_free_from)
-      }
-    };
-    const p = prices[deliveryCurrency];
-    const subtotalConverted = convertPrice(subtotal, currency, deliveryCurrency);
-    if (delivery.method === "cdek_pvz") return subtotalConverted >= p.pvz_free ? 0 : p.pvz;
-    if (delivery.method === "cdek_courier") return subtotalConverted >= p.courier_free ? 0 : p.courier;
+    const subtotalRUB = getSubtotal(preview, "rub");
+
+    if (delivery.method === "cdek_pvz") {
+      const price = Number(currentRegion.cdek_pvz_price);
+      const freeFrom = Number(currentRegion.cdek_pvz_free_from);
+      return subtotalRUB >= freeFrom ? 0 : price;
+    }
+    if (delivery.method === "cdek_courier") {
+      const price = Number(currentRegion.cdek_courier_price);
+      const freeFrom = Number(currentRegion.cdek_courier_free_from);
+      return subtotalRUB >= freeFrom ? 0 : price;
+    }
     return 0;
-  }, [currentRegion, delivery.method, subtotal, currency, deliveryCurrency]);
+  }, [currentRegion, delivery.method, preview, currency]);
 
   const deliveryPriceConverted = convertPrice(deliveryPrice, deliveryCurrency, currency);
   const total = subtotal + deliveryPriceConverted;
 
-  const handleSubmit = ({entrance, floor, apartment, ...formData}) => {
+  const handleSubmit = (data) => {
     submitOrder({
-      ...formData,
+      ...data,
       country: delivery.country,
       delivery_method: delivery.method,
       delivery_price: deliveryPrice,
       currency,
-      delivery_extra: {entrance: entrance || "", floor: floor || "", apartment: apartment || ""}
+      delivery_extra: {
+        entrance: data.entrance || "",
+        floor: data.floor || "",
+        apartment: data.apartment || ""
+      }
     });
   };
 
@@ -199,12 +187,12 @@ const CheckoutPage = () => {
             <div className="checkout-page__left">
               <h1 className="checkout-page__title">Оформление заказа</h1>
 
-              {pendingOrder !== undefined && (
+              {!paymentUrl && pendingOrder !== undefined && (
                 <PendingOrder
                   order={pendingOrder}
                   currency={currency}
                   isLoading={pendingOrder === null}
-                  onPayClick={() => pendingOrder && (window.location.href = pendingOrder.payment_url)}
+                  onPayClick={() => pendingOrder && window.location.assign(pendingOrder.payment_url)}
                 />
               )}
 
@@ -214,9 +202,6 @@ const CheckoutPage = () => {
                   isPending={isPending}
                   defaultValues={profileDefaults}
                   deliverySlot={deliverySlot}
-                  orderCreated={!!paymentUrl}
-                  paymentUrl={paymentUrl}
-                  orderNumber={orderNumber}
                 />
               )}
 

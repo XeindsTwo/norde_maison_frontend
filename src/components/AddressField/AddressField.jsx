@@ -14,29 +14,42 @@ const AddressField = ({ value = "", onChange, name = "address" }) => {
       return;
     }
 
-    setInnerValue(prev => ({
+    setInnerValue((prev) => ({
       ...(prev || {}),
       value,
     }));
   }, [value]);
+
+  const handleChange = (suggestion) => {
+    setInnerValue(suggestion);
+    onChange?.(suggestion?.value || "");
+  };
+
+  const handleInputChange = (e) => {
+    const newVal = e.target.value;
+    setInnerValue((prev) => ({
+      ...(prev || {}),
+      value: newVal,
+    }));
+    onChange?.(newVal);
+  };
 
   return (
     <div className="address-field-wrapper">
       <AddressSuggestions
         token={DADATA_TOKEN}
         value={innerValue}
-        onChange={suggestion => {
-          setInnerValue(suggestion);
-          onChange?.(suggestion?.value || "");
-        }}
+        onChange={handleChange}
         containerClassName="dadata-container"
         suggestionsClassName="dadata-suggestions"
         suggestionClassName="dadata-suggestion-item"
         inputProps={{
           placeholder: "Адрес",
+          value: innerValue?.value || "",
+          onChange: handleInputChange,
           className: "dadata-input",
           name,
-          autoComplete: "off"
+          autoComplete: "off",
         }}
       />
     </div>
