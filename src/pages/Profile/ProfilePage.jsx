@@ -1,14 +1,14 @@
 import "./Profile.scss";
-import { useState, useEffect, useCallback } from "react";
-import { useLocation } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
+import {useState, useEffect, useCallback} from "react";
+import {useLocation} from "react-router-dom";
+import {useQuery} from "@tanstack/react-query";
 import Header from "@/components/Header/Header";
 import Footer from "@/components/Footer/Footer";
 import ProfileSidebar from "./components/ProfileSidebar/ProfileSidebar";
 import ProfileContent from "./ProfileContent";
 import CheckoutSuccessModal from "@/components/Modals/CheckoutSuccessModal";
 import OrderDetailsModal from "./components/tabs/ProfileOrdersTab/OrderDetailsModal/OrderDetailsModal";
-import { getUserOrders, getPendingOrder } from "@/api/auth";
+import {getUserOrders, getPendingOrder} from "@/api/auth";
 
 const ProfilePage = () => {
   const location = useLocation();
@@ -19,7 +19,7 @@ const ProfilePage = () => {
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [pendingOrder, setPendingOrder] = useState(null);
 
-  const { data: ordersData, isLoading } = useQuery({
+  const {data: ordersData, isLoading} = useQuery({
     queryKey: ["userOrders"],
     queryFn: async () => (await getUserOrders()).data,
     staleTime: 5 * 60 * 1000
@@ -30,10 +30,12 @@ const ProfilePage = () => {
   useEffect(() => {
     const fetchPending = async () => {
       try {
-        const { data } = await getPendingOrder();
+        const {data} = await getPendingOrder();
         if (data.has_pending) setPendingOrder(data);
+        else setPendingOrder(undefined);
       } catch (e) {
         console.error(e);
+        setPendingOrder(undefined);
       }
     };
     fetchPending();

@@ -1,4 +1,5 @@
 import Skeleton from "react-loading-skeleton";
+import {motion} from 'framer-motion';
 import PendingOrder from "@/components/PendingOrder/PendingOrder.jsx";
 import AssemblyIcon from "@/assets/images/icons/orders/assembly.svg";
 import InWayIcon from "@/assets/images/icons/orders/in_way.svg";
@@ -50,7 +51,7 @@ const ProfileOrdersTab = ({ orders = [], isLoading, onOrderClick, pendingOrder, 
 
   return (
     <div className="orders-tab">
-      {pendingOrder && (
+      {pendingOrder !== undefined && pendingOrder && (
         <PendingOrder
           order={pendingOrder}
           currency={currency}
@@ -61,7 +62,16 @@ const ProfileOrdersTab = ({ orders = [], isLoading, onOrderClick, pendingOrder, 
       {orders.length ? (
         <div className="orders-tab__list">
           {orders.map(order => (
-            <div key={order.id} className="order" onClick={() => onOrderClick(order)}>
+            <motion.div
+              layout
+              key={order.id}
+              className="order"
+              onClick={() => onOrderClick(order)}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.15 }}
+            >
               <div className="order__content">
                 <div className="order__left">
                   <div className="order__date">Заказ от {order.created_at}</div>
@@ -78,7 +88,7 @@ const ProfileOrdersTab = ({ orders = [], isLoading, onOrderClick, pendingOrder, 
                   {order.items?.length > 5 && <div className="order__more">+{order.items.length - 5}</div>}
                 </div>
               </div>
-            </div>
+            </motion.div>
           ))}
         </div>
       ) : (

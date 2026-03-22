@@ -1,39 +1,38 @@
-import { useState, useMemo, useEffect } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import {useState, useMemo, useEffect} from "react";
+import {useNavigate, useSearchParams} from "react-router-dom";
 import Header from "@/components/Header/Header.jsx";
 import Footer from "@/components/Footer/Footer.jsx";
-import { useOrderPreview } from "@/hooks/useOrderPreview";
-import { useCreateOrder } from "@/hooks/useCreateOrder";
-import { useCurrency } from "@/context/CurrencyContext";
-import { useAuth } from "@/context/AuthContext";
-import { getSubtotal, convertPrice, formatPrice } from "@/utils/formatPrice";
-import { api } from "@/api/http";
+import {useOrderPreview} from "@/hooks/useOrderPreview";
+import {useCreateOrder} from "@/hooks/useCreateOrder";
+import {useCurrency} from "@/context/CurrencyContext";
+import {useAuth} from "@/context/AuthContext";
+import {getSubtotal, convertPrice} from "@/utils/formatPrice";
+import {api} from "@/api/http";
 import CheckoutForm from "./components/CheckoutForm/CheckoutForm";
 import CheckoutDeliveryCountry from "./components/CheckoutDelivery/CheckoutDeliveryCountry";
 import CheckoutDeliveryMethods from "./components/CheckoutDelivery/CheckoutDeliveryMethods";
 import CheckoutDeliveryAddress from "./components/CheckoutDelivery/CheckoutDeliveryAddress";
 import CheckoutSummary from "./components/CheckoutSummary/CheckoutSummary";
 import Skeleton from "react-loading-skeleton";
-import IomoneyIcon from "@/assets/images/icons/iomoney.svg";
 import PendingOrder from "@/components/PendingOrder/PendingOrder.jsx";
 import "./CheckoutPage.scss";
 
-const COUNTRY_CURRENCY = { RU: "rub", KZ: "kzt", BY: "byn" };
+const COUNTRY_CURRENCY = {RU: "rub", KZ: "kzt", BY: "byn"};
 
 const CheckoutPage = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const { data: preview = {}, isLoading, error } = useOrderPreview();
-  const { currency } = useCurrency();
-  const { user } = useAuth();
-  const [delivery, setDelivery] = useState({ country: "RU", method: "cdek_pvz" });
+  const {data: preview = {}, isLoading, error} = useOrderPreview();
+  const {currency} = useCurrency();
+  const {user} = useAuth();
+  const [delivery, setDelivery] = useState({country: "RU", method: "cdek_pvz"});
   const [paymentUrl, setPaymentUrl] = useState(null);
   const [paymentId, setPaymentId] = useState(null);
   const [orderNumber, setOrderNumber] = useState(null);
   const [pendingOrder, setPendingOrder] = useState(null);
   const orderFromUrl = searchParams.get("order");
 
-  const { mutate: submitOrder, isPending } = useCreateOrder({
+  const {mutate: submitOrder, isPending} = useCreateOrder({
     onSuccess: (data) => {
       setPaymentUrl(data.payment_url);
       setOrderNumber(data.order_number);
@@ -48,8 +47,10 @@ const CheckoutPage = () => {
       try {
         const { data } = await api.get("/orders/checkout/current-pending/");
         if (data.has_pending) setPendingOrder(data);
+        else setPendingOrder(undefined);
       } catch (e) {
         console.error("Error fetching pending order:", e);
+        setPendingOrder(undefined);
       }
     };
     fetchPending();
@@ -60,10 +61,10 @@ const CheckoutPage = () => {
     if (!orderFromUrl) return;
     const interval = setInterval(async () => {
       try {
-        const { data } = await api.get(`orders/${orderFromUrl}/status/`);
+        const {data} = await api.get(`orders/${orderFromUrl}/status/`);
         if (data.status === "assembly") {
           clearInterval(interval);
-          navigate("/profile", { state: { orderSuccess: true, orderNumber: orderFromUrl } });
+          navigate("/profile", {state: {orderSuccess: true, orderNumber: orderFromUrl}});
         }
       } catch (e) {
         console.error("Polling error:", e);
@@ -77,10 +78,10 @@ const CheckoutPage = () => {
     if (!paymentId) return;
     const interval = setInterval(async () => {
       try {
-        const { data } = await api.get(`orders/payment/${paymentId}/status/`);
+        const {data} = await api.get(`orders/payment/${paymentId}/status/`);
         if (data.succeeded) {
           clearInterval(interval);
-          navigate("/profile", { state: { orderSuccess: true, orderNumber } });
+          navigate("/profile", {state: {orderSuccess: true, orderNumber}});
         }
       } catch (e) {
         console.error("Polling error:", e);
@@ -125,20 +126,20 @@ const CheckoutPage = () => {
   const deliveryPriceConverted = convertPrice(deliveryPrice, deliveryCurrency, currency);
   const total = subtotal + deliveryPriceConverted;
 
-  const handleSubmit = ({ entrance, floor, apartment, ...formData }) => {
+  const handleSubmit = ({entrance, floor, apartment, ...formData}) => {
     submitOrder({
       ...formData,
       country: delivery.country,
       delivery_method: delivery.method,
       delivery_price: deliveryPrice,
       currency,
-      delivery_extra: { entrance: entrance || "", floor: floor || "", apartment: apartment || "" }
+      delivery_extra: {entrance: entrance || "", floor: floor || "", apartment: apartment || ""}
     });
   };
 
-  const deliverySlot = ({ register, errors, watch, setValue }) => (
+  const deliverySlot = ({register, errors, watch, setValue}) => (
     <>
-      <CheckoutDeliveryCountry regions={regions} delivery={delivery} onChange={setDelivery} />
+      <CheckoutDeliveryCountry regions={regions} delivery={delivery} onChange={setDelivery}/>
       <CheckoutDeliveryMethods
         regions={regions}
         delivery={delivery}
@@ -169,42 +170,45 @@ const CheckoutPage = () => {
 
   if (isLoading) return (
     <>
-      <Header />
+      <Header/>
       <main className="checkout-page">
-        <div className="container container--padding"><Skeleton height={500} /></div>
+        <div className="container container--padding"><Skeleton height={500}/></div>
       </main>
-      <Footer />
+      <Footer/>
     </>
   );
 
   if (error && !pendingOrder) return (
     <>
-      <Header />
+      <Header/>
       <main className="checkout-page">
         <div className="container container--padding">
           <p className="checkout-page__empty">Корзина пустая ¯\_(ツ)_/¯</p>
         </div>
       </main>
-      <Footer />
+      <Footer/>
     </>
   );
 
   return (
     <>
-      <Header />
+      <Header/>
       <main className="checkout-page">
         <div className="container container--padding">
           <div className="checkout-page__layout">
             <div className="checkout-page__left">
               <h1 className="checkout-page__title">Оформление заказа</h1>
 
-              {pendingOrder ? (
+              {pendingOrder !== undefined && (
                 <PendingOrder
                   order={pendingOrder}
                   currency={currency}
-                  onPayClick={() => window.location.href = pendingOrder.payment_url}
+                  isLoading={pendingOrder === null}
+                  onPayClick={() => pendingOrder && (window.location.href = pendingOrder.payment_url)}
                 />
-              ) : hasItems ? (
+              )}
+
+              {pendingOrder === undefined && hasItems && (
                 <CheckoutForm
                   onSubmit={handleSubmit}
                   isPending={isPending}
@@ -214,13 +218,15 @@ const CheckoutPage = () => {
                   paymentUrl={paymentUrl}
                   orderNumber={orderNumber}
                 />
-              ) : (
+              )}
+
+              {pendingOrder === undefined && !hasItems && (
                 <p className="checkout-page__empty">Корзина пустая ¯\_(ツ)_/¯</p>
               )}
             </div>
 
             <div className="checkout-page__right">
-              {!pendingOrder && hasItems && (
+              {pendingOrder === undefined && hasItems && (
                 <CheckoutSummary
                   items={preview.items || []}
                   subtotal={subtotal}
@@ -237,7 +243,7 @@ const CheckoutPage = () => {
           </div>
         </div>
       </main>
-      <Footer />
+      <Footer/>
     </>
   );
 };

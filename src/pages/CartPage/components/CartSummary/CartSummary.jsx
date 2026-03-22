@@ -1,9 +1,8 @@
-import {Link} from "react-router-dom";
 import "./CartSummary.scss";
+import {Link} from "react-router-dom";
 import {formatPrice} from "@/utils/formatPrice";
 
-const CartSummary = ({cart, currency, hasUnavailable}) => {
-
+const CartSummary = ({cart, currency, hasUnavailable, pendingOrder}) => {
   if (!cart) return null;
 
   const total = Number(cart.total_price) || 0;
@@ -11,7 +10,6 @@ const CartSummary = ({cart, currency, hasUnavailable}) => {
 
   return (
     <div className="cart-summary">
-
       <p className="cart-summary__total">
         Итого: <span>{formatPrice(total, currency)}</span>
       </p>
@@ -22,16 +20,17 @@ const CartSummary = ({cart, currency, hasUnavailable}) => {
         </p>
       )}
 
-      {isDisabled ? (
-        <button className="cart-summary__btn btn" disabled>
-          Перейти к оформлению
-        </button>
-      ) : (
-        <Link to="/checkout" className="cart-summary__btn btn">
-          Перейти к оформлению
-        </Link>
+      {!pendingOrder && (
+        isDisabled ? (
+          <button className="cart-summary__btn btn" disabled>
+            Перейти к оформлению
+          </button>
+        ) : (
+          <Link to="/checkout" className="cart-summary__btn btn">
+            Перейти к оформлению
+          </Link>
+        )
       )}
-
     </div>
   );
 };

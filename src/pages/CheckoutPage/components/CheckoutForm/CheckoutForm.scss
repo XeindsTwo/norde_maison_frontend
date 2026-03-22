@@ -60,8 +60,9 @@
     }
 
     &.small {
+      max-width: max-content;
       font-size: 18px;
-      padding: 18px;
+      padding: 18px 35px;
     }
   }
 }
