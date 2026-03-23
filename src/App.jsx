@@ -1,4 +1,5 @@
-import {Routes, Route} from "react-router-dom";
+import {useEffect} from "react";
+import {Routes, Route, useLocation} from "react-router-dom";
 import {useRouteLoading} from "@/hooks/useRouteLoading";
 import HomePage from "@/pages/Home/HomePage";
 import GenderPage from "@/pages/GenderPage/GenderPage";
@@ -11,11 +12,21 @@ import SuccessModal from "@/components/Modals/AuthModal/components/SuccessModal.
 import ProtectedRoute from "@/components/ProtectedRoute.jsx";
 import ProfilePage from "@/pages/Profile/ProfilePage.jsx";
 import CartPage from "@/pages/CartPage/CartPage.jsx";
-import CheckoutPage from "@/pages/CheckoutPage/CheckoutPage.jsx"; // 🆕
+import CheckoutPage from "@/pages/CheckoutPage/CheckoutPage.jsx";
 import SearchPageResult from "@/pages/SearchPage/SearchPageResult.jsx";
+import {useSearch} from "@/context/SearchContext";
+import SearchOverlay from "@/components/SearchOverlay/SearchOverlay";
 
 function App() {
   const {loading} = useRouteLoading(500);
+  const {isOpen: isSearchOpen, closeSearch} = useSearch();
+  const location = useLocation();
+
+  useEffect(() => {
+    if (isSearchOpen) {
+      closeSearch();
+    }
+  }, [location.pathname]);
 
   return (
     <div className="app-layout">
@@ -60,6 +71,8 @@ function App() {
 
           <AuthModal/>
           <SuccessModal/>
+
+          <SearchOverlay isOpen={isSearchOpen} onClose={closeSearch}/>
         </>
       )}
     </div>

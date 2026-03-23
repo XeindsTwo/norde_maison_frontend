@@ -18,8 +18,8 @@ export const updateProfile = (data) =>
 export const changePassword = (data) =>
   api.post("auth/change-password/", data);
 
-export const getUserOrders = () =>
-  api.get("auth/orders/");
+export const getUserOrders = (params = {}) =>
+  api.get("auth/orders/", {params});
 
 export const getPendingOrder = () =>
   api.get("orders/checkout/current-pending/");

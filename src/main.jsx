@@ -7,6 +7,7 @@ import ScrollToTop from './components/ScrollToTop.jsx';
 import {AuthProvider} from "@/context/AuthContext";
 import {CurrencyProvider} from '@/context/CurrencyContext';
 import {Notification} from "@/components/Notification/Notification";
+import {SearchProvider} from "@/context/SearchContext";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -23,9 +24,11 @@ createRoot(document.getElementById("root")).render(
     <QueryClientProvider client={queryClient}>
       <CurrencyProvider>
         <AuthProvider>
-          <ScrollToTop/>
-          <App/>
-          <Notification/>
+          <SearchProvider>
+            <ScrollToTop/>
+            <App/>
+            <Notification/>
+          </SearchProvider>
         </AuthProvider>
       </CurrencyProvider>
     </QueryClientProvider>

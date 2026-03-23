@@ -7,6 +7,7 @@ import {Link} from "react-router-dom";
 import {useEffect, useRef, useState} from 'react';
 import {useCurrency} from "@/context/CurrencyContext";
 import {useAuth} from "@/context/AuthContext";
+import {useSearch} from "@/context/SearchContext";
 
 const handleScrollTop = (e) => {
   e.preventDefault();
@@ -25,6 +26,7 @@ const currencyMap = {
 const Footer = () => {
   const {isAuth, openAuth} = useAuth();
   const {currency, setCurrency} = useCurrency();
+  const {openSearch} = useSearch(); // общая функция открытия поиска
   const [isCurrencyOpen, setIsCurrencyOpen] = useState(false);
   const valuteRef = useRef(null);
 
@@ -68,29 +70,27 @@ const Footer = () => {
                   Личный кабинет
                 </Link>
               ) : (
-                <button
-                  type="button"
-                  className="footer__link"
-                  onClick={openAuth}
-                >
+                <button type="button" className="footer__link" onClick={openAuth}>
                   Авторизация
                 </button>
               )}
-              <button className="footer__link" type="button">
+
+              <button
+                className="footer__link"
+                type="button"
+                onClick={openSearch}
+              >
                 <SearchIcon/>
                 Поиск
               </button>
+
               {isAuth ? (
                 <Link className="footer__link" to="/cart">
                   <CartIcon/>
                   Корзина
                 </Link>
               ) : (
-                <button
-                  type="button"
-                  className="footer__link"
-                  onClick={openAuth}
-                >
+                <button type="button" className="footer__link" onClick={openAuth}>
                   <CartIcon/>
                   Корзина
                 </button>
@@ -109,36 +109,24 @@ const Footer = () => {
 
       <div className="container container--padding">
         <div className="footer__bottom">
-
           <div className="footer__valute" ref={valuteRef}>
             <button
               className={`footer__btn ${isCurrencyOpen ? 'is-open' : ''}`}
               type="button"
-              onClick={() => setIsCurrencyOpen((v) => !v)}
+              onClick={() => setIsCurrencyOpen(v => !v)}
             >
               {currencyMap[currency]}
               <ButtonValute/>
             </button>
 
             <div className={`footer__valute-dropdown ${isCurrencyOpen ? 'footer__valute-dropdown--open' : ''}`}>
-              <button
-                className="footer__valute-item"
-                onClick={() => handleSelect("rub")}
-              >
+              <button className="footer__valute-item" onClick={() => handleSelect("rub")}>
                 Россия (RUB ₽)
               </button>
-
-              <button
-                className="footer__valute-item"
-                onClick={() => handleSelect("kzt")}
-              >
+              <button className="footer__valute-item" onClick={() => handleSelect("kzt")}>
                 Казахстан (KZT ₸)
               </button>
-
-              <button
-                className="footer__valute-item"
-                onClick={() => handleSelect("byn")}
-              >
+              <button className="footer__valute-item" onClick={() => handleSelect("byn")}>
                 Беларусь (BYN Br)
               </button>
             </div>
@@ -147,7 +135,6 @@ const Footer = () => {
           <p className="footer__author">
             Все права защищены © Norde Maison, 2026
           </p>
-
         </div>
       </div>
     </footer>

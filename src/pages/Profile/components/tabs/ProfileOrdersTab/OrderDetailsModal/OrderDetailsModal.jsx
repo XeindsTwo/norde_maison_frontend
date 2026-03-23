@@ -5,11 +5,20 @@ import DeliveredIcon from "@/assets/images/icons/orders/delivered.svg";
 import CancelledIcon from "@/assets/images/icons/orders/cancelled.svg";
 import CrossArrow from "@/assets/images/icons/cross-modal.svg";
 import "./OrderDetailsModal.scss";
-import {formatPrice} from "@/utils/formatPrice";
+import {formatPrice, convertPrice} from "@/utils/formatPrice";
 import {Link} from "react-router-dom";
 
-const OrderDetailsModal = ({order, onClose}) => {
+const OrderDetailsModal = ({order, currency = "rub", onClose}) => {
   if (!order) return null;
+
+  const getPrice = (field) => {
+    const map = {
+      rub: field,
+      kzt: `${field}_kzt`,
+      byn: `${field}_byn`
+    };
+    return order[map[currency]] || order[field];
+  };
 
   const getStatusLabel = (status) => ({
     assembly: "В сборке",
@@ -20,11 +29,16 @@ const OrderDetailsModal = ({order, onClose}) => {
 
   const getStatusIcon = (status) => {
     switch (status) {
-      case "assembly": return <AssemblyIcon/>;
-      case "in_way": return <InWayIcon/>;
-      case "delivered": return <DeliveredIcon/>;
-      case "cancelled": return <CancelledIcon/>;
-      default: return <AssemblyIcon/>;
+      case "assembly":
+        return <AssemblyIcon/>;
+      case "in_way":
+        return <InWayIcon/>;
+      case "delivered":
+        return <DeliveredIcon/>;
+      case "cancelled":
+        return <CancelledIcon/>;
+      default:
+        return <AssemblyIcon/>;
     }
   };
 
@@ -34,19 +48,30 @@ const OrderDetailsModal = ({order, onClose}) => {
   }[method] || method);
 
   const items = Array.isArray(order.items) ? order.items : [];
-  const itemsTotal = items.reduce((sum, i) => sum + (parseFloat(i.price_snapshot || 0) * (i.quantity || 0)), 0);
+
+  const itemsTotal = items.reduce((sum, i) => {
+    const priceRub = parseFloat(i.price_snapshot || 0);
+    const converted = convertPrice(priceRub, "rub", currency);
+    return sum + converted * (i.quantity || 0);
+  }, 0);
 
   return (
     <AnimatedModal isOpen={true} onClose={onClose} width="654px">
       <div className="modal__top">
-        <div className="modal__title">Заказ №{order.order_number || 'N/A'} от {order.created_at || 'N/A'}</div>
-        <button className="modal__close" onClick={onClose}><CrossArrow/></button>
+        <div className="modal__title">
+          Заказ №{order.order_number || 'N/A'} от {order.created_at || 'N/A'}
+        </div>
+        <button className="modal__close" onClick={onClose}>
+          <CrossArrow/>
+        </button>
       </div>
+
       <div className="modal__inner">
         <div className="order-modal__status">
           {getStatusIcon(order.status)}
           <span>{getStatusLabel(order.status)}</span>
         </div>
+
         <div className="order-modal__content">
           <ul className="order-modal__items">
             {items.map((item, index) => (
@@ -69,41 +94,44 @@ const OrderDetailsModal = ({order, onClose}) => {
                 </div>
                 <div className="order-modal__price">
                   <span>{item.quantity || 0} × </span>
-                  {formatPrice(item.price_snapshot || 0)}
+                  {formatPrice(convertPrice(item.price_snapshot || 0, "rub", currency), currency)}
                 </div>
               </Link>
             ))}
           </ul>
+
           <div className="order-modal__totals">
             <div className="order-modal__totals-main">
               <div className="order-modal__label">Итого:</div>
               {order.delivery_price > 0 && (
-                <p className="order-modal__price-old">{formatPrice(itemsTotal)}</p>
+                <p className="order-modal__price-old">
+                  {formatPrice(itemsTotal, currency)}
+                </p>
               )}
               <p className="order-modal__price-current">
-                {formatPrice(order.total_price || 0)}
+                {formatPrice(getPrice("total_price"), currency)}
               </p>
             </div>
+
             <div className="order-modal__totals-details">
               <div className="order-modal__totals-row">
                 <span>Сумма товаров:</span>
-                <p className="order-modal__totals-value">{formatPrice(itemsTotal)}</p>
+                <p className="order-modal__totals-value">
+                  {formatPrice(itemsTotal, currency)}
+                </p>
               </div>
+
               <div className="order-modal__totals-row">
                 <span>Доставка:</span>
                 <div className="order-modal__totals-value">
-                  {order.delivery_price > 0 ? (
-                    <>
-                      <p className="order-modal__price-old">{formatPrice(0)}</p>
-                      <p className="order-modal__price-current">{formatPrice(order.delivery_price)}</p>
-                    </>
-                  ) : (
-                    formatPrice(0)
-                  )}
+                  {getPrice("delivery_price") > 0
+                    ? formatPrice(getPrice("delivery_price"), currency)
+                    : formatPrice(0, currency)}
                 </div>
               </div>
             </div>
           </div>
+
           <ul className="order-modal__delivery-info">
             <li><strong>Доставка:</strong> {getDeliveryLabel(order.delivery_method)}</li>
             <li><strong>ФИО:</strong> {order.last_name} {order.first_name} {order.middle_name || ''}</li>

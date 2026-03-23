@@ -4,8 +4,7 @@ import ProfileOrdersTab from "./components/tabs/ProfileOrdersTab/ProfileOrdersTa
 import ProfileLogoutConfirm from "./components/tabs/ProfileLogoutConfirm/ProfileLogoutConfirm.jsx";
 import { AnimatePresence, motion } from "framer-motion";
 
-const ProfileContent = ({ tab, setTab, orders, isLoading, onOrderClick, pendingOrder }) => {
-
+const ProfileContent = ({ tab, setTab, orders, isLoading, onOrderClick, pendingOrder, currency }) => {
   const renderTab = () => {
     switch (tab) {
       case "info":
@@ -22,6 +21,7 @@ const ProfileContent = ({ tab, setTab, orders, isLoading, onOrderClick, pendingO
             isLoading={isLoading}
             onOrderClick={onOrderClick}
             pendingOrder={pendingOrder}
+            currency={currency}
           />
         );
     }

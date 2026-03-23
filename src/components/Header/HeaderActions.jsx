@@ -1,55 +1,48 @@
-import { useState } from 'react';
-import { Link } from "react-router-dom";
-import { useAuth } from "@/context/AuthContext";
-import { useCart } from "@/hooks/useCart";
-import SearchOverlay from "@/components/SearchOverlay/SearchOverlay";
+import {Link} from "react-router-dom";
+import {useAuth} from "@/context/AuthContext";
+import {useCart} from "@/hooks/useCart";
+import {useSearch} from "@/context/SearchContext";
 
 import SearchIcon from "@/assets/images/icons/bx_search.svg";
 import CartIcon from "@/assets/images/icons/bx_cart.svg";
 
 const HeaderActions = () => {
-  const { openAuth, isAuth } = useAuth();
-  const { data: cart } = useCart();
-  const [searchOpen, setSearchOpen] = useState(false);
+  const {openSearch} = useSearch();
+  const {openAuth, isAuth} = useAuth();
+  const {data: cart} = useCart();
 
   const totalItems = cart?.items?.length || 0;
 
   return (
-    <>
-      <div className="header__right">
-        {isAuth ? (
-          <Link className="header__link" to="/profile">
-            Личный кабинет
-          </Link>
-        ) : (
-          <button className="header__link" onClick={openAuth} type="button">
-            Авторизация
-          </button>
-        )}
-
-        <button className="header__link" type="button" onClick={() => setSearchOpen(true)}>
-          <SearchIcon/>
-          Поиск
+    <div className="header__right">
+      {isAuth ? (
+        <Link className="header__link" to="/profile">
+          Личный кабинет
+        </Link>
+      ) : (
+        <button className="header__link" onClick={openAuth} type="button">
+          Авторизация
         </button>
+      )}
 
-        {isAuth ? (
-          <Link className="header__link header__cart" to="/cart">
-            <CartIcon/>
-            {isAuth && totalItems > 0 && (
-              <span className="header__cart-badge">{totalItems}</span>
-            )}
-            Корзина
-          </Link>
-        ) : (
-          <button className="header__link" onClick={openAuth} type="button">
-            <CartIcon/>
-            Корзина
-          </button>
-        )}
-      </div>
+      <button className="header__link" type="button" onClick={openSearch}>
+        <SearchIcon/>
+        Поиск
+      </button>
 
-      <SearchOverlay isOpen={searchOpen} onClose={() => setSearchOpen(false)}/>
-    </>
+      {isAuth ? (
+        <Link className="header__link header__cart" to="/cart">
+          <CartIcon/>
+          {totalItems > 0 && <span className="header__cart-badge">{totalItems}</span>}
+          Корзина
+        </Link>
+      ) : (
+        <button className="header__link" onClick={openAuth} type="button">
+          <CartIcon/>
+          Корзина
+        </button>
+      )}
+    </div>
   );
 };
 

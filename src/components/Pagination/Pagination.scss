@@ -18,7 +18,11 @@
   justify-content: center;
   background: none;
   border: 1px solid rgba(17, 17, 17, 0.2);
-  transition: opacity .2s ease;
+  transition: opacity .3s, border .3s;
+
+  &:hover {
+    border-color: rgba($black100, .64);
+  }
 
   svg {
     width: 22px;

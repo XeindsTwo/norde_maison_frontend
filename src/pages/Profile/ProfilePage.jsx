@@ -14,6 +14,8 @@ const ProfilePage = () => {
   const location = useLocation();
   const [searchParams] = useSearchParams();
 
+  const currency = searchParams.get("currency") || "rub";
+
   const [tab, setTab] = useState("orders");
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [showOrderDetails, setShowOrderDetails] = useState(false);
@@ -21,13 +23,14 @@ const ProfilePage = () => {
   const [pendingOrder, setPendingOrder] = useState(null);
 
   const {data: ordersData, isLoading: isLoadingOrders} = useQuery({
-    queryKey: ["userOrders"],
-    queryFn: async () => (await getUserOrders()).data,
+    queryKey: ["userOrders", currency],
+    queryFn: async () => (await getUserOrders({currency})).data,
     staleTime: 5 * 60 * 1000,
   });
+
   const orders = Array.isArray(ordersData) ? ordersData : [];
 
-  const {data: meData, isLoading: isLoadingMe, error} = useQuery({
+  const {data: meData, isLoading: isLoadingMe} = useQuery({
     queryKey: ["me"],
     queryFn: getMe,
   });
@@ -40,8 +43,7 @@ const ProfilePage = () => {
         const {data} = await getPendingOrder();
         if (data?.has_pending) setPendingOrder(data);
         else setPendingOrder(null);
-      } catch (e) {
-        console.error(e);
+      } catch {
         setPendingOrder(null);
       }
     };
@@ -74,6 +76,7 @@ const ProfilePage = () => {
   }, [location.state, searchParams, orders]);
 
   const closeSuccessModal = () => setShowSuccessModal(false);
+
   const closeOrderModal = () => {
     setShowOrderDetails(false);
     setTimeout(() => setSelectedOrder(null), 200);
@@ -95,6 +98,7 @@ const ProfilePage = () => {
             onChangeTab={setTab}
             supportUrl={supportUrl}
             isLoading={isLoadingMe}
+            currency={currency}
           />
           <ProfileContent
             tab={tab}
@@ -103,10 +107,12 @@ const ProfilePage = () => {
             isLoading={isLoadingOrders || isLoadingMe}
             onOrderClick={openOrderDetails}
             pendingOrder={pendingOrder}
+            currency={currency}
           />
         </div>
       </div>
       <Footer/>
+
       {showSuccessModal && (
         <CheckoutSuccessModal
           isOpen={showSuccessModal}
@@ -115,10 +121,12 @@ const ProfilePage = () => {
           onViewOrder={openOrderDetails}
         />
       )}
+
       {selectedOrder && showOrderDetails && (
         <OrderDetailsModal
           isOpen={showOrderDetails}
           order={selectedOrder}
+          currency={currency}
           onClose={closeOrderModal}
         />
       )}
