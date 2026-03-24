@@ -78,6 +78,11 @@
     &.one {
       grid-template-columns: repeat(1, 1fr);
     }
+
+    &.between {
+      @include flex-between-center-gap(30);
+      margin-top: auto;
+    }
   }
 
   &__btn {
@@ -118,6 +123,11 @@
       &:active {
         transform: translateY(1px);
       }
+    }
+
+    &--small {
+      padding: 12px 28px;
+      width: max-content;
     }
   }
 }

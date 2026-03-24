@@ -1,9 +1,9 @@
 import "./ProductInfo.scss";
-import { useState, useEffect, useMemo } from "react";
-import { useCurrency } from "@/context/CurrencyContext";
-import { normalizeHex } from "@/utils/color";
-import { formatPrice } from "@/utils/formatPrice.js";
-import { useCart } from "@/hooks/useCart";
+import {useState, useEffect, useMemo} from "react";
+import {useCurrency} from "@/context/CurrencyContext";
+import {normalizeHex} from "@/utils/color";
+import {formatPrice} from "@/utils/formatPrice.js";
+import {useCart} from "@/hooks/useCart";
 
 import ColorSelector from "../ColorSelector/ColorSelector";
 import SizeSelector from "../SizeSelector/SizeSelector";
@@ -14,9 +14,9 @@ import ProductDeliveryInfo from "@/pages/ProductDetailPage/ProductDeliveryInfo";
 
 const MAX_PER_ITEM = 5;
 
-const ProductInfo = ({ product }) => {
-  const { currency } = useCurrency();
-  const { data: cart } = useCart();
+const ProductInfo = ({product, onOpenSizeQuiz}) => {
+  const {currency} = useCurrency();
+  const {data: cart} = useCart();
 
   const [selectedColor, setSelectedColor] = useState(null);
   const [selectedSize, setSelectedSize] = useState(null);
@@ -39,7 +39,7 @@ const ProductInfo = ({ product }) => {
         sizeMap[v.size] = (sizeMap[v.size] || 0) + v.stock;
       });
 
-    return Object.entries(sizeMap).map(([size, stock]) => ({ size, stock }));
+    return Object.entries(sizeMap).map(([size, stock]) => ({size, stock}));
   }, [product?.variants, selectedColor?.hex]);
 
   useEffect(() => {
@@ -48,7 +48,7 @@ const ProductInfo = ({ product }) => {
 
   if (!product) return null;
 
-  const priceMap = { rub: product.price_rub, kzt: product.price_kzt, byn: product.price_byn };
+  const priceMap = {rub: product.price_rub, kzt: product.price_kzt, byn: product.price_byn};
   const currentPrice = priceMap[currency] ?? product.price_rub;
 
   const variant = product?.variants?.find(
@@ -69,11 +69,29 @@ const ProductInfo = ({ product }) => {
   return (
     <div className="product-info">
       <h1 className="product-info__title">{product.name}</h1>
-      <FavoriteButton productId={product.id} className="product-info__favorite" label="В избранное" />
+      <FavoriteButton
+        productId={product.id}
+        className="product-info__favorite"
+        label="В избранное"
+      />
       <div className="product-info__price">{formatPrice(currentPrice, currency)}</div>
-      <ColorSelector colors={product.colors} selected={selectedColor} onSelect={setSelectedColor} />
-      <SizeSelector sizes={filteredSizes} selected={selectedSize} onSelect={setSelectedSize} />
-      <QuantitySelector quantity={quantity} setQuantity={setQuantity} max={limit} limitReached={limitReached} />
+      <ColorSelector
+        colors={product.colors}
+        selected={selectedColor}
+        onSelect={setSelectedColor}
+      />
+      <SizeSelector
+        sizes={filteredSizes}
+        selected={selectedSize}
+        onSelect={setSelectedSize}
+        onOpenSizeQuiz={onOpenSizeQuiz}
+      />
+      <QuantitySelector
+        quantity={quantity}
+        setQuantity={setQuantity}
+        max={limit}
+        limitReached={limitReached}
+      />
       {isOutOfStock ? (
         <p className="product-info__warning">Этот вариант временно недоступен</p>
       ) : limitReached ? (
@@ -90,11 +108,9 @@ const ProductInfo = ({ product }) => {
         variant={variant}
         limitReached={limitReached}
       />
-
-      <ProductDeliveryInfo price={currentPrice} quantity={quantity} />
-
+      <ProductDeliveryInfo price={currentPrice} quantity={quantity}/>
       <div className="product-info__description">
-        <div className="product-info__content" dangerouslySetInnerHTML={{ __html: product.description }} />
+        <div className="product-info__content" dangerouslySetInnerHTML={{__html: product.description}}/>
       </div>
     </div>
   );

@@ -1,20 +1,19 @@
 import "./ProductDetailPage.scss";
 import {useParams} from "react-router-dom";
 import {useQuery} from "@tanstack/react-query";
-
+import {useState} from "react";
 import {getProductDetail} from "@/api/catalog";
-
 import Gallery from "./components/Gallery/Gallery";
 import ProductInfo from "./components/ProductInfo/ProductInfo";
 import SimilarProducts from "./components/SimilarProductsSection/SimilarProducts";
-
 import Header from "@/components/Header/Header.jsx";
 import Footer from "@/components/Footer/Footer.jsx";
 import Breadcrumbs from "@/components/Breadcrumbs/Breadcrumbs.jsx";
+import SizeQuizModal from "@/components/SizeQuiz/SizeQuizModal";
 
 const ProductDetailPage = () => {
-
   const {id} = useParams();
+  const [isSizeQuizOpen, setIsSizeQuizOpen] = useState(false);
 
   const {data, isLoading, isError} = useQuery({
     queryKey: ["product-detail", id],
@@ -93,7 +92,10 @@ const ProductDetailPage = () => {
 
             <div className="product-detail__grid">
               <Gallery product={product}/>
-              <ProductInfo product={product}/>
+              <ProductInfo
+                product={product}
+                onOpenSizeQuiz={() => setIsSizeQuizOpen(true)}
+              />
             </div>
 
             {product?.similar_products?.length > 0 && (
@@ -105,8 +107,11 @@ const ProductDetailPage = () => {
           </div>
         </section>
       </main>
-
       <Footer/>
+      <SizeQuizModal
+        isOpen={isSizeQuizOpen}
+        onClose={() => setIsSizeQuizOpen(false)}
+      />
     </>
   );
 };
