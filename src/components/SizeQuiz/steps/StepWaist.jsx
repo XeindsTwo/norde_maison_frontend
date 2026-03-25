@@ -1,15 +1,22 @@
+import CheckIcon from '@/assets/images/size-quiz/check-icon.svg';
+
+const images = {
+  narrow: '/images/waist/1.png',
+  medium: '/images/waist/2.png',
+  wide: '/images/waist/3.png',
+};
+
 const options = [
   { key: 'narrow', label: 'УЗКАЯ' },
   { key: 'medium', label: 'СРЕДНЯЯ' },
   { key: 'wide', label: 'ШИРОКАЯ' },
 ];
 
-const StepWaist = ({ form, updateForm, goToStep, currentStep }) => {
+const StepWaist = ({ form, updateForm, currentStep }) => {
   const { waistShape } = form;
 
   const handleSelect = (key) => {
     updateForm({ waistShape: key });
-    goToStep(currentStep + 1);
   };
 
   return (
@@ -27,8 +34,13 @@ const StepWaist = ({ form, updateForm, goToStep, currentStep }) => {
             className={`sizequiz__chest-card ${waistShape === opt.key ? 'is-active' : ''}`}
             onClick={() => handleSelect(opt.key)}
           >
-            <div className="sizequiz__chest-img" />
-            <div className="sizequiz__chest-label">{opt.label}</div>
+            <div className="sizequiz__chest-img">
+              <img src={images[opt.key]} alt={opt.label} />
+            </div>
+            <div className="sizequiz__select-label">
+              {waistShape === opt.key && <CheckIcon />}
+              {opt.label}
+            </div>
           </button>
         ))}
       </div>
@@ -36,5 +48,6 @@ const StepWaist = ({ form, updateForm, goToStep, currentStep }) => {
   );
 };
 
-StepWaist.canNext = () => false; // авто-next
+StepWaist.canNext = (form) => form.waistShape !== null;
+
 export default StepWaist;

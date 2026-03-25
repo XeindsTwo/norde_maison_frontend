@@ -3,10 +3,10 @@ const StepAge = ({form, updateForm}) => {
 
   return (
     <div className="sizequiz__params">
-      <div className="sizequiz__question">Ваш возраст</div>
+      <div className="sizequiz__question">Возраст</div>
       <div className="sizequiz__inputs">
         <div className="sizequiz__field">
-          <label className="sizequiz__label">Возраст</label>
+          <label className="sizequiz__label">Ваш возраст</label>
           <input
             type="number"
             min={16}

@@ -1,25 +1,38 @@
 const getSize = (form) => {
-  let score = 0;
-  const h = Number(form.height), w = Number(form.weight), age = Number(form.age);
+  const h = Number(form.height) / 100;
+  const w = Number(form.weight);
+  let index = 0;
 
-  if (h && w) {
-    const bmi = w / Math.pow(h / 100, 2);
-    score += bmi < 18.5 ? -1 : bmi > 27 ? 1 : 0;
-    if (age > 50) score += 0.5;
+  if (h > 0 && w > 0) {
+    const bmi = w / (h * h);
+    index += bmi;
   }
 
-  score += form.fit;
+  if (form.chestShape === 'narrow') index -= 0.5;
+  if (form.chestShape === 'wide') index += 0.5;
 
-  ['chestShape', 'waistShape', 'hipsShape'].forEach((shape) => {
-    if (form[shape] === 'wide') score += 1;
-    if (form[shape] === 'narrow') score -= 1;
-  });
+  if (form.waistShape === 'narrow') index -= 0.3;
+  if (form.waistShape === 'wide') index += 0.3;
 
-  if (score <= -2) return 'XS';
-  if (score === -1) return 'S';
-  if (score === 0) return 'M';
-  if (score === 1) return 'L';
-  return 'XL';
+  if (form.hipsShape === 'narrow') index -= 0.5;
+  if (form.hipsShape === 'medium') index += 0.5;
+
+  if (form.fit === -2) index -= 0.75;
+  if (form.fit === 2) index += 1.5;
+
+  const age = Number(form.age);
+  if (age >= 25 && age <= 40) index += 0.3;
+  if (age > 40) index += 0.6;
+
+  if (form.gender === 'M') index += 0.3;
+
+  if (index < 18) return 'XSS';
+  if (index < 20) return 'XS';
+  if (index < 22) return 'S';
+  if (index < 24) return 'M';
+  if (index < 26) return 'L';
+  if (index < 28) return 'XL';
+  return 'XXL';
 };
 
 const StepResult = ({form}) => {
@@ -27,10 +40,10 @@ const StepResult = ({form}) => {
 
   return (
     <div className="sizequiz__result">
-      <div className="sizequiz__title">Ваш размер</div>
+      <div className="sizequiz__subtitle">Рекомендованный размер</div>
       <div className="sizequiz__result-size">{size}</div>
       <div className="sizequiz__result-desc">
-        Рекомендуем брать размер {size} с учётом выбранной посадки
+        Мы сделали эту рекомендацию на основе ваших параметров и предпочтений, сравнив их с тысячами похожих профилей.
       </div>
     </div>
   );

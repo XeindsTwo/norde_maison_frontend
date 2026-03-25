@@ -1,16 +1,22 @@
-// steps/StepChest.jsx
+import CheckIcon from '@/assets/images/size-quiz/check-icon.svg';
+
+const images = {
+  narrow: '/images/chest/1.png',
+  medium: '/images/chest/2.png',
+  wide: '/images/chest/3.png',
+};
+
 const options = [
   { key: 'narrow', label: 'УЗКАЯ' },
   { key: 'medium', label: 'СРЕДНЯЯ' },
   { key: 'wide', label: 'ШИРОКАЯ' },
 ];
 
-const StepChest = ({ form, updateForm, goToStep, currentStep }) => {
+const StepChest = ({ form, updateForm, currentStep }) => {
   const { chestShape } = form;
 
   const handleSelect = (key) => {
     updateForm({ chestShape: key });
-    goToStep(currentStep + 1); // авто к Waist
   };
 
   return (
@@ -28,8 +34,13 @@ const StepChest = ({ form, updateForm, goToStep, currentStep }) => {
             className={`sizequiz__chest-card ${chestShape === opt.key ? 'is-active' : ''}`}
             onClick={() => handleSelect(opt.key)}
           >
-            <div className="sizequiz__chest-img" />
-            <div className="sizequiz__chest-label">{opt.label}</div>
+            <div className="sizequiz__chest-img">
+              <img src={images[opt.key]} alt={opt.label} />
+            </div>
+            <div className="sizequiz__select-label">
+              {chestShape === opt.key && <CheckIcon />}
+              {opt.label}
+            </div>
           </button>
         ))}
       </div>
@@ -37,5 +48,6 @@ const StepChest = ({ form, updateForm, goToStep, currentStep }) => {
   );
 };
 
-StepChest.canNext = () => false; // авто-next
+StepChest.canNext = (form) => form.chestShape !== null;
+
 export default StepChest;

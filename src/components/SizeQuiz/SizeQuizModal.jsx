@@ -1,4 +1,4 @@
-import {useState, useCallback} from 'react';
+import {useState, useCallback, useEffect} from 'react';
 import {AnimatePresence, motion} from 'framer-motion';
 import AnimatedModal from '@/components/Modals/ui/AnimatedModal';
 import CrossArrow from '@/assets/images/icons/cross-modal.svg';
@@ -36,21 +36,35 @@ const initialForm = {
   hipsShape: null,
 };
 
-const stepsWithButtons = [1, 2];
+const STEPS_WITHOUT_BUTTONS = [0, 6];
 
 const SizeQuizModal = ({isOpen, onClose}) => {
   const [step, setStep] = useState(0);
   const [form, setForm] = useState(initialForm);
+  const [shouldAutoNext, setShouldAutoNext] = useState(false);
 
   const StepComponent = steps[step];
   const isLast = step === steps.length - 1;
-  const showButtons = stepsWithButtons.includes(step);
+  const showButtons = !STEPS_WITHOUT_BUTTONS.includes(step);
 
   const updateForm = useCallback((patch) => {
     setForm((prev) => ({...prev, ...patch}));
-  }, []);
+    // Авто-next только для шагов 3,4,5 (Chest, Waist, Hips)
+    if ([3,4,5].includes(step)) {
+      setShouldAutoNext(true);
+    }
+  }, [step]);
 
   const canNext = StepComponent.canNext ? StepComponent.canNext(form) : true;
+
+  useEffect(() => {
+    if (shouldAutoNext && canNext && !isLast) {
+      setTimeout(() => {
+        setStep((s) => s + 1);
+        setShouldAutoNext(false);
+      }, 100);
+    }
+  }, [shouldAutoNext, canNext, isLast]);
 
   const goNext = () => {
     if (!canNext) return;
@@ -64,6 +78,7 @@ const SizeQuizModal = ({isOpen, onClose}) => {
   const resetQuiz = () => {
     setStep(0);
     setForm(initialForm);
+    setShouldAutoNext(false);
   };
 
   const handleClose = () => {
@@ -72,10 +87,9 @@ const SizeQuizModal = ({isOpen, onClose}) => {
   };
 
   return (
-    <AnimatedModal isOpen={isOpen} onClose={handleClose} width="720px">
+    <AnimatedModal isOpen={isOpen} onClose={handleClose} width="876px">
       <div className="modal__top">
         <div className="sizequiz__header">
-          {/* УБРАЛИ счётчик шагов */}
           <h3 className="modal__title">Какой у меня размер?</h3>
         </div>
 
@@ -98,6 +112,9 @@ const SizeQuizModal = ({isOpen, onClose}) => {
               updateForm={updateForm}
               goToStep={setStep}
               currentStep={step}
+              goNext={goNext}
+              goPrev={goPrev}
+              canNext={canNext}
             />
           </motion.div>
         </AnimatePresence>
@@ -125,7 +142,7 @@ const SizeQuizModal = ({isOpen, onClose}) => {
         )}
 
         {isLast && (
-          <div className="modal__actions between sizequiz__actions">
+          <div className="modal__actions between">
             <button
               onClick={resetQuiz}
               className="btn modal__btn modal__btn--cancel modal__btn--small"
