@@ -163,6 +163,13 @@
   }
 }
 
+.sizequiz__select-img {
+  max-width: 215px;
+  max-height: 215px;
+  width: 100%;
+  height: 100%;
+}
+
 .sizequiz__select-label {
   @include flex-align-center(6);
   justify-content: center;

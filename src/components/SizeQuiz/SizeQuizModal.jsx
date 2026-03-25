@@ -38,6 +38,13 @@ const initialForm = {
 
 const STEPS_WITHOUT_BUTTONS = [0, 6];
 
+// для предзагрузки
+const preloadImages = [
+  '/images/chest/1.png', '/images/chest/2.png', '/images/chest/3.png',
+  '/images/waist/1.png', '/images/waist/2.png', '/images/waist/3.png',
+  '/images/hips/1.png', '/images/hips/2.png', '/images/hips/3.png',
+];
+
 const SizeQuizModal = ({isOpen, onClose}) => {
   const [step, setStep] = useState(0);
   const [form, setForm] = useState(initialForm);
@@ -49,10 +56,7 @@ const SizeQuizModal = ({isOpen, onClose}) => {
 
   const updateForm = useCallback((patch) => {
     setForm((prev) => ({...prev, ...patch}));
-    // Авто-next только для шагов 3,4,5 (Chest, Waist, Hips)
-    if ([3,4,5].includes(step)) {
-      setShouldAutoNext(true);
-    }
+    if ([3, 4, 5].includes(step)) setShouldAutoNext(true);
   }, [step]);
 
   const canNext = StepComponent.canNext ? StepComponent.canNext(form) : true;
@@ -65,6 +69,13 @@ const SizeQuizModal = ({isOpen, onClose}) => {
       }, 100);
     }
   }, [shouldAutoNext, canNext, isLast]);
+
+  useEffect(() => {
+    preloadImages.forEach((src) => {
+      const img = new Image();
+      img.src = src;
+    });
+  }, []);
 
   const goNext = () => {
     if (!canNext) return;
