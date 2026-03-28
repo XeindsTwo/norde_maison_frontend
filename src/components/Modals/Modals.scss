@@ -52,7 +52,11 @@
     font-size: 16px;
     line-height: 1.4;
     letter-spacing: -0.32px;
-    color: rgba($black100, .8);
+    color: rgba($black100, .64);
+
+    &.bottom {
+      margin-bottom: 26px;
+    }
 
     &.short {
       max-width: 360px;
@@ -88,7 +92,7 @@
   &__btn {
     max-width: 100%;
     width: 100%;
-    padding: 16px;
+    padding: 17px;
     font-size: 18px;
     text-transform: initial;
 

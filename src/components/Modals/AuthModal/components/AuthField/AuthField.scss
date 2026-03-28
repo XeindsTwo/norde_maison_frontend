@@ -61,4 +61,29 @@
     align-items: center;
     padding: 0;
   }
+
+  &__right {
+    margin-left: auto;
+  }
+
+  &__forgot {
+    font-size: 14px;
+    line-height: 1;
+    color: rgba($black100, .6);
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+
+    span {
+      color: rgba($black100, .8);
+      text-decoration: underline;
+      text-underline-offset: 2px;
+      transition: color .3s, opacity .3s;
+    }
+
+    &:hover span {
+      opacity: 0.8;
+    }
+  }
 }

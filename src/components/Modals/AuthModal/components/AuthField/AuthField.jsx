@@ -11,9 +11,9 @@ const AuthField = ({
                      onChange,
                      placeholder,
                      resetToggleSignal,
-                     autoComplete
+                     autoComplete,
+                     rightAction,
                    }) => {
-
   const isPasswordField = type === "password";
   const [showPassword, setShowPassword] = useState(false);
 
@@ -27,24 +27,19 @@ const AuthField = ({
     setShowPassword(prev => !prev);
   };
 
-  const inputType =
-    isPasswordField
-      ? (showPassword ? "text" : "password")
-      : type;
+  const inputType = isPasswordField ? (showPassword ? "text" : "password") : type;
 
   return (
     <div className="auth-field">
-
       <div className="auth-field__top">
-        <label className="auth-field__label">
-          {label}
-        </label>
+        <label className="auth-field__label">{label}</label>
+        {rightAction && <div className="auth-field__right">{rightAction}</div>}
       </div>
 
       <div className="auth-field__input-wrapper">
         <input
           type="text"
-          style={{display: "none"}}
+          style={{ display: "none" }}
           autoComplete="username"
         />
 
@@ -65,13 +60,9 @@ const AuthField = ({
             className="auth-field__toggle"
             onClick={togglePassword}
           >
-            {showPassword
-              ? <HideIcon width={22} height={22}/>
-              : <ShowIcon width={22} height={22}/>
-            }
+            {showPassword ? <HideIcon width={22} height={22} /> : <ShowIcon width={22} height={22} />}
           </button>
         )}
-
       </div>
     </div>
   );

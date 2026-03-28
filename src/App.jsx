@@ -16,6 +16,8 @@ import CheckoutPage from "@/pages/CheckoutPage/CheckoutPage.jsx";
 import SearchPageResult from "@/pages/SearchPage/SearchPageResult.jsx";
 import {useSearch} from "@/context/SearchContext";
 import SearchOverlay from "@/components/SearchOverlay/SearchOverlay";
+import ResetPasswordSuccessModal from "@/components/Modals/AuthModal/components/ResetPasswordSuccessModal.jsx";
+import ResetPasswordModal from "@/components/Modals/AuthModal/components/ResetPasswordModal.jsx";
 
 function App() {
   const {loading} = useRouteLoading(500);
@@ -71,6 +73,8 @@ function App() {
 
           <AuthModal/>
           <SuccessModal/>
+          <ResetPasswordSuccessModal/>
+          <ResetPasswordModal/>
 
           <SearchOverlay isOpen={isSearchOpen} onClose={closeSearch}/>
         </>

@@ -23,3 +23,9 @@ export const getUserOrders = (params = {}) =>
 
 export const getPendingOrder = () =>
   api.get("orders/checkout/current-pending/");
+
+export const resetPasswordRequest = (data) =>
+  api.post("auth/password-reset/", data);
+
+export const resetPasswordConfirmNewPassword = (token, data) =>
+  api.post(`auth/password-reset-confirm/${token}/`, data);
