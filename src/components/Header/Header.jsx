@@ -3,13 +3,14 @@ import {useEffect, useState, useRef} from 'react';
 import {getCategories, getSubcategories} from '@/api/catalog.js';
 import MegaMenu from '../MegaMenu/MegaMenu.jsx';
 import {useAuth} from "@/context/AuthContext";
-import {Link, useLocation} from 'react-router-dom';
+import {Link} from 'react-router-dom';
 import HeaderActions from "./HeaderActions.jsx";
 import HeaderInfo from "./HeaderInfo.jsx";
+import { motion, AnimatePresence } from 'framer-motion';
 
 const Header = () => {
-  const {openAuth, isAuth} = useAuth();
-  const [openMenu, setOpenMenu] = useState(null); // 'women' | 'men' | null
+  const {isAuth} = useAuth();
+  const [openMenu, setOpenMenu] = useState(null);
   const [isMenuVisible, setIsMenuVisible] = useState(false);
   const [womenData, setWomenData] = useState({categories: [], materials: []});
   const [menData, setMenData] = useState({categories: [], materials: []});
@@ -18,22 +19,20 @@ const Header = () => {
 
   const closeTimeoutRef = useRef(null);
   const openTimeoutRef = useRef(null);
-
   const hoverLockRef = useRef({type: null, locked: false});
-  const location = useLocation();
+  const headerRef = useRef(null);
 
   useEffect(() => {
     const loadData = async () => {
       try {
-        // базовые категории и материалы
-        const [womenCatsRes, menCatsRes, materialsRes, subcatsRes] = await Promise.all([
+        const [womenCatsRes, menCatsRes, womenMaterialsRes, menMaterialsRes, subcatsRes] = await Promise.all([
           getCategories({gender: 'F', is_material: false}),
           getCategories({gender: 'M', is_material: false}),
-          getCategories({is_material: true}),
+          getSubcategories({gender: 'F', only_materials: true}),
+          getSubcategories({gender: 'M', only_materials: true}),
           getSubcategories(),
         ]);
 
-        // группируем подкатегории обычных категорий
         const groupedSubcats = {};
         subcatsRes.data.forEach((sc) => {
           const id = sc.category.id;
@@ -41,29 +40,14 @@ const Header = () => {
           groupedSubcats[id].push(sc);
         });
 
-        // отдельно загружаем подкатегории материалов для женщин и мужчин
-        const womenMaterialsCats = materialsRes.data.filter((c) => c.gender === 'F');
-        const menMaterialsCats = materialsRes.data.filter((c) => c.gender === 'M');
-
-        const womenMaterialsSubcats = await Promise.all(
-          womenMaterialsCats.map((cat) => getSubcategories({category: cat.id}))
-        );
-        const menMaterialsSubcats = await Promise.all(
-          menMaterialsCats.map((cat) => getSubcategories({category: cat.id}))
-        );
-
-        // плоский массив подкатегорий материалов
-        const flatWomenMaterials = womenMaterialsSubcats.flatMap((r) => r.data);
-        const flatMenMaterials = menMaterialsSubcats.flatMap((r) => r.data);
-
         setWomenData({
           categories: womenCatsRes.data,
-          materials: flatWomenMaterials,
+          materials: womenMaterialsRes.data,
         });
 
         setMenData({
           categories: menCatsRes.data,
-          materials: flatMenMaterials,
+          materials: menMaterialsRes.data,
         });
 
         setSubcategoriesByCategory(groupedSubcats);
@@ -89,13 +73,16 @@ const Header = () => {
   };
 
   const scheduleClose = () => {
-    if (closeTimeoutRef.current) return;
-
+    if (closeTimeoutRef.current) {
+      return;
+    }
     closeTimeoutRef.current = setTimeout(() => {
       setIsMenuVisible(false);
-      setTimeout(() => setOpenMenu(null), 400);
+      setTimeout(() => {
+        setOpenMenu(null);
+      }, 250);
       closeTimeoutRef.current = null;
-    }, 300);
+    }, 200);
   };
 
   const handleOpen = (type) => {
@@ -104,15 +91,12 @@ const Header = () => {
       hoverLockRef.current = {type: null, locked: false};
       return;
     }
-
-    if (closeTimeoutRef.current) clearTimeout(closeTimeoutRef.current);
-    if (openTimeoutRef.current) clearTimeout(openTimeoutRef.current);
-
+    clearTimers();
     openTimeoutRef.current = setTimeout(() => {
       setOpenMenu(type);
       setIsMenuVisible(true);
       openTimeoutRef.current = null;
-    }, 150);
+    }, 100);
   };
 
   const handleLinkClick = (type) => {
@@ -126,8 +110,38 @@ const Header = () => {
         ? menData
         : {categories: [], materials: []};
 
+  const menuVariants = {
+    hidden: { opacity: 0, y: 6 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.22, ease: [0.22, 1, 0.36, 1] }
+    },
+    exit: {
+      opacity: 0,
+      y: -4,
+      transition: { duration: 0.18, ease: [0.22, 1, 0.36, 1] }
+    }
+  };
+
+  const handleNavMouseEnter = () => {
+    clearTimers();
+  };
+
+  const handleNavMouseLeave = () => {
+    scheduleClose();
+  };
+
+  const handleMenuMouseEnter = () => {
+    clearTimers();
+  };
+
+  const handleMenuMouseLeave = () => {
+    scheduleClose();
+  };
+
   return (
-    <header className="header">
+    <header className="header" ref={headerRef}>
       <HeaderInfo/>
       <div className="container">
         <div className="header__top">
@@ -136,7 +150,11 @@ const Header = () => {
               <img src="/images/logo.svg" width={189} height={24} alt="Nordé Maison"/>
             </Link>
 
-            <nav className="header__nav" onMouseEnter={clearTimers} onMouseLeave={scheduleClose}>
+            <nav
+              className="header__nav"
+              onMouseEnter={handleNavMouseEnter}
+              onMouseLeave={handleNavMouseLeave}
+            >
               <Link
                 to="/women"
                 className={`header__link ${openMenu === 'women' ? 'is-active' : ''}`}
@@ -164,17 +182,30 @@ const Header = () => {
         </div>
       </div>
 
-      <div
-        className={`mega-menu ${isMenuVisible ? 'mega-menu--visible' : ''}`}
-        onMouseEnter={clearTimers}
-        onMouseLeave={scheduleClose}
-      >
-        <div className="container">
-          {!loading && openMenu && (
-            <MegaMenu data={currentData} subcategoriesByCategory={subcategoriesByCategory}/>
-          )}
+      {isMenuVisible && (
+        <div
+          className="mega-menu mega-menu--visible"
+          onMouseEnter={handleMenuMouseEnter}
+          onMouseLeave={handleMenuMouseLeave}
+        >
+          <div className="container">
+            {!loading && openMenu && (
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={openMenu}
+                  className="mega-menu__content"
+                  variants={menuVariants}
+                  initial="hidden"
+                  animate="visible"
+                  exit="exit"
+                >
+                  <MegaMenu data={currentData} subcategoriesByCategory={subcategoriesByCategory}/>
+                </motion.div>
+              </AnimatePresence>
+            )}
+          </div>
         </div>
-      </div>
+      )}
     </header>
   );
 };

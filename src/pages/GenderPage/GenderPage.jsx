@@ -9,6 +9,7 @@ import GenderHero from '../../components/GenderHero/GenderHero.jsx';
 import GenderCategorySection from './GenderCategorySection/GenderCategorySection.jsx';
 
 const GenderPage = ({gender}) => {
+  const isMen = gender === 'M';
 
   const {data: categories = [], isLoading: categoriesLoading} = useQuery({
     queryKey: ['categories', gender],
@@ -18,30 +19,35 @@ const GenderPage = ({gender}) => {
     }
   });
 
-  const {data: subcategories = [], isLoading: subcategoriesLoading} = useQuery({
-    queryKey: ['subcategories'],
+  const {data: ordinarySubcats = [], isLoading: ordinaryLoading} = useQuery({
+    queryKey: ['subcategories', gender, 'ordinary'],
     queryFn: async () => {
-      const res = await getSubcategories({});
+      const res = await getSubcategories({gender, only_materials: false});
       return res.data;
     }
   });
 
-  const loading = categoriesLoading || subcategoriesLoading;
-
-  const sortedCategories = [...categories].sort((a, b) => {
-    if (a.name === "Материалы") return 1;
-    if (b.name === "Материалы") return -1;
-    return a.order - b.order;
+  const {data: materialSubcats = [], isLoading: materialsLoading} = useQuery({
+    queryKey: ['subcategories', gender, 'materials'],
+    queryFn: async () => {
+      const res = await getSubcategories({gender, only_materials: true});
+      return res.data;
+    }
   });
 
-  const subcatsByCategoryId = sortedCategories.reduce((acc, cat) => {
-    acc[cat.id] = subcategories.filter(
-      sc => sc.category.id === cat.id
-    );
+  const loading = categoriesLoading || ordinaryLoading || materialsLoading;
+
+  const ordinaryCategories = categories.filter(cat => cat.name !== 'Материалы');
+  const materialCategory = categories.find(cat => cat.name === 'Материалы');
+
+  const sortedOrdinaryCategories = [...ordinaryCategories].sort((a, b) => a.order - b.order);
+
+  const ordinaryByCategoryId = ordinarySubcats.reduce((acc, sc) => {
+    const catId = sc.category.id;
+    if (!acc[catId]) acc[catId] = [];
+    acc[catId].push(sc);
     return acc;
   }, {});
-
-  const isMen = gender === 'M';
 
   const breadcrumbItems = [
     {label: 'Главная', to: '/'},
@@ -56,41 +62,51 @@ const GenderPage = ({gender}) => {
 
       <main className="gender">
         <div className="container container--padding">
-
           <Breadcrumbs items={breadcrumbItems}/>
           <GenderHero gender={gender}/>
 
           <section className="gender__sections">
-
-            {loading
-              ? skeletonSections.map((_, index) => (
+            {loading ? (
+              skeletonSections.map((_, index) => (
                 <GenderCategorySection
                   key={index}
                   gender={gender}
                   category={{name: ''}}
                   subcategories={[]}
                   loading={true}
+                  isMaterialCategory={false}
                 />
               ))
-              : sortedCategories.map(cat => {
+            ) : (
+              <>
+                {sortedOrdinaryCategories.map(cat => {
+                  const list = ordinaryByCategoryId[cat.id] || [];
+                  if (!list.length) return null;
 
-                const list = subcatsByCategoryId[cat.id] || [];
-                if (!list.length) return null;
+                  return (
+                    <GenderCategorySection
+                      key={cat.id}
+                      gender={gender}
+                      category={cat}
+                      subcategories={list}
+                      loading={false}
+                      isMaterialCategory={false}
+                    />
+                  );
+                })}
 
-                return (
+                {materialCategory && materialSubcats.length > 0 && (
                   <GenderCategorySection
-                    key={cat.id}
                     gender={gender}
-                    category={cat}
-                    subcategories={list}
+                    category={materialCategory}
+                    subcategories={materialSubcats}
                     loading={false}
+                    isMaterialCategory={true}
                   />
-                );
-
-              })}
-
+                )}
+              </>
+            )}
           </section>
-
         </div>
       </main>
 

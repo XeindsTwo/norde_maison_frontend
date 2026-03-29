@@ -1,17 +1,23 @@
-import {Link} from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 import './GenderCategorySection.scss';
 
-const GenderCategorySection = ({gender, category, subcategories, loading = false}) => {
+const GenderCategorySection = ({
+                                 gender,
+                                 category,
+                                 subcategories,
+                                 loading = false,
+                                 isMaterialCategory = false
+                               }) => {
   const skeletonCount = 4;
-  const list = loading ? Array.from({length: skeletonCount}) : subcategories;
+  const list = loading ? Array.from({ length: skeletonCount }) : subcategories;
   const genderParam = gender === 'M' ? 'M' : 'F';
 
   return (
     <section className="gender-section">
       <h2 className="gender-section__title">
-        {loading ? <Skeleton width={180} height={28}/> : category.name}
+        {loading ? <Skeleton width={180} height={28} /> : category.name}
       </h2>
 
       <ul className="gender-section__list">
@@ -19,13 +25,17 @@ const GenderCategorySection = ({gender, category, subcategories, loading = false
           loading ? (
             <li key={index}>
               <div className="gender-section__link gender-section__link--skeleton">
-                <Skeleton style={{width: '100%', height: '100%'}}/>
+                <Skeleton style={{ width: '100%', height: '100%' }} />
               </div>
             </li>
           ) : (
             <li key={item.id}>
               <Link
-                to={`/catalog?gender=${genderParam}&subcategory=${item.id}`}
+                to={
+                  isMaterialCategory
+                    ? `/catalog?gender=${genderParam}&material=${item.id}`
+                    : `/catalog?gender=${genderParam}&subcategory=${item.id}`
+                }
                 className="gender-section__link"
               >
                 <div className="gender-section__image-wrap">
@@ -43,7 +53,7 @@ const GenderCategorySection = ({gender, category, subcategories, loading = false
                 </span>
               </Link>
             </li>
-          ),
+          )
         )}
       </ul>
     </section>

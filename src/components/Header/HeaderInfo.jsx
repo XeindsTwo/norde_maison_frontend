@@ -16,9 +16,7 @@ const MAP = {
 };
 
 const HeaderInfo = () => {
-
   const {currency} = useCurrency();
-
   const data = MAP[currency] || MAP.rub;
 
   return (
