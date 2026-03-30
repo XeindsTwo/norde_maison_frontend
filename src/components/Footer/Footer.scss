@@ -6,6 +6,12 @@
     border-bottom: 1px solid rgba($black100, .15);
     padding: 40px 0;
     font-size: 18px;
+    @include r($sm) {
+      font-size: 16px;
+    }
+    @include r($phone) {
+      padding: 30px 0;
+    }
 
     &-inner {
       @include flex-between-center-gap(30);
@@ -42,6 +48,9 @@
 
   &__nav {
     @include flex-between-center-gap(18);
+    @media (max-width: 920px) {
+      display: none;
+    }
   }
 
   &__link {
@@ -116,10 +125,24 @@
     font-size: 14px;
     padding: 16px 0;
     color: rgba($black100, .64);
+    @include r($sm) {
+      flex-direction: column;
+    }
+    @media (max-width: 380px) {
+      align-items: flex-start;
+    }
   }
 
   &__valute {
     position: relative;
+
+    span {
+      display: none;
+      @include r($sm) {
+        display: block;
+        margin-bottom: 10px;
+      }
+    }
   }
 
   &__btn {
@@ -170,6 +193,9 @@
     pointer-events: none;
     transform: translateY(4px);
     transition: opacity .25s ease, transform .25s ease;
+    @include r($sm) {
+      bottom: calc(100% - 12px);
+    }
   }
 
   &__valute-dropdown--open {
@@ -193,6 +219,13 @@
     &:hover {
       background-color: rgba($black100, .04);
       color: $black100;
+    }
+  }
+
+  &__author {
+    @media (max-width: 380px) {
+      width: 100%;
+      text-align: center;
     }
   }
 }

@@ -1,19 +1,48 @@
 .category-showcase {
   margin-bottom: 40px;
 
+  @include r($lg) {
+    margin-bottom: 36px;
+  }
+
+  @include r($tablet) {
+    margin-bottom: 32px;
+  }
+
   &__top {
     @include flex-between-center-gap(30);
     margin-bottom: 24px;
+
+    @include r($lg) {
+      gap: 24px;
+      margin-bottom: 22px;
+    }
+
+    @include r($tablet) {
+      gap: 20px;
+      margin-bottom: 20px;
+    }
   }
 
   &__title {
     font-size: 30px;
     font-weight: 500;
     letter-spacing: -0.05em;
+
+    @include r($lg) {
+      font-size: 28px;
+    }
+
+    @include r($tablet) {
+      font-size: 26px;
+    }
+
+    @include r($phone) {
+      font-size: 22px;
+    }
   }
 
   &__all {
-    font-size: 18px;
     letter-spacing: -0.03em;
     font-weight: 400;
     color: rgba($black100, .8);
@@ -23,6 +52,18 @@
     &:hover {
       color: $black100;
       border-bottom-color: transparent;
+    }
+
+    @include r($lg) {
+      font-size: 16px;
+    }
+
+    @include r($tablet) {
+      font-size: 16px;
+    }
+
+    @include r($phone) {
+      font-size: 16px;
     }
   }
 
@@ -50,6 +91,30 @@
     &:hover img, &:focus img {
       transform: scale(1.05);
     }
+
+    @include r($lg) {
+      max-height: 450px;
+
+      img {
+        min-height: 450px;
+      }
+    }
+
+    @include r($tablet) {
+      max-height: 385px;
+
+      img {
+        min-height: 385px;
+      }
+    }
+
+    @include r($phone) {
+      max-height: 240px;
+
+      img {
+        min-height: 240px;
+      }
+    }
   }
 
   &__name {
@@ -57,11 +122,34 @@
     bottom: 0;
     left: 0;
     z-index: 1;
+
+    @include r($sm) {
+      font-size: 14px;
+      padding: 12px 20px;
+    }
+    @include r($phone) {
+      font-size: 12px;
+      padding: 12px 14px;
+    }
   }
 
   &__list {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     grid-gap: 20px;
+
+    @include r($lg) {
+      grid-gap: 18px;
+    }
+
+    @include r($tablet) {
+      grid-template-columns: repeat(2, 1fr);
+      grid-gap: 16px;
+    }
+
+    @include r($phone) {
+      grid-template-columns: repeat(2, 1fr);
+      grid-gap: 14px;
+    }
   }
 }

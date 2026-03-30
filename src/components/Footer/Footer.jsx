@@ -110,6 +110,7 @@ const Footer = () => {
       <div className="container container--padding">
         <div className="footer__bottom">
           <div className="footer__valute" ref={valuteRef}>
+            <span>Выберите валюту:</span>
             <button
               className={`footer__btn ${isCurrencyOpen ? 'is-open' : ''}`}
               type="button"

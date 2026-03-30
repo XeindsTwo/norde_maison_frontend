@@ -42,6 +42,19 @@
       transform: translateY(0);
       opacity: .9;
     }
+
+    img {
+      @include r($lg) {
+        width: 176px;
+        height: auto;
+      }
+      @include r($sm) {
+        width: 163px;
+      }
+      @media (max-width: 420px) {
+        width: 150px;
+      }
+    }
   }
 
   &__nav {
