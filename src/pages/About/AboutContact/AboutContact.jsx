@@ -44,7 +44,7 @@ const AboutContact = () => {
               />
             )}
           </div>
-          <img src="/images/telegram.svg" width="360" height="360" alt=""/>
+          <img className="about-contact__img" src="/images/telegram.svg" width="360" height="360" alt=""/>
         </div>
       </div>
     </section>

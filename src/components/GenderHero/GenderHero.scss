@@ -9,6 +9,21 @@
     font-weight: 500;
     letter-spacing: -0.05em;
     margin-bottom: 18px;
+    @include r($desktop) {
+      font-size: 34px;
+      letter-spacing: -0.03em;
+    }
+    @include r($lg) {
+      font-size: 30px;
+      letter-spacing: -0.02em;
+    }
+    @include r($sm) {
+      font-size: 28px;
+    }
+    @include r($phone) {
+      font-size: 24px;
+      letter-spacing: 0;
+    }
   }
 
   &__description {
@@ -16,5 +31,11 @@
     letter-spacing: -0.48px;
     line-height: 1.5;
     color: rgba($black100, .64);
+    @include r($tablet) {
+      letter-spacing: -0.24px;
+    }
+    @include r($phone) {
+      letter-spacing: 0;
+    }
   }
 }

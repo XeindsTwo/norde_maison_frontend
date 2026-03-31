@@ -4,6 +4,10 @@
     flex-direction: column;
     gap: 46px;
     margin-bottom: 90px;
+    @include r($lg) {
+      gap: 32px;
+      margin-bottom: 80px;
+    }
   }
 
   &__loading {

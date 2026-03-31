@@ -8,6 +8,15 @@
   font-size: 14px;
   color: rgba($black100, .6);
   text-transform: uppercase;
+  @include r($desktop) {
+    margin-bottom: 90px;
+  }
+  @include r($lg) {
+    margin-bottom: 76px;
+  }
+  @include r($sm) {
+    margin-bottom: 66px;
+  }
 
   &__item {
     display: inline-flex;
