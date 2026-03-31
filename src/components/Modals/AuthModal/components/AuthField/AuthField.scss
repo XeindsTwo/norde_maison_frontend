@@ -30,6 +30,9 @@
     width: 100%;
     outline: none;
     transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    @include r($phone) {
+      padding: 14px 16px;
+    }
 
     &::placeholder {
       color: rgba($black100, .46);

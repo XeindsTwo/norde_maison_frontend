@@ -9,6 +9,9 @@
     letter-spacing: -0.12px;
     color: rgba($black100, 0.6);
     transition: border 0.3s, color 0.3s;
+    @include r($sm) {
+      font-size: 22px;
+    }
 
     &:hover {
       color: rgba($black100, 0.8);
