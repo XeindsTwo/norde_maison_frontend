@@ -1,0 +1,67 @@
+.filters-mobile {
+  &__buttons {
+    @include flex-align-center(8);
+    align-items: stretch;
+    flex-wrap: wrap;
+  }
+
+  &__btn {
+    font-size: 16px;
+    line-height: 1;
+    @include r($phone) {
+      font-size: 15px;
+    }
+
+    &.sort {
+      @include flex-center;
+      width: 46px;
+      padding: 0;
+    }
+  }
+
+  &__reset {
+    @include flex-align-center(5);
+    margin-bottom: 18px;
+    padding: 3px 0;
+    color: rgba($black100, .7);
+    transition: color .3s;
+    @include r($phone) {
+      margin-bottom: 12px;
+    }
+
+    svg {
+      width: 16px;
+      height: 16px;
+      transform: translateY(-1px);
+
+      g path {
+        fill: rgba($black100, .7);
+      }
+    }
+
+    &:hover {
+      color: darkred;
+
+      svg g path {
+        fill: darkred;
+      }
+    }
+  }
+
+  &__list {
+    margin: 0 -20px;
+    max-height: 440px;
+    overflow-y: auto;
+  }
+
+  &__apply {
+    max-width: 100%;
+    width: 100%;
+    padding: 17px;
+    margin-top: 20px;
+
+    &.non-top {
+      margin-top: 0;
+    }
+  }
+}

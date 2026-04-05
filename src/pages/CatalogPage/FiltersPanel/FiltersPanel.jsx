@@ -1,41 +1,34 @@
-import {useRef, useState} from "react";
+import { useRef, useState } from "react";
+import useIsMobile from "./hooks/useIsMobile";
 import useDropdownOutside from "@/hooks/useDropdownOutside";
-
 import useFiltersState from "./hooks/useFiltersState";
+import FiltersPanelMobile from "./FiltersPanelMobile";
 import PriceFilter from "./components/PriceFilter";
 import SizeFilter from "./components/SizeFilter";
 import ColorFilter from "./components/ColorFilter";
 import SortFilter from "./components/SortFilter";
-
 import sortSizes from "@/utils/sortSizes";
-import {useCurrency} from "@/context/CurrencyContext";
-
+import { useCurrency } from "@/context/CurrencyContext";
 import "./FiltersPanel.scss";
 
-const FiltersPanel = ({filters = {}}) => {
+const FiltersPanel = ({ filters = {} }) => {
+  const isMobile = useIsMobile();
+  const { currency } = useCurrency();
+  const {
+    priceMin, priceMax, sort, sizes, colors,
+    setPriceMin, setPriceMax, setSort,
+    applyQuery, toggleMulti, resetFilters
+  } = useFiltersState(); // ↑ ВСЕ ХУКИ ВНАЧАЛЕ!
 
   const dropdownRefs = useRef({});
   const [activeDropdown, setActiveDropdown] = useState(null);
-
-  const {currency} = useCurrency();
-
-  const {
-    priceMin,
-    priceMax,
-    sort,
-    sizes,
-    colors,
-    setPriceMin,
-    setPriceMax,
-    setSort,
-    applyQuery,
-    toggleMulti,
-    resetFilters
-  } = useFiltersState();
+  const sortedSizes = sortSizes(filters.sizes || []);
 
   useDropdownOutside(dropdownRefs, () => setActiveDropdown(null));
 
-  const sortedSizes = sortSizes(filters.sizes || []);
+  if (isMobile) {
+    return <FiltersPanelMobile filters={filters} />;
+  }
 
   return (
     <div className="filters">

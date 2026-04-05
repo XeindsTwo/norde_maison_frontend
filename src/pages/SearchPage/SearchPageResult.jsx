@@ -1,13 +1,13 @@
 import "./SearchPageResult.scss";
-import {useEffect, useState, useCallback} from "react";
-import {useSearchParams, useNavigate} from "react-router-dom";
+import { useEffect, useState, useCallback } from "react";
+import { useSearchParams, useNavigate } from "react-router-dom";
 
 import Header from "@/components/Header/Header.jsx";
 import Footer from "@/components/Footer/Footer.jsx";
 import ProductCard from "@/components/ProductCard/ProductCard.jsx";
 import FiltersPanel from "@/pages/CatalogPage/FiltersPanel/FiltersPanel.jsx";
 import useFiltersState from "@/pages/CatalogPage/FiltersPanel/hooks/useFiltersState";
-import {useProductSearch} from "@/hooks/useProductSearch";
+import { useProductSearch } from "@/hooks/useProductSearch";
 import SearchHeader from "@/pages/SearchPage/SearchHeader.jsx";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
@@ -24,7 +24,7 @@ const SearchPageResult = () => {
 
   const [debouncedQuery, setDebouncedQuery] = useState("");
   const [uiLoading, setUiLoading] = useState(false);
-  const [initialFilters, setInitialFilters] = useState({});
+  const [allFilters, setAllFilters] = useState({});
 
   const query = searchParams.get("q")?.trim() || "";
   const page = Number(searchParams.get("page") || 1);
@@ -58,7 +58,7 @@ const SearchPageResult = () => {
     return () => clearTimeout(timer);
   }, [debouncedQuery]);
 
-  const {data, isLoading, isFetching} = useProductSearch({
+  const { data, isLoading, isFetching } = useProductSearch({
     q: debouncedQuery || undefined,
     page,
     page_size: PAGE_SIZE,
@@ -70,15 +70,10 @@ const SearchPageResult = () => {
   });
 
   useEffect(() => {
-    if (data?.filters && Object.keys(initialFilters).length === 0 && size.length === 0 && color.length === 0) {
-      setInitialFilters(data.filters);
+    if (data?.filters && !allFilters.sizes && !allFilters.colors) {
+      setAllFilters(data.filters);
     }
-  }, [data, initialFilters, size.length, color.length]);
-
-  const mergedFilters = {
-    ...initialFilters,
-    ...(data?.filters || {})
-  };
+  }, [data, allFilters.sizes, allFilters.colors]);
 
   const productsData = data || {};
   const products = productsData.results || [];
@@ -95,21 +90,20 @@ const SearchPageResult = () => {
 
   return (
     <>
-      <Header/>
+      <Header />
 
       <main className="catalog">
         <div className="container container--padding">
-
           <div className="catalog__layout">
-            <SearchHeader/>
+            <SearchHeader />
 
-            {(uiLoading || hasFilters || mergedFilters.sizes?.length > 0 || mergedFilters.colors?.length > 0) && (
+            {(uiLoading || hasFilters || (allFilters.sizes?.length > 0) || (allFilters.colors?.length > 0)) && (
               <aside className="catalog__filters">
                 {uiLoading ? (
-                  <Skeleton height={47}/>
+                  <Skeleton height={47} />
                 ) : (
                   <FiltersPanel
-                    filters={mergedFilters}
+                    filters={allFilters}
                     {...filtersState}
                   />
                 )}
@@ -117,7 +111,6 @@ const SearchPageResult = () => {
             )}
 
             <div className="catalog__content">
-
               {!loading && products.length === 0 && (
                 <p className="catalog__empty">
                   Ничего не найдено ¯\_(ツ)_/¯
@@ -126,11 +119,11 @@ const SearchPageResult = () => {
 
               <div className="catalog__grid">
                 {loading
-                  ? Array.from({length: PAGE_SIZE}).map((_, i) => (
-                    <ProductCard key={i} product={null}/>
+                  ? Array.from({ length: PAGE_SIZE }).map((_, i) => (
+                    <ProductCard key={i} product={null} />
                   ))
-                  : products.map(product => (
-                    <ProductCard key={product.id} product={product}/>
+                  : products.map((product) => (
+                    <ProductCard key={product.id} product={product} />
                   ))}
               </div>
 
@@ -141,13 +134,12 @@ const SearchPageResult = () => {
                   onChange={handlePageChange}
                 />
               )}
-
             </div>
           </div>
         </div>
       </main>
 
-      <Footer/>
+      <Footer />
     </>
   );
 };

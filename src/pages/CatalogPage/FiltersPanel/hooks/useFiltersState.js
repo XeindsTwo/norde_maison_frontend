@@ -7,7 +7,7 @@ export default function useFiltersState() {
 
   const [priceMin, setPriceMin] = useState("");
   const [priceMax, setPriceMax] = useState("");
-  const [sort, setSort] = useState("default");
+  const [sort, setSort] = useState("default"); // будет браться из URL
   const [sizes, setSizes] = useState([]);
   const [colors, setColors] = useState([]);
   const [currency, setCurrency] = useState("rub");
@@ -35,30 +35,29 @@ export default function useFiltersState() {
       override
     );
 
+    // тут важно: остальные параметры не сносятся, только page/фильтры
     setSearchParams(params);
   };
 
   const toggleMulti = (key, value) => {
+    let next;
+
     if (key === "size") {
-      const next = sizes.includes(value)
-        ? sizes.filter(v => v !== value)
+      next = sizes.includes(value)
+        ? sizes.filter((v) => v !== value)
         : [...sizes, value];
-
       setSizes(next);
-      applyQuery({ size: next });
-    }
-
-    if (key === "color") {
-      const next = colors.includes(value)
-        ? colors.filter(v => v !== value)
+    } else if (key === "color") {
+      next = colors.includes(value)
+        ? colors.filter((v) => v !== value)
         : [...colors, value];
-
       setColors(next);
-      applyQuery({ color: next });
     }
+
+    applyQuery({ [key]: next });
   };
 
-  const resetFilters = type => {
+  const resetFilters = (type) => {
     const params = new URLSearchParams(searchParams);
 
     if (type === "price") {

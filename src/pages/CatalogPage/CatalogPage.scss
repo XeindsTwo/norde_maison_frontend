@@ -1,6 +1,9 @@
 .catalog {
   &__layout {
     margin-top: 64px;
+    @include r($tablet) {
+      margin-top: 46px;
+    }
   }
 
   &__filters {
@@ -14,6 +17,13 @@
     margin-bottom: 64px;
     @media (max-width: 1200px) {
       grid-template-columns: repeat(3, 1fr);
+    }
+    @media (max-width: 920px) {
+      gap: 24px 18px;
+    }
+    @media (max-width: 700px) {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 18px 16px;
     }
   }
 

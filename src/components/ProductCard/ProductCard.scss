@@ -105,6 +105,7 @@
       font-size: 16px;
       @include line-clamp(2);
       white-space: wrap;
+      margin-bottom: 9px;
     }
     @include r($phone) {
       font-size: 15px;
@@ -114,6 +115,9 @@
   &__info {
     margin-top: auto;
     @include flex-align-center(12);
+    @include r($phone) {
+      flex-wrap: wrap-reverse;
+    }
   }
 
   &__colors {

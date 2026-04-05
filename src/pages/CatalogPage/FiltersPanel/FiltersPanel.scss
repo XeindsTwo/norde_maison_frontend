@@ -58,6 +58,8 @@
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
     z-index: 50;
     will-change: transform, opacity;
+    max-height: 310px;
+    overflow-y: auto;
 
     &--right {
       right: 0;
@@ -79,6 +81,14 @@
     align-items: center;
     cursor: pointer;
     transition: 0.3s ease;
+    @include r($tablet) {
+      border-bottom: 1px solid #EAE7E7;
+      padding: 15px 22px;
+
+      &:first-child {
+        border-top: 1px solid #EAE7E7;
+      }
+    }
 
     &:hover {
       background: #F0F0F0;
@@ -105,6 +115,13 @@
     display: flex;
     gap: 8px;
     margin-bottom: 8px;
+    @include r($tablet) {
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    @include r($sm) {
+      flex-direction: column;
+    }
 
     input {
       width: 100%;
@@ -113,6 +130,10 @@
       outline: none;
       color: rgba($black100, .8);
       transition: background-color .4s;
+      @include r($tablet) {
+        font-size: 16px;
+        padding: 13px 14px;
+      }
 
       &:focus {
         background-color: rgba($black100, .09);
@@ -148,6 +169,11 @@
     width: 20px;
     height: 20px;
     border-radius: 50%;
+    @include r($phone) {
+      font-size: 8px;
+      width: 16px;
+      height: 16px;
+    }
   }
 
   &__reset {
@@ -157,13 +183,17 @@
     transition: 0.2s ease;
 
     &--hoverable:hover {
-      filter: brightness(0) saturate(100%)
-      invert(22%) sepia(73%) saturate(3449%)
-      hue-rotate(343deg) brightness(92%) contrast(94%);
+      filter: brightness(0) saturate(100%) invert(22%) sepia(73%) saturate(3449%) hue-rotate(343deg) brightness(92%) contrast(94%);
     }
   }
 
   &__muted {
-    color: rgba(0,0,0,.64);
+    color: rgba(0, 0, 0, .64);
+  }
+}
+
+@media (max-width: 768px) {
+  .filters {
+    display: none;
   }
 }
