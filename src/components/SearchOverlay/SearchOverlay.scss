@@ -12,12 +12,38 @@
     left: 0;
     right: 0;
     z-index: 101;
-    background: #fff;
+    background: $white;
     padding: 28px 0 58px;
     min-height: 210px;
     max-height: 86vh;
-    overflow-y: scroll;
+    overflow-y: auto;
     box-shadow: 0 8px 32px rgba($black100, 0.1);
+    @media (max-width: 1100px) {
+      max-height: 88vh;
+    }
+    @include r($lg) {
+      padding-bottom: 44px;
+    }
+    @include r($tablet) {
+      padding-top: 18px;
+    }
+
+    .container--padding {
+      @include r($tablet) {
+        padding: 0 20px;
+      }
+      @include r($phone) {
+        padding: 0 17px;
+      }
+    }
+
+    &::-webkit-scrollbar {
+      width: 5px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      border: 3px solid rgba($black100, .6);
+    }
   }
 
   &__inner {
@@ -29,6 +55,16 @@
     max-width: 876px;
     width: 100%;
     margin: 0 auto;
+    @media (max-width: 1100px) {
+      max-width: 720px;
+    }
+    @media (max-width: 920px) {
+      max-width: 630px;
+    }
+    @include r($tablet) {
+      max-width: 100%;
+      margin-bottom: -30px;
+    }
   }
 
   &__field {
@@ -39,6 +75,9 @@
     border: 1px solid #EAE7E7;
     padding: 14px 20px;
     transition: background-color .3s, border .3s;
+    @include r($phone) {
+      padding: 14px 16px;
+    }
 
     &:hover {
       border-color: rgba($black100, .5);
@@ -53,9 +92,12 @@
     letter-spacing: -0.36px;
     outline: none;
     color: $black100;
+    @include r($tablet) {
+      font-size: 16px;
+    }
 
     &::placeholder {
-      color: rgba($black100, 0.35);
+      color: rgba($black100, 0.7);
     }
   }
 
@@ -69,7 +111,7 @@
     }
 
     svg path {
-      fill-opacity: 0.3;
+      fill-opacity: 0.7;
     }
   }
 
@@ -77,8 +119,13 @@
     font-size: 18px;
     letter-spacing: -0.36px;
     font-weight: 400;
+    margin-bottom: 10px;
     color: rgba($black100, 0.8);
     text-align: center;
+    @include r($tablet) {
+      font-size: 16px;
+      margin-bottom: 24px;
+    }
   }
 
   &__close {
@@ -90,9 +137,33 @@
     height: 38px;
     transform: translateY(-50%);
     transition: transform 0.3s;
+    @include r($desktop) {
+      right: 20px;
+      top: 40px;
+    }
+    @media (max-width: 920px) {
+      right: 5px;
+      top: 34px;
+    }
+    @include r($tablet) {
+      position: static;
+      transform: none;
+      margin-left: auto;
+      margin-bottom: -14px;
+    }
 
     &:hover {
       transform: translateY(-50%) rotate(90deg);
+      @include r($tablet) {
+        transform: translateY(0) rotate(-180deg);
+      }
+    }
+
+    svg {
+      @include r($tablet) {
+        width: 32px;
+        height: 32px;
+      }
     }
   }
 
@@ -104,6 +175,13 @@
     @media (max-width: 1200px) {
       grid-template-columns: repeat(3, 1fr);
     }
+    @media (max-width: 920px) {
+      gap: 24px 18px;
+    }
+    @media (max-width: 700px) {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px 16px;
+    }
   }
 
   &__more {
@@ -114,5 +192,9 @@
     margin-top: 32px;
     padding: 14px 22px;
     border: 1px solid rgba($black100, .2);
+    @include r($sm) {
+      font-size: 14px;
+      padding: 14px 18px;
+    }
   }
 }

@@ -6,6 +6,11 @@
   color: rgba($black100, .8);
   transition: box-shadow 0.18s ease;
 
+  a {
+    @include flex-column(0);
+    height: 100%;
+  }
+
   &--skeleton {
     pointer-events: none;
 
@@ -20,6 +25,7 @@
   }
 
   &__favorite {
+    @include flex-center;
     position: absolute;
     top: 6px;
     right: 6px;
@@ -30,6 +36,10 @@
     border: none;
     padding: 0;
     cursor: pointer;
+    @include r($sm) {
+      width: 38px;
+      height: 38px;
+    }
 
     &:hover {
       svg path {
@@ -39,6 +49,10 @@
 
     svg {
       color: transparent;
+      @include r($sm) {
+        width: 19px;
+        height: 19px;
+      }
 
       path {
         fill: rgba($black100, .2);
@@ -57,6 +71,12 @@
     overflow: hidden;
     background: #f5f5f5;
     margin-bottom: 14px;
+    @include r($sm) {
+      margin-bottom: 11px;
+    }
+    @media (max-width: 410px) {
+      min-height: 250px;
+    }
 
     img {
       width: 100%;
@@ -80,9 +100,19 @@
     overflow: hidden;
     text-overflow: ellipsis;
     margin-bottom: 6px;
+    @include r($tablet) {
+      letter-spacing: -0.18px;
+      font-size: 16px;
+      @include line-clamp(2);
+      white-space: wrap;
+    }
+    @include r($phone) {
+      font-size: 15px;
+    }
   }
 
   &__info {
+    margin-top: auto;
     @include flex-align-center(12);
   }
 
@@ -104,6 +134,12 @@
     font-size: 22px;
     font-weight: 600;
     letter-spacing: -0.44px;
+    @include r($tablet) {
+      font-size: 20px;
+    }
+    @include r($phone) {
+      font-size: 18px;
+    }
   }
 
   &__indicators {

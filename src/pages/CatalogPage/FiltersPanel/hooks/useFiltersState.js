@@ -3,7 +3,6 @@ import { useSearchParams } from "react-router-dom";
 import buildFiltersQuery from "../utils/filtersQueryBuilder";
 
 export default function useFiltersState() {
-
   const [searchParams, setSearchParams] = useSearchParams();
 
   const [priceMin, setPriceMin] = useState("");
@@ -36,11 +35,10 @@ export default function useFiltersState() {
       override
     );
 
-    setSearchParams(params, { replace: true });
+    setSearchParams(params);
   };
 
   const toggleMulti = (key, value) => {
-
     if (key === "size") {
       const next = sizes.includes(value)
         ? sizes.filter(v => v !== value)

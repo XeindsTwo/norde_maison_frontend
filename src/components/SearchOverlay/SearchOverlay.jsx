@@ -66,17 +66,41 @@ const SearchOverlay = ({isOpen, onClose}) => {
     };
 
     if (isOpen) {
+      const scrollY = window.scrollY;
+      document.body.style.position = 'fixed';
+      document.body.style.top = `-${scrollY}px`;
+      document.body.style.width = '100%';
+      document.body.style.overflow = 'hidden';
+      document.documentElement.style.overflow = 'hidden';
+
       document.addEventListener("keydown", handleKey);
 
       clearTimeout(focusTimeoutRef.current);
       focusTimeoutRef.current = setTimeout(() => {
         inputRef.current?.focus();
       }, 80);
+    } else {
+      const scrollY = document.body.style.top;
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.width = '';
+      document.body.style.overflow = '';
+      document.documentElement.style.overflow = '';
+      window.scrollTo(0, parseInt(scrollY || '0') * -1);
     }
 
     return () => {
       document.removeEventListener("keydown", handleKey);
       clearTimeout(focusTimeoutRef.current);
+
+      if (!isOpen) return;
+      const scrollY = document.body.style.top;
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.width = '';
+      document.body.style.overflow = '';
+      document.documentElement.style.overflow = '';
+      window.scrollTo(0, parseInt(scrollY || '0') * -1);
     };
   }, [isOpen, onClose]);
 
@@ -123,15 +147,18 @@ const SearchOverlay = ({isOpen, onClose}) => {
 
             <div className="container container--padding">
               <div className="search-overlay__inner">
-
+                <button
+                  className="search-overlay__close"
+                  onClick={onClose}
+                >
+                  <IconCross/>
+                </button>
                 <div className="search-overlay__top">
-
                   <SearchOverlaySearchField
                     inputRef={inputRef}
                     query={query}
                     setQuery={setQuery}
                   />
-
                   <div className="search-overlay__hint">
                     <SearchOverlayHint
                       isQueryEmpty={isQueryEmpty}
@@ -140,22 +167,17 @@ const SearchOverlay = ({isOpen, onClose}) => {
                       isLoading={uiLoading}
                     />
                   </div>
-
                 </div>
-
                 <div className="search-overlay__results">
-
                   {showSkeleton && (
                     <SearchOverlaySkeleton limit={PREVIEW_LIMIT_SKELETON}/>
                   )}
-
                   {showResults && (
                     <>
                       <SearchOverlayGrid
                         products={previewProducts}
                         limit={PREVIEW_LIMIT}
                       />
-
                       {products.length > PREVIEW_LIMIT && (
                         <div className="search-overlay__more">
                           <button
@@ -168,18 +190,9 @@ const SearchOverlay = ({isOpen, onClose}) => {
                       )}
                     </>
                   )}
-
                 </div>
-
               </div>
             </div>
-
-            <button
-              className="search-overlay__close"
-              onClick={onClose}
-            >
-              <IconCross/>
-            </button>
 
           </motion.div>
         </>

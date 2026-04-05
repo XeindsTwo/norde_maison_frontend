@@ -39,9 +39,7 @@ const FiltersPanel = ({filters = {}}) => {
 
   return (
     <div className="filters">
-
       <div className="filters__group">
-
         <PriceFilter
           priceMin={priceMin}
           priceMax={priceMax}
@@ -54,7 +52,6 @@ const FiltersPanel = ({filters = {}}) => {
           dropdownRefs={dropdownRefs}
           currency={currency}
         />
-
         <SizeFilter
           filters={filters}
           sizes={sizes}
@@ -65,7 +62,6 @@ const FiltersPanel = ({filters = {}}) => {
           setActiveDropdown={setActiveDropdown}
           dropdownRefs={dropdownRefs}
         />
-
         <ColorFilter
           filters={filters}
           colors={colors}
@@ -75,11 +71,8 @@ const FiltersPanel = ({filters = {}}) => {
           setActiveDropdown={setActiveDropdown}
           dropdownRefs={dropdownRefs}
         />
-
       </div>
-
       <div className="filters__group filters__group--right">
-
         <SortFilter
           sort={sort}
           setSort={setSort}
@@ -88,7 +81,6 @@ const FiltersPanel = ({filters = {}}) => {
           setActiveDropdown={setActiveDropdown}
           dropdownRefs={dropdownRefs}
         />
-
       </div>
     </div>
   );
