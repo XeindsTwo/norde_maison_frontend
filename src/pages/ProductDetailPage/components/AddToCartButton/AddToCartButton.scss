@@ -2,6 +2,9 @@
   @include flex-column(22);
   width: 100%;
   margin-top: 32px;
+  @include r($lg) {
+    margin-top: 26px;
+  }
 }
 
 .add-to-cart-button {
@@ -37,6 +40,9 @@
   letter-spacing: -0.32px;
   line-height: 1.4;
   color: rgba($black100, .8);
+  @include r($phone) {
+    font-size: 14px;
+  }
 
   span {
     display: block;

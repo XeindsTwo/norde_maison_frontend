@@ -99,7 +99,7 @@ const ProductDetailPage = () => {
             </div>
 
             {product?.similar_products?.length > 0 && (
-              <div className="product-detail__similar">
+              <div className="similar-products">
                 <SimilarProducts products={product.similar_products}/>
               </div>
             )}

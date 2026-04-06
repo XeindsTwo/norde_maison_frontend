@@ -11,6 +11,13 @@
     font-size: 16px;
     border: 1px solid rgba($black100, .2);
     transition: background-color .3s, color .3s, border .3s;
+    @include r($lg) {
+      padding: 12px 16px;
+    }
+    @include r($phone) {
+      font-size: 14px;
+      padding: 11px 15px;
+    }
 
     &.active {
       border-color: black;
@@ -20,7 +27,7 @@
 
     &:disabled {
       color: rgba($black100, .3);
-      background-color: rgba($black100, .03);
+      background-color: rg ba($black100, .03);
       border-color: rgba($black100, .05);
       cursor: not-allowed;
     }

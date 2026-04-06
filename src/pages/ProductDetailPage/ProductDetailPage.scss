@@ -6,10 +6,18 @@
     grid-template-columns: 1fr 540px;
     gap: 50px;
     align-items: flex-start;
-  }
-
-  &__similar {
-    margin-top: 100px;
+    @media (max-width: 1300px) {
+      grid-template-columns: 1fr 480px;
+    }
+    @include r($desktop) {
+      grid-template-columns: 1fr 540px;
+    }
+    @media (max-width: 1100px) {
+      grid-template-columns: 1fr 430px;
+    }
+    @include r($lg) {
+      display: block;
+    }
   }
 
   &__empty {
@@ -17,14 +25,5 @@
     font-size: 18px;
     color: rgba($black100, .8);
     text-align: center;
-  }
-}
-
-@media (max-width: 1100px) {
-  .product-detail {
-    &__grid {
-      grid-template-columns: 1fr;
-      gap: 40px;
-    }
   }
 }

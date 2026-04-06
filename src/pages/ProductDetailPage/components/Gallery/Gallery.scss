@@ -1,11 +1,23 @@
 .product-gallery {
   max-width: 730px;
   width: 100%;
+  @include r($desktop) {
+    max-width: 450px;
+  }
+  @include r($lg) {
+    margin-bottom: 20px;
+    a:not(:first-child) {
+      display: none;
+    }
+  }
 
   &__grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 15px;
+    @include r($desktop) {
+      grid-template-columns: repeat(1, 1fr);
+    }
   }
 
   &__item {
@@ -15,6 +27,12 @@
     background: #f5f5f5;
     position: relative;
     cursor: zoom-in;
+    @include r($desktop) {
+      height: 670px;
+    }
+    @include r($lg) {
+      height: 490px;
+    }
 
     img {
       width: 100%;
