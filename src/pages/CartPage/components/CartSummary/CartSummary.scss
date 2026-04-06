@@ -2,6 +2,10 @@
   padding-top: 32px;
   margin: 40px 0 48px;
   border-top: 1px solid rgba($black100, .15);
+  @media (max-width: 880px) {
+    margin-top: 0;
+    padding-top: 16px;
+  }
 
   &__total {
     font-size: 28px;
@@ -9,6 +13,20 @@
     letter-spacing: -0.28px;
     color: rgba($black100, .64);
     margin-bottom: 24px;
+    @include r($desktop) {
+      font-size: 26px;
+    }
+    @include r($lg) {
+      font-size: 24px;
+      margin-bottom: 34px;
+    }
+    @include r($tablet) {
+      font-size: 22px;
+    }
+    @include r($sm) {
+      font-size: 20px;
+      text-align: center;
+    }
 
     span {
       color: $black100;
@@ -26,6 +44,17 @@
 
   &__btn {
     padding: 22px 44px;
+    @include r($sm) {
+      width: 90%;
+      max-width: 90%;
+      margin: 0 auto;
+    }
+    @media (max-width: 510px) {
+      padding: 19px 36px;
+      text-transform: initial;
+      max-width: 100%;
+      width: 100%;
+    }
 
     &:disabled {
       opacity: .5;

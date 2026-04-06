@@ -5,6 +5,9 @@
   padding: 32px 0;
   border-top: 1px solid rgba($black100, .15);
   align-items: flex-start;
+  @include r($lg) {
+    grid-template-columns: 3.5fr 1fr 1fr 1fr;
+  }
 
   &__product {
     display: flex;

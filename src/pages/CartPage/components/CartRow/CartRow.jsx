@@ -1,5 +1,6 @@
 import "./CartRow.scss";
 import CartProduct from "../CartProduct/CartProduct";
+import CartProductMobile from "../CartProductMobile/CartProductMobile";
 import CartQuantity from "../CartQuantity/CartQuantity";
 import {formatPrice} from "@/utils/formatPrice";
 
@@ -7,11 +8,23 @@ const CartRow = ({
                    item,
                    currency,
                    onDelete,
-                   onQuantityChange
+                   onQuantityChange,
+                   isFirst
                  }) => {
 
   const unitPrice = Number(item.product_price);
   const totalPrice = unitPrice * item.quantity;
+  const isMobile = window.innerWidth <= 880;
+
+  if (isMobile) {
+    return <CartProductMobile
+      item={item}
+      currency={currency}
+      onQuantityChange={onQuantityChange}
+      onDelete={onDelete}
+      isFirst={isFirst}
+    />;
+  }
 
   return (
     <div className="cart-row">
@@ -38,12 +51,12 @@ const CartRow = ({
       />
 
       <span className="cart-price">
-                {formatPrice(unitPrice, currency)}
-            </span>
+        {formatPrice(unitPrice, currency)}
+      </span>
 
       <span className="cart-price cart-price--total">
-                {formatPrice(totalPrice, currency)}
-            </span>
+        {formatPrice(totalPrice, currency)}
+      </span>
 
     </div>
   );

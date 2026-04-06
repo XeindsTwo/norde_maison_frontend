@@ -1,6 +1,12 @@
 .cart-product {
   display: flex;
   gap: 40px;
+  @include r($desktop) {
+    gap: 30px;
+  }
+  @include r($lg) {
+    gap: 24px;
+  }
 
   &__image {
     width: 100px;
@@ -44,6 +50,4 @@
       margin-left: 5px;
     }
   }
-
-
 }

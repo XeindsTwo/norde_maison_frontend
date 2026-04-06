@@ -18,13 +18,14 @@ const CartTable = ({
         <div className="cart-header__right">Цена итого</div>
       </div>
 
-      {cart.items?.map(item => (
+      {cart.items?.map((item, index) => (
         <CartRow
           key={item.id}
           item={item}
           currency={currency}
           onDelete={onDelete}
           onQuantityChange={onQuantityChange}
+          isFirst={index === 0}
         />
       ))}
 

@@ -9,6 +9,13 @@
     1fr;
 
   align-items: center;
+  @include r($lg) {
+    grid-template-columns:
+    minmax(300px, 3.3fr)
+    1fr
+    1fr
+    1fr;
+  }
 }
 
 .cart-header {
@@ -18,4 +25,7 @@
   letter-spacing: -0.48px;
   line-height: 1.5;
   padding-bottom: 12px;
+  @media (max-width: 880px) {
+    display: none;
+  }
 }
