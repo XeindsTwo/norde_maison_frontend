@@ -5,10 +5,7 @@
     max-width: 450px;
   }
   @include r($lg) {
-    margin-bottom: 20px;
-    a:not(:first-child) {
-      display: none;
-    }
+    display: none;
   }
 
   &__grid {

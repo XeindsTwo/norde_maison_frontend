@@ -3,7 +3,7 @@ import {useParams} from "react-router-dom";
 import {useQuery} from "@tanstack/react-query";
 import {useState} from "react";
 import {getProductDetail} from "@/api/catalog";
-import Gallery from "./components/Gallery/Gallery";
+import Gallery from "./components/Gallery/Gallery"; // новый универсальный Gallery
 import ProductInfo from "./components/ProductInfo/ProductInfo";
 import SimilarProducts from "./components/SimilarProductsSection/SimilarProducts";
 import Header from "@/components/Header/Header.jsx";
@@ -57,9 +57,9 @@ const ProductDetailPage = () => {
       <>
         <Header/>
         <main className="product-detail loading">
-          <div className="container container--padding">
-            Загрузка...
-          </div>
+         <div className="container container--padding">
+           Загрузка...
+         </div>
         </main>
         <Footer/>
       </>
@@ -71,14 +71,16 @@ const ProductDetailPage = () => {
       <>
         <Header/>
         <main className="product-detail loading">
-          <div className="container container--padding">
-            <p className="product-detail__empty">Товар не найден</p>
-          </div>
+         <div className="container container--padding">
+           <p className="product-detail__empty">Товар не найден</p>
+         </div>
         </main>
         <Footer/>
       </>
     );
   }
+
+  const images = product?.images || [];
 
   return (
     <>
@@ -86,25 +88,25 @@ const ProductDetailPage = () => {
 
       <main className="product-detail">
         <section>
-          <div className="container container--padding">
+         <div className="container container--padding">
 
-            <Breadcrumbs items={breadcrumbs}/>
+           <Breadcrumbs items={breadcrumbs}/>
 
-            <div className="product-detail__grid">
-              <Gallery product={product}/>
-              <ProductInfo
-                product={product}
-                onOpenSizeQuiz={() => setIsSizeQuizOpen(true)}
-              />
-            </div>
+           <div className="product-detail__grid">
+             <Gallery product={product} images={images}/>
+             <ProductInfo
+               product={product}
+               onOpenSizeQuiz={() => setIsSizeQuizOpen(true)}
+             />
+           </div>
 
-            {product?.similar_products?.length > 0 && (
-              <div className="similar-products">
-                <SimilarProducts products={product.similar_products}/>
-              </div>
-            )}
+           {product?.similar_products?.length > 0 && (
+             <div className="similar-products">
+               <SimilarProducts products={product.similar_products}/>
+             </div>
+           )}
 
-          </div>
+         </div>
         </section>
       </main>
       <Footer/>
