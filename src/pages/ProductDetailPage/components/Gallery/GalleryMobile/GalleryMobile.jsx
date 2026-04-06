@@ -1,5 +1,5 @@
 import "./GalleryMobile.scss";
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { FreeMode, Navigation, Thumbs } from "swiper";
 import LightGallery from "lightgallery/react";
@@ -16,6 +16,7 @@ import "react-loading-skeleton/dist/skeleton.css";
 const GalleryMobile = ({ product, images = [] }) => {
   const [thumbsSwiper, setThumbsSwiper] = useState(null);
   const [imageLoaded, setImageLoaded] = useState({});
+  const [mainSwiper, setMainSwiper] = useState(null);
 
   if (!images.length) {
     return (
@@ -25,6 +26,12 @@ const GalleryMobile = ({ product, images = [] }) => {
     );
   }
 
+  const onInit = useCallback((detail) => {
+    if (detail && detail.instance) {
+      detail.instance.settings.container = document.querySelector('.gallery-mobile__lightbox');
+    }
+  }, []);
+
   return (
     <div className="gallery-mobile">
       <LightGallery
@@ -32,6 +39,8 @@ const GalleryMobile = ({ product, images = [] }) => {
         plugins={[]}
         download={false}
         elementClassNames="gallery-mobile__lightbox"
+        selector=".gallery-mobile__main-link"
+        onInit={onInit}
       >
         <Swiper
           loop={false}
@@ -41,32 +50,34 @@ const GalleryMobile = ({ product, images = [] }) => {
           navigation={false}
           spaceBetween={20}
           thumbs={{
-            swiper:
-              thumbsSwiper && !thumbsSwiper.destroyed ? thumbsSwiper : null,
+            swiper: thumbsSwiper && !thumbsSwiper.destroyed ? thumbsSwiper : null,
           }}
           modules={[FreeMode, Navigation, Thumbs]}
+          onSwiper={setMainSwiper}
           className="gallery-mobile__main"
           style={{ width: "100%" }}
         >
           {images.map((img, index) => (
             <SwiperSlide key={index} style={{ width: "100%" }}>
-              <a
-                href={img}
-                className="gallery-mobile__main-link"
-                data-src={img}
-              >
-                {!imageLoaded[index] && <Skeleton height={480} />}
-                <img
-                  src={img}
-                  alt={product?.name || ""}
+              <div className="gallery-mobile__main-link-wrapper">
+                <a
+                  href={img}
+                  className="gallery-mobile__main-link"
                   data-src={img}
                   data-sub-html={product?.name || ""}
-                  onLoad={() =>
-                    setImageLoaded((prev) => ({ ...prev, [index]: true }))
-                  }
-                  className="gallery-mobile__main-image"
-                />
-              </a>
+                >
+                  {!imageLoaded[index] && <Skeleton height={480} />}
+                  <img
+                    src={img}
+                    alt={product?.name || ""}
+                    data-lg-size="large-thumb"
+                    onLoad={() =>
+                      setImageLoaded((prev) => ({ ...prev, [index]: true }))
+                    }
+                    className="gallery-mobile__main-image"
+                  />
+                </a>
+              </div>
             </SwiperSlide>
           ))}
         </Swiper>
@@ -82,7 +93,7 @@ const GalleryMobile = ({ product, images = [] }) => {
                 slidesPerView: "auto",
                 spaceBetween: 8,
               },
-              768: {
+              610: {
                 direction: "vertical",
                 slidesPerView: "auto",
                 spaceBetween: 8,
@@ -98,6 +109,16 @@ const GalleryMobile = ({ product, images = [] }) => {
             loop={false}
             modules={[FreeMode, Thumbs]}
             className="gallery-mobile__thumbs-swiper"
+            onClick={(swiper, event) => {
+              const clickedSlide = event.target.closest('.swiper-slide');
+              if (clickedSlide && mainSwiper) {
+                const index = Array.from(clickedSlide.parentNode.children).indexOf(clickedSlide);
+                mainSwiper.slideTo(index, 300);
+                if (thumbsSwiper && !thumbsSwiper.destroyed) {
+                  thumbsSwiper.slideTo(index, 300, false);
+                }
+              }
+            }}
           >
             {images.map((img, index) => (
               <SwiperSlide key={index} className="gallery-mobile__thumb-slide">

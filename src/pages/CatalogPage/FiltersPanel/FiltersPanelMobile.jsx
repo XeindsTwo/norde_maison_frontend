@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import {useState} from "react";
 import AnimatedModal from "@/components/Modals/ui/AnimatedModal";
 import ColorFilterMobile from "./mobile/ColorFilterMobile";
 import SizeFilterMobile from "./mobile/SizeFilterMobile";
@@ -6,14 +6,14 @@ import PriceFilterMobile from "./mobile/PriceFilterMobile";
 import SortFilterMobile from "./mobile/SortFilterMobile";
 import useFiltersState from "./hooks/useFiltersState";
 import sortSizes from "@/utils/sortSizes";
-import { useCurrency } from "@/context/CurrencyContext";
+import {useCurrency} from "@/context/CurrencyContext";
 import CrossArrow from "@/assets/images/icons/cross-modal.svg";
 import SortIcon from "@/assets/images/icons/sort.svg";
 import "./mobile/FiltersPanelMobile.scss";
 
-const FiltersPanelMobile = ({ filters = {} }) => {
+const FiltersPanelMobile = ({filters = {}}) => {
   const [activeFilter, setActiveFilter] = useState(null);
-  const { currency } = useCurrency();
+  const {currency} = useCurrency();
   const {
     priceMin,
     priceMax,
@@ -36,21 +36,6 @@ const FiltersPanelMobile = ({ filters = {} }) => {
     applyQuery();
     closeModal();
   };
-
-  useEffect(() => {
-    if (activeFilter) {
-      document.body.style.overflow = "hidden";
-      document.documentElement.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "";
-      document.documentElement.style.overflow = "";
-    }
-
-    return () => {
-      document.body.style.overflow = "";
-      document.documentElement.style.overflow = "";
-    };
-  }, [activeFilter]);
 
   const renderContent = () => {
     switch (activeFilter) {
@@ -122,7 +107,7 @@ const FiltersPanelMobile = ({ filters = {} }) => {
           className="filters-mobile__btn sort filters__button"
           onClick={() => setActiveFilter("sort")}
         >
-          <SortIcon />
+          <SortIcon/>
         </button>
 
         <button
@@ -166,7 +151,7 @@ const FiltersPanelMobile = ({ filters = {} }) => {
         <div className="modal__top non-bottom">
           <h3 className="modal__title">{getTitle()}</h3>
           <button className="modal__close" onClick={closeModal}>
-            <CrossArrow />
+            <CrossArrow/>
           </button>
         </div>
         <div className="modal__inner">{renderContent()}</div>

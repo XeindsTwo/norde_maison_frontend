@@ -10,6 +10,22 @@ const AnimatedModal = ({
                        }) => {
 
   useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = "hidden";
+      document.documentElement.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+      document.documentElement.style.overflow = "";
+    }
+
+    return () => {
+      document.body.style.overflow = "";
+      document.documentElement.style.overflow = "";
+    };
+
+  }, [isOpen]);
+
+  useEffect(() => {
     if (!isOpen) return;
 
     const escHandler = (e) => {
@@ -19,11 +35,9 @@ const AnimatedModal = ({
     };
 
     document.addEventListener("keydown", escHandler);
-    document.body.style.overflow = "hidden";
 
     return () => {
       document.removeEventListener("keydown", escHandler);
-      document.body.style.overflow = "";
     };
 
   }, [isOpen, onClose]);

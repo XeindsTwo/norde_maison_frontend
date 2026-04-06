@@ -1,3 +1,23 @@
+.notification-container {
+  top: 110px !important;
+  right: 40px !important;
+
+  @include r($lg) {
+    top: 60px !important;
+  }
+  @include r($tablet) {
+    top: 40px !important;
+  }
+  @include r($sm) {
+    right: 30px !important;
+  }
+  @include r($phone) {
+    right: 24px !important;
+    top: 30px !important;
+    width: auto !important;
+  }
+}
+
 .notification {
   @include flex-between-center-gap(20);
   min-width: 280px;

@@ -1,5 +1,12 @@
 .similar-products {
   margin-top: 100px;
+
+  .product-card {
+    @include r($tablet) {
+      max-width: 100%;
+    }
+  }
+
   @include r($tablet) {
     margin-top: 80px;
   }
@@ -10,15 +17,27 @@
     margin-bottom: 32px;
     letter-spacing: -0.28px;
     color: rgba($black100, .8);
+    @include r($tablet) {
+      font-size: 26px;
+      letter-spacing: -0.2px;
+    }
+    @include r($sm) {
+      font-size: 24px;
+      margin-bottom: 24px;
+    }
   }
 
-  &__list {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 26px;
-    margin-bottom: 64px;
-    @media (max-width: 1200px) {
-      grid-template-columns: repeat(3, 1fr);
+  &__swiper {
+    padding-bottom: 40px;
+  }
+
+  &__swiper-inner {
+    @include r($desktop) {
+      overflow: visible;
+    }
+
+    .swiper-slide {
+      height: auto;
     }
   }
 }

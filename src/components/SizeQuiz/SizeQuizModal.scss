@@ -2,12 +2,18 @@
   @include flex-column(0);
   justify-content: center;
   min-height: 400px;
+  @include r($phone) {
+    padding-top: 26px;
+  }
 
   & > div:first-child {
     @include flex-center;
     align-items: stretch;
     flex-direction: column;
     flex: 1 0 auto;
+    @include r($sm) {
+      justify-content: flex-start;
+    }
   }
 }
 
@@ -20,6 +26,10 @@
 .sizequiz__center {
   text-align: center;
   margin-bottom: 50px;
+  @include r($sm) {
+    margin-top: auto;
+    margin-bottom: auto;
+  }
 }
 
 .sizequiz__question {
@@ -28,6 +38,17 @@
   font-weight: 500;
   letter-spacing: -0.13px;
   margin-bottom: 30px;
+  @include r($lg) {
+    font-size: 24px;
+  }
+  @include r($tablet) {
+    font-size: 22px;
+    margin-bottom: 24px;
+  }
+  @include r($phone) {
+    font-size: 20px;
+    margin-bottom: 16px;
+  }
 
   &.small-bottom {
     margin-bottom: 18px;
@@ -39,6 +60,10 @@
 .sizequiz__gender-grid {
   @include flex-align-center(15);
   justify-content: center;
+  @include r($phone) {
+    flex-direction: column;
+    gap: 12px;
+  }
 }
 
 .sizequiz__gender-btn {
@@ -47,6 +72,22 @@
   font-size: 22px;
   border: 1px solid rgba($black100, .15);
   transition: all .2s;
+  @include r($tablet) {
+    font-size: 20px;
+    padding: 16px 30px;
+
+    svg {
+      width: 28px;
+      height: 28px;
+    }
+  }
+  @include r($phone) {
+    font-size: 18px;
+    svg {
+      width: 26px;
+      height: 26px;
+    }
+  }
 
   &:hover {
     border-color: #000;
@@ -92,6 +133,9 @@
   margin-bottom: 8px;
   letter-spacing: -0.16px;
   text-transform: uppercase;
+  @include r($phone) {
+    font-size: 14px;
+  }
 }
 
 .sizequiz__input {
@@ -101,6 +145,9 @@
   border: 1px solid rgba($black100, .15);
   transition: border .3s;
   color: #111;
+  @include r($tablet) {
+    font-size: 16px;
+  }
 
   &:hover {
     border-color: $black100;
@@ -132,12 +179,22 @@
   color: rgba($black100, .64);
   letter-spacing: -0.48px;
   margin-bottom: 18px;
+  @include r($phone) {
+    font-size: 14px;
+    max-width: 250px;
+    margin: 0 auto 18px;
+    letter-spacing: -0.2px;
+  }
 }
 
 .sizequiz__chest-grid {
   @include flex-align-center(10);
   justify-content: center;
   margin-bottom: 40px;
+  @include r($phone) {
+    gap: 4px;
+    margin: 0 -6px;
+  }
 }
 
 .sizequiz__chest-card {
@@ -178,6 +235,12 @@
   letter-spacing: 0.16px;
   text-transform: uppercase;
   color: rgba($black100, .64);
+  @include r($tablet) {
+    font-size: 15px;
+  }
+  @include r($phone) {
+    font-size: 13px;
+  }
 }
 
 /* result */
@@ -185,6 +248,9 @@
 .sizequiz__result {
   text-align: center;
   padding: 40px 0;
+  @include r($sm) {
+    padding: 0;
+  }
 }
 
 .sizequiz__result-size {
@@ -192,6 +258,15 @@
   letter-spacing: -0.37px;
   font-weight: 600;
   margin-bottom: 18px;
+  @include r($lg) {
+    font-size: 68px;
+  }
+  @include r($tablet) {
+    font-size: 62px;
+  }
+  @include r($phone) {
+    font-size: 52px;
+  }
 }
 
 .sizequiz__result-desc {
@@ -199,6 +274,9 @@
   color: rgba($black100, .64);
   max-width: 550px;
   margin: 0 auto;
+  @include r($phone) {
+    font-size: 14px;
+  }
 }
 
 /* actions */

@@ -40,7 +40,7 @@ const StepResult = ({form}) => {
 
   return (
     <div className="sizequiz__result">
-      <div className="sizequiz__subtitle">Рекомендованный размер</div>
+      <div className="sizequiz__question">Рекомендованный размер</div>
       <div className="sizequiz__result-size">{size}</div>
       <div className="sizequiz__result-desc">
         Мы сделали эту рекомендацию на основе ваших параметров и предпочтений, сравнив их с тысячами похожих профилей.

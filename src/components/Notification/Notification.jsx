@@ -49,14 +49,12 @@ export const Notification = () => {
   return (
     <Toaster
       position="top-right"
-      containerStyle={{
-        top: 110,
-        right: 40
-      }}
+      containerClassName="notification-container"
       toastOptions={{
         style: {
           background: "transparent",
-          boxShadow: "none"
+          boxShadow: "none",
+          maxWidth: "calc(100vw - 32px)"
         }
       }}
     />

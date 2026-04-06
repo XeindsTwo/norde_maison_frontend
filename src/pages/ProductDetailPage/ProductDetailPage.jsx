@@ -3,7 +3,7 @@ import {useParams} from "react-router-dom";
 import {useQuery} from "@tanstack/react-query";
 import {useState} from "react";
 import {getProductDetail} from "@/api/catalog";
-import Gallery from "./components/Gallery/Gallery"; // новый универсальный Gallery
+import Gallery from "./components/Gallery/Gallery";
 import ProductInfo from "./components/ProductInfo/ProductInfo";
 import SimilarProducts from "./components/SimilarProductsSection/SimilarProducts";
 import Header from "@/components/Header/Header.jsx";

@@ -26,10 +26,10 @@
     transition: color .3s;
     @media (max-width: 992px) {
       margin-left: 3px;
-      font-size: 16px;
     }
     @include r($sm) {
       margin-bottom: 13px;
+      font-size: 16px;
     }
 
     &:hover {
