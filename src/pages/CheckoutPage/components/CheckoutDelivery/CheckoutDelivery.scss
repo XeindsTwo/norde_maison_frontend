@@ -32,6 +32,9 @@
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 12px;
+    @include r($phone) {
+      grid-template-columns: 1fr;
+    }
   }
 
   &__icon {
@@ -93,6 +96,9 @@
     color: rgba($black100, 0.8);
     user-select: none;
     margin-bottom: 40px;
+    @include r($phone) {
+      font-size: 12px;
+    }
 
     input[type="checkbox"] {
       appearance: none;

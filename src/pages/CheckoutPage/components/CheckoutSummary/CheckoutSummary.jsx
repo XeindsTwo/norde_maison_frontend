@@ -37,6 +37,10 @@ const CheckoutSummary = ({
               <p className="checkout-summary__variant">
                 Цвет: {item.color} / Размер: {item.size}
               </p>
+              <div className="checkout-summary__price mobile">
+                <span>{item.quantity} × </span>
+                {formatPrice(getItemPrice(item, currency), currency)}
+              </div>
             </div>
             <div className="checkout-summary__price">
               <span>{item.quantity} × </span>

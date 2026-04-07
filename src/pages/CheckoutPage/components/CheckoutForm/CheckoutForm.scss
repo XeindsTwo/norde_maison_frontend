@@ -7,6 +7,9 @@
     display: flex;
     flex-direction: column;
     gap: 16px;
+    @include r($phone) {
+      gap: 14px;
+    }
 
     &:first-child {
       margin-bottom: 32px;
@@ -24,12 +27,18 @@
     @include r($lg) {
       font-size: 20px;
     }
+    @include r($phone) {
+      font-size: 18px;
+    }
   }
 
   &__row {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 12px;
+    @include r($phone) {
+      grid-template-columns: 1fr;
+    }
   }
 
   &__optional {
@@ -51,6 +60,10 @@
     cursor: pointer;
     transition: opacity 0.3s, transform 0.3s;
     letter-spacing: -0.4px;
+    @include r($sm) {
+      font-size: 18px;
+      padding: 17px 20px;
+    }
 
     &:hover:not(:disabled) {
       opacity: 0.88;
