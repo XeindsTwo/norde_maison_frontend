@@ -28,7 +28,7 @@ const CheckoutDeliveryAddress = ({delivery, register, errors, watch, setValue}) 
       {isCourier && (
         <div className="checkout-delivery__extra-row">
           <div className="checkout-page__field">
-            <label className="checkout-page__label">Подъезд/Дом</label>
+            <label className="checkout-page__label top">Подъезд/Дом</label>
             <input
               className={`checkout-page__input ${errors?.entrance ? "checkout-page__input--error" : ""}`}
               placeholder="1"
@@ -39,7 +39,7 @@ const CheckoutDeliveryAddress = ({delivery, register, errors, watch, setValue}) 
             )}
           </div>
           <div className="checkout-page__field">
-            <label className="checkout-page__label">Этаж</label>
+            <label className="checkout-page__label top">Этаж</label>
             <input
               className="checkout-page__input"
               placeholder="1"
@@ -48,7 +48,7 @@ const CheckoutDeliveryAddress = ({delivery, register, errors, watch, setValue}) 
           </div>
           <div className="checkout-page__field">
             <label className="checkout-page__label">
-              Квартира <span className="checkout-delivery__optional">(опционально)</span>
+              Квартира <span className="checkout-delivery__optional top">(опционально)</span>
             </label>
             <input
               className="checkout-page__input"

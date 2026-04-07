@@ -98,6 +98,7 @@
     margin-bottom: 40px;
     @include r($phone) {
       font-size: 12px;
+      margin-bottom: 24px;
     }
 
     input[type="checkbox"] {
@@ -113,6 +114,9 @@
       transition: all 0.2s ease;
       flex-shrink: 0;
       margin: 0;
+      @include r($phone) {
+        margin-top: -1px;
+      }
 
       &::after {
         content: "";
@@ -157,5 +161,8 @@
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 12px;
+    @include r($phone) {
+      grid-template-columns: repeat(1, 1fr);
+    }
   }
 }

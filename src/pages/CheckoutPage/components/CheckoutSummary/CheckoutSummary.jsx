@@ -65,11 +65,10 @@ const CheckoutSummary = ({
 
         <ul className="checkout-summary__rows">
           <li className="checkout-summary__row">
-            Сумма товаров:
-            <span>{formatPrice(subtotal, currency)}</span>
+            Сумма товаров:&nbsp; <span>{formatPrice(subtotal, currency)}</span>
           </li>
           <li className="checkout-summary__row">
-            Доставка:
+            Доставка:&nbsp;
             <p className="checkout-summary__delivery">
               {deliveryIsFree ? (
                 <>

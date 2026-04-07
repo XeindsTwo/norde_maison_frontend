@@ -116,6 +116,12 @@
     align-items: flex-end;
     gap: 16px;
     padding-top: 16px;
+    @include r($sm) {
+      align-items: flex-start;
+    }
+    @media (max-width: 430px) {
+      flex-direction: column-reverse;
+    }
   }
 
   &__footer-left {
@@ -155,6 +161,10 @@
     text-align: right;
     @include r($desktop) {
       font-size: 16px;
+      text-align: left;
+    }
+    @include r($phone) {
+      gap: 4px;
     }
   }
 
@@ -165,6 +175,9 @@
       display: inline-block;
       margin-left: 6px;
       color: $black100;
+      @include r($sm) {
+        margin-left: 1px;
+      }
     }
   }
 
