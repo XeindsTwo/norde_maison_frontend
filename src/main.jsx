@@ -30,7 +30,7 @@ createRoot(document.getElementById("root")).render(
             <Notification/>
           </SearchProvider>
         </AuthProvider>
-      </CurrencyProvider>
+      </CurrencyProvider> 
     </QueryClientProvider>
   </BrowserRouter>
 );

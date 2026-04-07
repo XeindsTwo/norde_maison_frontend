@@ -1,0 +1,137 @@
+.header-mobile-menu {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 86vw;
+  max-width: 500px;
+  height: 100vh;
+  background: $white;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  box-shadow: 4px 0 24px rgba($black100, 0.1);
+  @media (max-width: 410px) {
+    width: 92vw;
+  }
+
+  &__header {
+    @include flex-between-center-gap(16);
+    padding: 16px 18px;
+    border-bottom: 1px solid rgba($black100, 0.08);
+  }
+
+  &__logo {
+    img {
+      width: 140px;
+      height: auto;
+    }
+  }
+
+  &__close {
+    @include flex-center;
+    width: 44px;
+    height: 44px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    margin-right: -5px;
+
+    &:hover {
+      opacity: 0.8;
+    }
+  }
+
+  &__nav {
+    @include flex-column(18);
+    padding: 18px 18px 20px 18px;
+  }
+
+  &__link {
+    @include flex-between-center-gap(30);
+    width: 100%;
+    padding: 3px 0;
+    font-size: 18px;
+    color: $black100;
+    text-decoration: none;
+    transition: all 0.4s ease;
+
+    &:hover,
+    &.is-active {
+      color: $black100;
+    }
+
+    &.is-active {
+      svg {
+        transform: rotate(90deg);
+      }
+    }
+
+    svg {
+      transition: all 0.2s;
+    }
+  }
+
+  &__categories {
+    flex: 1;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 22px;
+  }
+
+  &__categories-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px 32px;
+    padding: 32px 0;
+  }
+
+  &__category {
+    display: grid;
+    grid-template:
+      "title" auto
+      "subs" 1fr / 1fr;
+    gap: 12px;
+    min-height: 160px;
+
+    span {
+      grid-area: title;
+      font-size: 14px;
+      font-weight: 500;
+      text-transform: uppercase;
+      color: rgba($black100, 0.64);
+      @include r($phone) {
+        min-height: calc(1.4em * 2);
+      }
+    }
+  }
+
+  &__subcategorys {
+    grid-area: subs;
+    @include flex-column(7);
+  }
+
+  &__subcategory {
+    display: block;
+    font-size: 16px;
+    color: rgba($black100, 0.7);
+    text-decoration: none;
+    padding: 3px 0;
+    transition: color 0.3s ease;
+
+    &:hover {
+      color: $black100;
+    }
+  }
+
+  &__footer {
+    padding: 20px 18px;
+    border-top: 1px solid rgba($black100, 0.08);
+    margin-top: auto;
+  }
+
+  &__currency {
+    font-size: 14px;
+    color: rgba($black100, 0.6);
+  }
+}

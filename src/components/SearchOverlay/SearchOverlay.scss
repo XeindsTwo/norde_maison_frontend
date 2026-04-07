@@ -48,6 +48,9 @@
 
   &__inner {
     @include flex-column(34);
+    @include r($lg) {
+      gap: 28px;
+    }
   }
 
   &__top {
