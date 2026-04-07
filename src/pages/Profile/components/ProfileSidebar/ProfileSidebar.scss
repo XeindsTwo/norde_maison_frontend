@@ -3,6 +3,12 @@
   border: 1px solid rgba($black100, .15);
   font-size: 18px;
   letter-spacing: -0.18px;
+  @include r($desktop) {
+    padding: 18px 20px;
+  }
+  @include r($lg) {
+    font-size: 16px;
+  }
 
   &__title {
     margin-bottom: 6px;
@@ -10,6 +16,12 @@
     letter-spacing: -0.28px;
     font-weight: 500;
     line-height: 1.4;
+    @include r($desktop) {
+      font-size: 26px;
+    }
+    @include r($lg) {
+      font-size: 24px;
+    }
   }
 
   &__mail {
