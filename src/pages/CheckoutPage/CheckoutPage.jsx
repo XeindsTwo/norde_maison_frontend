@@ -145,7 +145,7 @@ const CheckoutPage = () => {
       />
       <div className="checkout-page__field">
         <label className="checkout-page__label">Комментарий</label>
-        <textarea className="checkout-page__input checkout-page__textarea" rows={4} {...register("comment")} />
+        <textarea className="checkout-page__input checkout-page__textarea" placeholder="Ваше сообщение" rows={4} {...register("comment")} />
       </div>
       <label className="checkout-delivery__checkbox">
         <input type="checkbox" {...register("save_address")} />
@@ -183,6 +183,7 @@ const CheckoutPage = () => {
       <Header/>
       <main className="checkout-page">
         <div className="container container--padding">
+          <h1 className="checkout-page__title mobile">Оформление заказа</h1>
           <div className="checkout-page__layout">
             <div className="checkout-page__left">
               <h1 className="checkout-page__title">Оформление заказа</h1>

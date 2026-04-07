@@ -6,6 +6,24 @@
     font-size: 28px;
     font-weight: 500;
     letter-spacing: -0.28px;
+    @include r($lg) {
+      display: none;
+    }
+
+    &.mobile {
+      display: none;
+      @include r($lg) {
+        font-size: 26px;
+        letter-spacing: -0.18px;
+        margin-top: 20px;
+        margin-bottom: 28px;
+        display: block;
+      }
+      @include r($tablet) {
+        font-size: 24px;
+        letter-spacing: 0;
+      }
+    }
   }
 
   &__empty {
@@ -21,9 +39,17 @@
     grid-template-columns: 1fr 620px;
     gap: 32px;
     align-items: flex-start;
-
-    @media (max-width: 960px) {
-      grid-template-columns: 1fr;
+    @media (max-width: 1300px) {
+      grid-template-columns: 1fr 560px;
+    }
+    @include r($desktop) {
+      grid-template-columns: 1fr 500px;
+    }
+    @include r($lg) {
+      display: flex;
+      flex-direction: column;
+      margin-top: 0;
+      gap: 24px;
     }
   }
 
@@ -40,6 +66,11 @@
     top: 24px;
     margin-top: 16px;
     width: 100%;
+    @include r($lg) {
+      position: static;
+      margin-top: 0;
+      order: -1;
+    }
   }
 
   &__field {
