@@ -26,6 +26,9 @@
     display: flex;
     align-items: center;
     gap: 28px;
+    @include r($desktop) {
+      gap: 20px;
+    }
   }
 
   &__logo {
@@ -62,6 +65,9 @@
     gap: 26px;
     padding: 6px 0;
     transform: translateY(3px);
+    @include r($desktop) {
+      gap: 16px;
+    }
   }
 
   &__link {

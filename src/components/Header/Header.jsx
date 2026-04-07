@@ -7,6 +7,7 @@ import {Link} from 'react-router-dom';
 import HeaderActions from "./HeaderActions.jsx";
 import HeaderInfo from "./HeaderInfo.jsx";
 import { motion, AnimatePresence } from 'framer-motion';
+import HeaderMobile from './HeaderMobile/HeaderMobile.jsx';
 
 const Header = () => {
   const {isAuth} = useAuth();
@@ -16,6 +17,7 @@ const Header = () => {
   const [menData, setMenData] = useState({categories: [], materials: []});
   const [subcategoriesByCategory, setSubcategoriesByCategory] = useState({});
   const [loading, setLoading] = useState(true);
+  const [isMobile, setIsMobile] = useState(false);
 
   const closeTimeoutRef = useRef(null);
   const openTimeoutRef = useRef(null);
@@ -61,6 +63,16 @@ const Header = () => {
     loadData();
   }, []);
 
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 992);
+    };
+
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
   const clearTimers = () => {
     if (closeTimeoutRef.current) {
       clearTimeout(closeTimeoutRef.current);
@@ -104,11 +116,11 @@ const Header = () => {
   };
 
   const currentData =
-    openMenu === 'women'
-      ? womenData
-      : openMenu === 'men'
-        ? menData
-        : {categories: [], materials: []};
+      openMenu === 'women'
+          ? womenData
+          : openMenu === 'men'
+              ? menData
+              : {categories: [], materials: []};
 
   const menuVariants = {
     hidden: { opacity: 0, y: 6 },
@@ -140,73 +152,77 @@ const Header = () => {
     scheduleClose();
   };
 
+  if (isMobile) {
+    return <HeaderMobile />;
+  }
+
   return (
-    <header className="header" ref={headerRef}>
-      <HeaderInfo/>
-      <div className="container">
-        <div className="header__top">
-          <div className="header__left">
-            <Link to="/" className="header__logo">
-              <img src="/images/logo.svg" width={189} height={24} alt="Nordé Maison"/>
-            </Link>
+      <header className="header" ref={headerRef}>
+        <HeaderInfo/>
+        <div className="container">
+          <div className="header__top">
+            <div className="header__left">
+              <Link to="/" className="header__logo">
+                <img src="/images/logo.svg" width={189} height={24} alt="Nordé Maison"/>
+              </Link>
 
-            <nav
-              className="header__nav"
-              onMouseEnter={handleNavMouseEnter}
-              onMouseLeave={handleNavMouseLeave}
-            >
-              <Link
-                to="/women"
-                className={`header__link ${openMenu === 'women' ? 'is-active' : ''}`}
-                onMouseEnter={() => handleOpen('women')}
-                onClick={() => handleLinkClick('women')}
+              <nav
+                  className="header__nav"
+                  onMouseEnter={handleNavMouseEnter}
+                  onMouseLeave={handleNavMouseLeave}
               >
-                Женщинам
-              </Link>
-
-              <Link
-                to="/men"
-                className={`header__link ${openMenu === 'men' ? 'is-active' : ''}`}
-                onMouseEnter={() => handleOpen('men')}
-                onClick={() => handleLinkClick('men')}
-              >
-                Мужчинам
-              </Link>
-
-              <Link to="/about" className="header__link">
-                О нас
-              </Link>
-            </nav>
-          </div>
-          <HeaderActions />
-        </div>
-      </div>
-
-      {isMenuVisible && (
-        <div
-          className="mega-menu mega-menu--visible"
-          onMouseEnter={handleMenuMouseEnter}
-          onMouseLeave={handleMenuMouseLeave}
-        >
-          <div className="container">
-            {!loading && openMenu && (
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={openMenu}
-                  className="mega-menu__content"
-                  variants={menuVariants}
-                  initial="hidden"
-                  animate="visible"
-                  exit="exit"
+                <Link
+                    to="/women"
+                    className={`header__link ${openMenu === 'women' ? 'is-active' : ''}`}
+                    onMouseEnter={() => handleOpen('women')}
+                    onClick={() => handleLinkClick('women')}
                 >
-                  <MegaMenu data={currentData} subcategoriesByCategory={subcategoriesByCategory}/>
-                </motion.div>
-              </AnimatePresence>
-            )}
+                  Женщинам
+                </Link>
+
+                <Link
+                    to="/men"
+                    className={`header__link ${openMenu === 'men' ? 'is-active' : ''}`}
+                    onMouseEnter={() => handleOpen('men')}
+                    onClick={() => handleLinkClick('men')}
+                >
+                  Мужчинам
+                </Link>
+
+                <Link to="/about" className="header__link">
+                  О нас
+                </Link>
+              </nav>
+            </div>
+            <HeaderActions />
           </div>
         </div>
-      )}
-    </header>
+
+        {isMenuVisible && (
+            <div
+                className="mega-menu mega-menu--visible"
+                onMouseEnter={handleMenuMouseEnter}
+                onMouseLeave={handleMenuMouseLeave}
+            >
+              <div className="container">
+                {!loading && openMenu && (
+                    <AnimatePresence mode="wait">
+                      <motion.div
+                          key={openMenu}
+                          className="mega-menu__content"
+                          variants={menuVariants}
+                          initial="hidden"
+                          animate="visible"
+                          exit="exit"
+                      >
+                        <MegaMenu data={currentData} subcategoriesByCategory={subcategoriesByCategory}/>
+                      </motion.div>
+                    </AnimatePresence>
+                )}
+              </div>
+            </div>
+        )}
+      </header>
   );
 };
 

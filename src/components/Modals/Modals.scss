@@ -105,6 +105,12 @@
     &.short {
       max-width: 360px;
     }
+
+    &.short-mobile {
+      @include r($phone) {
+        max-width: 250px;
+      }
+    }
   }
 
   &__error {

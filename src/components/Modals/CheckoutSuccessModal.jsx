@@ -23,7 +23,7 @@ const CheckoutSuccessModal = ({ isOpen, order, onClose, onViewOrder }) => {
         </button>
       </div>
       <div className="modal__inner">
-        <p className="modal__text">Вы можете отслеживать статус доставки в личном кабинете</p>
+        <p className="modal__text short-mobile">Вы можете отслеживать статус доставки в личном кабинете</p>
         <div className="modal__actions one">
           <button className="btn modal__btn" onClick={handleViewOrder}>
             Посмотреть заказ

@@ -1,0 +1,131 @@
+.header-mobile {
+  border-bottom: 1px solid rgba($black100, .15);
+
+  &__info {
+    border-bottom: 1px solid rgba($black100, .15);
+
+    &-inner {
+      @include flex-between-center-gap(20);
+      padding: 10px 0;
+      font-size: 14px;
+      text-align: center;
+      justify-content: center;
+      color: rgba($black100, .6);
+    }
+  }
+
+  &__top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 0;
+    gap: 0;
+  }
+
+  &__left,
+  &__right {
+    @include flex-align-center(10);
+    flex: 1;
+    max-width: 33.333%;
+  }
+
+  &__right {
+    justify-content: flex-end;
+  }
+
+  &__logo {
+    flex: 0 0 auto;
+    display: flex;
+    justify-content: center;
+    transform: translateY(-2px);
+
+    img {
+      width: 160px;
+      height: auto;
+    }
+  }
+
+  &__btn {
+    @include flex-center;
+    flex-shrink: 0;
+    padding: 2px;
+    transition: opacity .3s;
+  }
+
+  &__hamburger {
+    padding: 0;
+  }
+
+  &__search, &__cart {
+    svg {
+      width: 26px;
+      height: 26px;
+
+      path {
+        fill: rgba($black100, .8);
+      }
+    }
+  }
+
+  &__cart {
+    position: relative;
+
+    &-badge {
+      @include flex-center;
+      position: absolute;
+      top: 0;
+      right: -2px;
+      left: auto;
+      background: $black100;
+      color: white;
+      font-size: 8px;
+      line-height: 1;
+      min-width: 14px;
+      height: 14px;
+      border-radius: 50%;
+    }
+  }
+
+  &__menu {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: $white;
+    z-index: 999;
+    overflow-y: auto;
+    padding-top: 80px;
+  }
+
+  &__menu-list {
+    list-style: none;
+    margin: 0;
+    padding: 0 24px;
+  }
+
+  &__menu-item {
+    padding: 0;
+    margin: 0;
+  }
+
+  &__menu-link {
+    display: block;
+    padding: 20px 0;
+    font-size: 18px;
+    color: rgba($black100, .8);
+    text-decoration: none;
+    border-bottom: 1px solid rgba($black100, .1);
+    transition: all .3s ease;
+
+    &:hover,
+    &:active {
+      color: $black100;
+      background: rgba($black100, .04);
+    }
+
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+}
