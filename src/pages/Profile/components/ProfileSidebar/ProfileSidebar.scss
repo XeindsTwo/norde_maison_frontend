@@ -7,7 +7,9 @@
     padding: 18px 20px;
   }
   @include r($lg) {
-    font-size: 16px;
+    border: none;
+    padding: 0;
+    position: relative;
   }
 
   &__title {
@@ -33,19 +35,57 @@
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    @include r($phone) {
+      font-size: 16px;
+    }
+  }
+
+  &__exit {
+    display: none;
+    @include r($lg) {
+      @include flex-center;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      position: absolute;
+      right: 3px;
+      top: 4px;
+
+      svg {
+        width: 24px;
+        height: 24px;
+      }
+    }
+  }
+
+  &__scroll-items {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    @include r($phone) {
+      gap: 8px;
+    }
   }
 
   &__actions {
     @include flex-column(11);
-    width: 100%;
   }
 
   &__action-btn {
     @include flex-align-center(8);
     padding: 12px 16px;
+    width: 100%;
     border: 1px solid rgba($black100, .1);
     color: rgba($black100, .64);
     transition: background-color .3s, border .3s, color .3s;
+    @include r($tablet) {
+      font-size: 16px;
+
+      svg {
+        width: 20px;
+        height: 20px;
+      }
+    }
 
     &:hover {
       background: #f5f5f5;

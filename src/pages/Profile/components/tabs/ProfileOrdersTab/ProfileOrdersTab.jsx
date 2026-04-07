@@ -1,5 +1,6 @@
 import Skeleton from "react-loading-skeleton";
 import {motion} from 'framer-motion';
+import {useEffect, useState} from 'react';
 import {formatPrice} from "@/utils/formatPrice";
 import PendingOrder from "@/components/PendingOrder/PendingOrder.jsx";
 import AssemblyIcon from "@/assets/images/icons/orders/assembly.svg";
@@ -9,6 +10,15 @@ import CancelledIcon from "@/assets/images/icons/orders/cancelled.svg";
 import "./ProfileOrdersTab.scss";
 
 const ProfileOrdersTab = ({ orders = [], isLoading, onOrderClick, pendingOrder, currency = "rub" }) => {
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+
+  useEffect(() => {
+    const handleResize = () => setWindowWidth(window.innerWidth);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  const getVisibleItemsCount = () => windowWidth <= 1300 ? 3 : 5;
 
   const getPrice = (order) => {
     const map = {
@@ -86,9 +96,11 @@ const ProfileOrdersTab = ({ orders = [], isLoading, onOrderClick, pendingOrder, 
             >
               <div className="order__content">
                 <div className="order__left">
-                  <div className="order__date">Заказ от {order.created_at}</div>
-                  <div className="order__price">
-                    {formatPrice(getPrice(order), currency)}
+                  <div className="order__top">
+                    <div className="order__date">Заказ от {order.created_at}</div>
+                    <div className="order__price">
+                      {formatPrice(getPrice(order), currency)}
+                    </div>
                   </div>
                   <div className="order__status">
                     <StatusIcon status={order.status} />
@@ -96,7 +108,7 @@ const ProfileOrdersTab = ({ orders = [], isLoading, onOrderClick, pendingOrder, 
                   </div>
                 </div>
                 <div className="order__images">
-                  {order.items?.slice(0, 5).map((item, i) => (
+                  {order.items?.slice(0, getVisibleItemsCount()).map((item, i) => (
                     <img
                       key={`${order.order_number}-${i}`}
                       src={item.main_image}
@@ -104,8 +116,8 @@ const ProfileOrdersTab = ({ orders = [], isLoading, onOrderClick, pendingOrder, 
                       className="order__image"
                     />
                   ))}
-                  {order.items?.length > 5 && (
-                    <div className="order__more">+{order.items.length - 5}</div>
+                  {order.items?.length > getVisibleItemsCount() && (
+                    <div className="order__more">+{order.items.length - getVisibleItemsCount()}</div>
                   )}
                 </div>
               </div>

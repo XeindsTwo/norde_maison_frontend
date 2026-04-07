@@ -17,6 +17,9 @@
     border: 1px solid rgba($black100, .15);
     transition: border .3s;
     color: #111;
+    @include r($phone) {
+      font-size: 14px;
+    }
 
     &:hover {
       border-color: $black100;

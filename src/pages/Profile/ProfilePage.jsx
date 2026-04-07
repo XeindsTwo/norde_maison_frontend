@@ -1,14 +1,15 @@
 import "./Profile.scss";
-import {useLocation, useSearchParams} from "react-router-dom";
-import {useState, useEffect, useCallback} from "react";
-import {useQuery} from "@tanstack/react-query";
+import { useLocation, useSearchParams } from "react-router-dom";
+import { useState, useEffect, useCallback } from "react";
+import { useQuery } from "@tanstack/react-query";
 import Header from "@/components/Header/Header";
 import Footer from "@/components/Footer/Footer";
 import ProfileSidebar from "./components/ProfileSidebar/ProfileSidebar";
+import ProfileSidebarMobile from "./components/ProfileSidebar/ProfileSidebarMobile";
 import ProfileContent from "./ProfileContent";
 import CheckoutSuccessModal from "@/components/Modals/CheckoutSuccessModal";
 import OrderDetailsModal from "./components/tabs/ProfileOrdersTab/OrderDetailsModal/OrderDetailsModal";
-import {getUserOrders, getPendingOrder, getMe} from "@/api/auth";
+import { getUserOrders, getPendingOrder, getMe } from "@/api/auth";
 
 const ProfilePage = () => {
   const location = useLocation();
@@ -22,15 +23,15 @@ const ProfilePage = () => {
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [pendingOrder, setPendingOrder] = useState(null);
 
-  const {data: ordersData, isLoading: isLoadingOrders} = useQuery({
+  const { data: ordersData, isLoading: isLoadingOrders } = useQuery({
     queryKey: ["userOrders", currency],
-    queryFn: async () => (await getUserOrders({currency})).data,
+    queryFn: async () => (await getUserOrders({ currency })).data,
     staleTime: 5 * 60 * 1000,
   });
 
   const orders = Array.isArray(ordersData) ? ordersData : [];
 
-  const {data: meData, isLoading: isLoadingMe} = useQuery({
+  const { data: meData, isLoading: isLoadingMe } = useQuery({
     queryKey: ["me"],
     queryFn: getMe,
   });
@@ -40,7 +41,7 @@ const ProfilePage = () => {
   useEffect(() => {
     const fetchPending = async () => {
       try {
-        const {data} = await getPendingOrder();
+        const { data } = await getPendingOrder();
         if (data?.has_pending) setPendingOrder(data);
         else setPendingOrder(null);
       } catch {
@@ -59,7 +60,7 @@ const ProfilePage = () => {
 
     const isFromCheckout =
       location.state?.orderSuccess ||
-      (searchParams.get("order_success") === "true");
+      searchParams.get("order_success") === "true";
 
     if (!isFromCheckout || !orderNumber) return;
 
@@ -90,16 +91,26 @@ const ProfilePage = () => {
 
   return (
     <>
-      <Header/>
+      <Header />
       <div className="container container--padding">
         <div className="profile__layout">
-          <ProfileSidebar
-            activeTab={tab}
-            onChangeTab={setTab}
-            supportUrl={supportUrl}
-            isLoading={isLoadingMe}
-            currency={currency}
-          />
+          <div className="desktop-only">
+            <ProfileSidebar
+              activeTab={tab}
+              onChangeTab={setTab}
+              supportUrl={supportUrl}
+              isLoading={isLoadingMe}
+            />
+          </div>
+
+          <div className="mobile-only">
+            <ProfileSidebarMobile
+              activeTab={tab}
+              onChangeTab={setTab}
+              supportUrl={supportUrl}
+            />
+          </div>
+
           <ProfileContent
             tab={tab}
             setTab={setTab}
@@ -111,7 +122,7 @@ const ProfilePage = () => {
           />
         </div>
       </div>
-      <Footer/>
+      <Footer />
 
       {showSuccessModal && (
         <CheckoutSuccessModal

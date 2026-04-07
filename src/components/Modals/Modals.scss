@@ -64,6 +64,12 @@
     @include r($tablet) {
       font-size: 22px;
     }
+
+    &.small {
+      @media (max-width: 410px) {
+        font-size: 20px;
+      }
+    }
   }
 
   &__close {

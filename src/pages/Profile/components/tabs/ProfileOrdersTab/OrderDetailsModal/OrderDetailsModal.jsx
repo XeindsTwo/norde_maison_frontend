@@ -58,7 +58,7 @@ const OrderDetailsModal = ({order, currency = "rub", onClose}) => {
   return (
     <AnimatedModal isOpen={true} onClose={onClose} width="654px">
       <div className="modal__top">
-        <div className="modal__title">
+        <div className="modal__title small">
           Заказ №{order.order_number || 'N/A'} от {order.created_at || 'N/A'}
         </div>
         <button className="modal__close" onClick={onClose}>
@@ -91,11 +91,15 @@ const OrderDetailsModal = ({order, currency = "rub", onClose}) => {
                   <p className="order-modal__variant">
                     Цвет: {item.color || 'N/A'} / Размер: {item.size || 'N/A'}
                   </p>
+                  <p className="order-modal__price mobile">
+                    <span>{item.quantity || 0} × </span>
+                    {formatPrice(convertPrice(item.price_snapshot || 0, "rub", currency), currency)}
+                  </p>
                 </div>
-                <div className="order-modal__price">
+                <p className="order-modal__price">
                   <span>{item.quantity || 0} × </span>
                   {formatPrice(convertPrice(item.price_snapshot || 0, "rub", currency), currency)}
-                </div>
+                </p>
               </Link>
             ))}
           </ul>
